@@ -643,36 +643,36 @@ const chartDataLabelsPlugin = {
         if (val === null || val === undefined || val === 0) return;
 
         ctx.save();
-        ctx.font = 'bold 10px system-ui, -apple-system, sans-serif';
+        ctx.font = 'bold 11px Inter, system-ui, -apple-system, sans-serif';
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
         if (isBar && isHorizontal) {
           // Horizontal bar chart: place OUTSIDE the right edge of the bar
-          const x = element.x + 12;
+          const x = element.x + 10;
           const y = element.y;
           ctx.textAlign = 'left';
           ctx.fillStyle = defaultColor;
           ctx.fillText(String(val), x, y);
         } else if (isBar) {
-          // Vertical bar chart: place OUTSIDE / ABOVE the bar
+          // Vertical bar chart: place directly at the TOP / ABOVE the bar
           const x = element.x;
-          let y = element.y - 8;
-          // Ensure it doesn't clip off the top
-          if (y < chart.chartArea.top + 6) y = chart.chartArea.top + 8;
+          let y = element.y - 10;
+          // Ensure it doesn't clip beyond the top of the canvas
+          if (y < chart.chartArea.top + 8) y = chart.chartArea.top + 10;
           
           ctx.fillStyle = defaultColor;
           ctx.fillText(String(val), x, y);
         } else if (isLine) {
           // Line chart: above the point
           const x = element.x;
-          let y = element.y - 10;
+          let y = element.y - 12;
           if (y < chart.chartArea.top + 8) y = element.y + 12;
 
           ctx.fillStyle = dataset.borderColor || defaultColor;
           ctx.fillText(String(val), x, y);
         } else if (isDoughnut) {
-          // Doughnut slice label: calculate middle angle outside or centered
+          // Doughnut slice label
           const angle = (element.startAngle + element.endAngle) / 2;
           const radius = (element.innerRadius + element.outerRadius) / 2;
           const x = element.x + Math.cos(angle) * radius;
@@ -680,7 +680,7 @@ const chartDataLabelsPlugin = {
 
           if (element.endAngle - element.startAngle > 0.25) {
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
+            ctx.font = 'bold 11px Inter, system-ui, -apple-system, sans-serif';
             ctx.shadowColor = 'rgba(0,0,0,0.6)';
             ctx.shadowBlur = 4;
             ctx.fillText(String(val), x, y);
