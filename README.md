@@ -1,5 +1,9 @@
 # CDR & MDR Public Health Mortality Surveillance Dashboard
 
+[![Live Dashboard](https://img.shields.io/badge/Live%20Dashboard-Visit%20App-success?style=for-the-badge&logo=github)](https://saurabhnakhale.github.io/CDR-MDR/)
+
+🔗 **Live URL**: **[https://saurabhnakhale.github.io/CDR-MDR/](https://saurabhnakhale.github.io/CDR-MDR/)**
+
 Interactive Public Health Mortality Surveillance Dashboard analyzing **Child Death Review (CDR)** and **Maternal Death Review (MDR)** datasets for Nagpur Division across financial years 2023–2027.
 
 Connected to live Google Sheets data:
