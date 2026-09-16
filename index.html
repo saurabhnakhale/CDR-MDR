@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CDR & MDR Child & Maternal Mortality Analytics Dashboard</title>
+  <meta name="description" content="Official Child Death Review (CDR) and Maternal Death Review (MDR) Data Analytics Dashboard covering all worksheets (2023-2027) with interactive KPIs, clinical causes, and drill-down audit capabilities.">
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/dashboard.css">
+</head>
+<body>
+  <div class="ambient-glow"></div>
+
+  <div class="dashboard-wrapper">
+    <!-- Header Navigation & Action Bar -->
+    <header class="dashboard-header">
+      <div class="header-branding">
+        <div class="header-icon-badge">
+          <i class="fas fa-heartbeat"></i>
+        </div>
+        <div class="header-title-group">
+          <h1>CDR & MDR Mortality Analytics Dashboard</h1>
+          <p>Nagpur Division Mortality Surveillance System • Child (CDR) & Maternal (MDR) Across All Years (2023–2027)</p>
+        </div>
+      </div>
+
+      <div class="header-actions">
+        <div class="badge-live-status">
+          <span class="pulse-dot"></span>
+          <span id="sync-timestamp">Live Synced: Ready</span>
+        </div>
+
+        <button id="btn-sync-all-sheets" class="btn-header-action" title="Fetch live updates across all 8 worksheets">
+          <i class="fas fa-sync-alt"></i> Sync All Sheets
+        </button>
+
+        <button id="btn-export-csv" class="btn-header-action" title="Export current filtered view to CSV">
+          <i class="fas fa-file-export"></i> Export CSV
+        </button>
+
+        <button id="btn-theme-toggle" class="btn-header-action" title="Toggle Light/Dark Theme">
+          <i id="theme-icon" class="fas fa-sun"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Module & Year Tabs Switcher -->
+    <section class="module-tabs-bar">
+      <div class="tab-buttons-group">
+        <button id="tab-btn-cdr" class="tab-btn active" data-module="CDR">
+          <i class="fas fa-baby"></i> Child Deaths (CDR)
+          <span id="tab-count-cdr" class="tab-badge">1,886</span>
+        </button>
+        <button id="tab-btn-mdr" class="tab-btn tab-mdr" data-module="MDR">
+          <i class="fas fa-female"></i> Maternal Deaths (MDR)
+          <span id="tab-count-mdr" class="tab-badge">417</span>
+        </button>
+      </div>
+
+      <div class="year-chips-selector">
+        <span style="font-size:0.75rem; font-weight:700; color:var(--text-muted); text-transform:uppercase; margin-right:4px;">Year:</span>
+        <button class="year-chip active" data-year="ALL">All Years (2023–27)</button>
+        <button class="year-chip" data-year="2023-24">2023-24</button>
+        <button class="year-chip" data-year="2024-25">2024-25</button>
+        <button class="year-chip" data-year="2025-26">2025-26</button>
+        <button class="year-chip" data-year="2026-27">2026-27</button>
+      </div>
+    </section>
+
+    <!-- Dynamic Surveillance Filter Bar -->
+    <section class="filter-panel">
+      <div class="filter-top-row">
+        <div class="filter-title-label">
+          <i class="fas fa-sliders-h" style="color:var(--accent-blue);"></i> <span id="filter-module-label">CDR Surveillance Filters</span>
+        </div>
+        <div id="filter-active-chips" class="filter-active-chips"></div>
+      </div>
+
+      <div id="filter-grid-container" class="filter-grid">
+        <!-- Injected dynamically based on active module (CDR vs MDR) -->
+      </div>
+    </section>
+
+    <!-- Executive KPI Statistics Grid -->
+    <section id="kpi-cards-container" class="kpi-grid">
+      <!-- Injected dynamically based on active module -->
+    </section>
+
+    <!-- Primary Charts Section -->
+    <section class="charts-grid-two-col">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2 id="chart-title-trend"><i class="fas fa-chart-line" style="color:var(--accent-indigo);"></i> Mortality Trajectory Trend</h2>
+            <span id="chart-sub-trend" class="chart-subtitle">Case volume trend across timeline</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-trend"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2 id="chart-title-causes"><i class="fas fa-stethoscope" style="color:var(--accent-rose);"></i> Clinical Causes Classification</h2>
+            <span class="chart-subtitle">Grouped primary epidemiological condition clusters</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-causes"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Secondary Charts Section -->
+    <section class="charts-grid-three-col">
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2><i class="fas fa-hospital-alt" style="color:var(--accent-blue);"></i> Place of Death</h2>
+            <span class="chart-subtitle">Tertiary Public vs Private vs Home</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-pod"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2 id="chart-title-breakdown-1"><i class="fas fa-child" style="color:var(--accent-amber);"></i> Age Demographics</h2>
+            <span id="chart-sub-breakdown-1" class="chart-subtitle">Age cohort analysis</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-breakdown-1"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2 id="chart-title-breakdown-2"><i class="fas fa-balance-scale" style="color:var(--accent-emerald);"></i> Clinical Parameter</h2>
+            <span id="chart-sub-breakdown-2" class="chart-subtitle">Birth weight / Delivery timing profile</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-breakdown-2"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- Case Explorer Table Section -->
+    <section class="table-section-card">
+      <div class="table-header-controls">
+        <div class="table-title">
+          <h3 id="table-main-title"><i class="fas fa-table" style="color:var(--accent-blue); margin-right:6px;"></i> Mortality Surveillance Case Explorer</h3>
+          <p id="table-count-summary">Showing records matching active criteria</p>
+        </div>
+
+        <div class="table-search-box">
+          <i class="fas fa-search" style="color:var(--text-muted);"></i>
+          <input type="text" id="search-input" class="filter-input" placeholder="Search by name, diagnosis, hospital, location...">
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table class="data-table">
+          <thead id="table-head">
+            <!-- Dynamic columns based on active module -->
+          </thead>
+          <tbody id="table-body">
+            <!-- Dynamic rows injected via app.js -->
+          </tbody>
+        </table>
+      </div>
+
+      <div class="table-footer">
+        <span id="page-indicator" class="pagination-info">Page 1 of 1</span>
+        <div class="pagination-controls">
+          <button id="btn-prev-page" class="btn-page"><i class="fas fa-chevron-left"></i> Previous</button>
+          <button id="btn-next-page" class="btn-page">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Detailed Investigation Modal Dialog -->
+  <div id="case-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="modal-case-title">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="modal-case-title">Mortality Review Investigation</h3>
+        <button id="modal-close-btn" class="btn-close-modal" aria-label="Close modal">&times;</button>
+      </div>
+
+      <div id="modal-content-grid" class="modal-grid">
+        <!-- Dynamically rendered for CDR or MDR -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Unified Multi-Sheet App Logic -->
+  <script src="js/app.js"></script>
+</body>
+</html>

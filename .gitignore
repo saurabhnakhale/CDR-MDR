@@ -1,0 +1,16 @@
+# Standalone git binaries
+mingit/
+mingit.zip
+
+# Node/V8 temporary files
+node_modules/
+.npm/
+
+# OS metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Temporary logs
+*.log
+scratch/

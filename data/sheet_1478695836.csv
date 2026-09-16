@@ -1,0 +1,596 @@
+Sr. No.,Block Name,Month ,Child Name,Mother's Name,Sex,Category,Age,Village,PHC Area,Sub-centre Area,Place of Birth,Birth Weight (gm),Last Weight (kg),Immunization Status,Date of Death,Place of Death,Probable Cause of Death
+4,GMCH NAGPUR,Apr-26,Satvik Vinod Meshram,,Male,SC,7 months,Nagpur,,,gmch nagpur,,2.2 KG,,06-Apr-2026,gmch nagpur,Spinal muscular atrophy with severe sepsis with septic shock with ARDS
+9,GMCH NAGPUR,Apr-26,Advik Shyam Bhadale,,Male,OBC,2 years,Nagpur,,,gmch nagpur,,2.2 KG,,13-Apr-2026,gmch nagpur,post autopsy
+14,GMCH NAGPUR,Apr-26,Usman Shah,,Male,GENERAL,1 month,Nagpur,,,gmch nagpur,,1.9 KG,,22-Apr-2026,gmch nagpur,Intra cranial hemorrhage with hydrocephalus with septic shock with disseminated intravascular coagulation
+15,GMCH NAGPUR,Apr-26,Anvika Yash Wagh,,Female,SC,3 month,Nagpur,,,gmch nagpur,,2 KG,,23-Apr-2026,gmch nagpur,suspected inborn error of metabolism with severe sepsis with septic shock
+17,GMCH NAGPUR,Apr-26,Manvi Ahirwal,,Female,OBC,1.6 years,Nagpur,,,gmch nagpur,,2 KG,,28-Apr-2026,gmch nagpur,suspected inborn error of metabolism with acyanotic congenital heart disease severe sepsis with septic shock
+27,GMCH NAGPUR,Apr-26,b/o karishma bhiskar (twin A),karishma bhiskar (twin A),male,OBC,4 day,nagpur,,,neo health city hospital,,2.4kg,2.4kg,,neo health city hospital,very pre term with low birth weight with septicemia with septic shock with DIC with pulmonary hemorrhage
+28,GMCH NAGPUR,Apr-26,b/o priyanka makhlage,priyanka makhlage,male,OBC,4 day,nagpur,,,DAGA hospital,,2.4kg,2.4kg,,DAGA hospital,pulmonary hypoplasia with right sided pneumothorax with shock
+29,GMCH NAGPUR,Apr-26,b/o karishma bhiskar twin B,karishma bhiskar twin B,Female,OBC,4 day,nagpur,,,new health city hospital,,905gm,905gm,,new health city hospital,very pre term with extreme low birth weight with HMD 3 with EOS with septic shock with DIC with germinal matrix hemorrhage
+33,GMCH NAGPUR,Apr-26,B/O Sushma Mukesh Nageshwar,Sushma Mukesh Nageshwar,Male,SC,5Days,Nagpur,,,LMH Nagpur,,900gm,820gm,,LMH Nagpur,"Very Preterm(28+5 weeks), with extreme low birth weight (900gm) with birth asphyxia with septicaemia with septic shock"
+35,GMCH NAGPUR,Apr-26,B/O Shital Chandreshekar Sandel,Shital Chandreshekar Sandel,Male,ST,12Days,Nagpur,,,"New Health City, Nagpur",,1.9kg,2.3kg,,"New Health City, Nagpur",Pre-term with low birth weight with hypoxic ischemic encephalopathy with early onset sepsis with septic shock with pulmonary hemorrhage
+36,GMCH NAGPUR,Apr-26,B/O Yogita Yograj Shivane,Yogita Yograj Shivane,Female,GENERAL,10days,Nagpur,,,Nagpur,,2.7kg,2.9kg,,Nagpur,Late onset sepsis with refractory seizures with acyanotic congenital heart disease with septicaemia with septic shock with DIC
+39,IGGMC NAGPUR,Apr-26,B/O QUSAR BANO MOHD RASHID ANSARI,QUSAR BANO MOHD RASHID ANSARI,FEMALE,GENERAL,DAY-1,"MAJRI, REHMAT NAGAR,(permanat add. Kamptee  )NAGPUR. 8432266697",,Kalmana  UPHC,PUBLIC,700,,0.7 KG,04-Jun-2026,IGGMC,HYALINE MEMBRANE DISEASE GRADE IV IN AN EXTREMELY PRETERM AND EXTREMELY LOW BIRTH WEIGHT NEONATE
+40,IGGMC NAGPUR,Apr-26,B/O ARSHIDA JAVED SHEIKH,ARSHIDA JAVED SHEIKH,FEMALE,GENERAL,DAY 5,"HAZRI MAJRI, DIAMOND COLONY, NEAR GLASS COMPANY, NAGPUR. 7219389320",,,PUBLIC,960,,0.96 KG,04-Aug-2026,IGGMC,HYALINE MEMBRANE DISEASE  IN AN EXTREMELY PRETERM AND EXTREMELY LOW BIRTH WEIGHT NEONATE
+41,IGGMC NAGPUR,Apr-26,B/O ANJALI KANTA TIWARI,ANJALI TIWARI,FEMALE,GENERAL,DAY 6,"GOREWADA, RING ROAD, NEAR PALOTTI SCHOOL, NAGPUR. 7821833078",,,PUBLIC,2370,,2.37 KG,04-Aug-2026,IGGMC,SEVERE PERINATAL HYPOXIA WITH GRADE II HYPOXIC ISCHEMIC ENCEPHALOPATHY WITH MULTIIORGAN DYSFUNCTION SYNDROME IN NEAR TERM AND LOW BIRTH WEIGHT NEONATE
+42,IGGMC NAGPUR,Apr-26,B/O SANDHYA RITIK GOUR,SANDHYA GOUR,MALE,GENERAL,DAY-5,"NEAR NAIK TALAV, SUMIT KIRANA STORE, NAGPUR. 708385376",,Binaki UPHC,PUBLIC,2220,,2.22 KG,04-Oct-2026,IGGMC,PULMONARY HEMORRHAGE WITH SEVERE PERSISTENT PULMONARY HYPERTENSION WITH REFRACTORY HYPOGLYCEMIA
+43,IGGMC NAGPUR,Apr-26,B/O RANJITA ARVIND GAIKWAD,RANJITA GAIKWAD,MALE,GENERAL,DAY-4,"RAJIV  GANDHI NAGAR, IVBM ROAD, GITTI KHADAN, NAGPUR. 9970088041",,K.T. Nagar UPHC,PUBLIC,980,,0.98 KG,16-Apr-2026,IGGMC,GRADE III INTRAVENTRICULAR HEMORRHAGE WITH CATECHOLAMINE RESISTANT REFRACTORY SHOCK IN EXTERMELY LOW BIRTH WEIGHT AND EXTREMELY PRETERM WITH PHENOTYPIC DOWNS MALE NEONATE
+44,IGGMC NAGPUR,Apr-26,B/O MADHURI SANTOSH DONGRE,MADHURI DONGRE,MALE,GENERAL,DAY 3,"WARD NO 5 BEHIND ICE COMPANY, YERKHEDA, KAMPTEE, NAGPUR. 8530676719",,,PUBLIC,1300,,1.3 KG,20-Apr-2026,IGGMC,GRADE IV HYALINE MEBRANE DISEASE WITH GRADE IV INTRAVENTRICULAR HEMORRHAGE IN AN EXTREMELY PRETERM AND EXTREMELY LOW BIRTH WEIGHT MALE NEONATE
+46,IGGMC NAGPUR,Apr-26,B/O TABASSUM HASAIN ANSARI,TABASSUM ANSARI,FEMALE,GENERAL,DAY 3,"TAJ NAGAR, TEKA HOUSE NO 237, AMBEDKAR MARG, NAGPUR. 9325425991 ( migration jabalpur)",,PACHPAOLI UPHC,PUBLIC,1680,,1.68 KG,23-Apr-2026,IGGMC,DISSEMINATED INTRAVASCULAR COAGULOPATHY WITH SEVERE IUGR IN EARLY PRETERM AND LOW BIRTH WEIGHT NEONATE
+47,IGGMC NAGPUR,Apr-26,B/O ROZY PARVEEN ABDUL RASHID ANSARI,ROZY PARVEEN,MALE,GENERAL,DAY 5,"NEAR MUNIR KARKHANA, VANDEVI NAGAR, UPPALWADI, NAGPUR. 9356838603",,Garib Nawaz UPHC,PUBLIC,2200,,2.2 KG,23-Apr-2026,IGGMC,REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION WITH VENTILATOR ASSOCIATED PNEUMONIA WITH PERINATAL ASPHYXIA IN A PRETERM NEONATE
+50,IGGMC NAGPUR,Apr-26,NITANSHI PRASHANT GAUR,NEHA PRASHANT GAUR,FEMALE,GENERAL,3 MONTHS,"JYOTI NAGAR, KHADAN, Behind DAGA Hospital Gandhibagh NAGPUR. 7909483511",,Hansapuri UPHC,PUBLIC,,,2.3 KG,04-Feb-2026,IGGMC,CARDIOPULMONARY ARREST WITH CARDIOGENIC SHOCK IN A KNOWN CASE OF CONGENITAL HEART DISEASE WITH SEVERE PULMONARY ARTERY HYPERTENSION
+51,IGGMC NAGPUR,Apr-26,B/O REENA KRISHNA GUPTA,REENA KRISHNA GUPTA,MALE,GENERAL,4 MONTHS,"SHRI KRISHNA DHAM, MANKAPUR, NAGPUR. 7518527060",,Zingabai Takli UPHC,PUBLIC,,,4.8 KG,04-Feb-2026,IGGMC,CARDIORESPIRATORY ARREST WITH ACUTE RESPIRATORY DISTRESS SYNDROME WITH CONGENITAL HEART DISEASE WITH FOCAL BRAIN INFARCT WITH SEIZURE DISORDER
+52,IGGMC NAGPUR,Apr-26,FARHAN FAKARUDDIN SHEIKH,FARHAN FAKARUDDIN SHEIKH,MALE,GENERAL,3 MONTHS,"YASHODHARA NAGAR, shivaji chowk uppalwadi,,  NAGPUR. 8830447180",,KAPIL NAGAR UPHC,PUBLIC,,,3 KG,17-Apr-2026,IGGMC,CARDIO RESPIRATORY ARREST IN KNOWN CASE OF CYANOTIC CONGENITAL HEART DISEASE
+53,IGGMC NAGPUR,Apr-26,RAHAT FATEMA MOHAMMAD WASIM,RAHAT FATEMA MOHAMMAD WASIM,FEMALE,GENERAL,1.5 YRS,"HIRVI NAGAR, BHIM CHAWK, NAGPUR. 8887865016",,Hiwri Nagar UPHC,PUBLIC,,,7.4 KG,04-Nov-2026,IGGMC,CARDIORESPIRATORY ARREST WITH ACUTE RESPIRATORY DISTRESS SYNDROME WITH LEFT SIDED PNEUMOTHORAX WITH LOWER RESPIRATORY TRACT INFECTION
+54,DAGA HOSPITAL,Apr-26,B/o Kaushal Dhunikumar Sagarwanshi,Kaushal Dhunikumar Sagarwanshi,male,OBC,3 Days,"Wanjari Nagar , Uppalwadi ,Nagpur",,,PUBLIC,,,2.7 kg,13-Apr-2026,DAGA,SUDDEN INFANT DEATH SYNDROME
+55,kingsway hospital,Apr-26,BABY OF SNEHA PAVAN RAUT,SNEHA PAVAN RAUT,Male,GENERAL,4 DAYS,"Khaparkheda, PHONE NO-7219462945",,,"COLOURS HOSPITAL MOTHER & CHILD CARE,AJNI SQUARE, NAGPUR-14",,NIL,675 GRAM,04-Apr-2026,Health facility: private,"PRETERM,SEVERE METABOLIC ACIDOSIS ,ACUTE RENAL FAILURE,LARGE PDA ,SEPTIC SHOCK"
+56,COLOURS HOSPITAL,Apr-26,B/O ANJUM MAHESH NAGARE,MRS.  ANJUM MAHESH NAGARE,Male,OBC,1 MONTH 10 DAYS,"temporary address-FLAT NO-5, CHINTAMANI APARTMENT, SUOG NAGAR, NAGPUR-440015.  MOB.8805392428,7767901413 permant add. Yawatmal",,,"COLOURS HOSPITAL MOTHER & CHILD CARE,AJNI SQUARE, NAGPUR-15",1.074 Kg,,,03/04/2026 AT.11.45 PM,PRIVATE HOSPITAL,"CARDIO RESPIRATORY ARREST IN A EXTREME PREMATURE WITH EXTREME LOW BIRTH,SEVERE RDS/ SEPSIS /BPD."
+57,COLOURS HOSPITAL,Apr-26,B/O PRAKARSHA HUMESH BHALADHARE,MRS. PRAKARSHA HUMESH BHALADHARE,Male,SC,8 HOURS,"temporary add.106,SUMEDH NAGAR, POWER GRID CHOWK ,NAGPUR-440026.      MOB-9834296007, 9096745110 permanat add. Mumbai",,,"COLOURS HOSPITAL MOTHER & CHILD CARE,AJNI SQUARE, NAGPUR-15",0.770 Kg,,,04-Oct-2026,PRIVATE HOSPITAL,PRE TERM (28 WEEK) L.S.C.S (0.770 Kg) NCIAB WITH RDS WITH SHOCK WITH CARDIO RESPIRATORY ARREST.
+59,Suretech Hospital,Apr-26,B/O Sneha Pundlik Dhote,Mrs. Sneha Pundlik Dhote,Male,GENERAL,1 Days,"At Post Ward No.9, Deshmukh Wadi,Hingana,Nagpur, Maharashtra 441110.",,,Health facility: private,840gm,,No,11-Apr-2025,Health facility: private,Terminal Cardiorespiratory Arrest Secondary To Preterm With Extremely Low Birth Weight With Extreme Prematurity.
+60,NSH HOSPITAL,Apr-26,MASTER. MD. ZOHAN SHEIKH,ASMA MOHAMMAD PARVEJ,Male,GENERAL,7 MONTHS,"BABULBAN PLOT NO. 368 ,MASJID LINE, NAGPUR- 9325046068 ,952948633",,BABULBAN UPHC,HOME,2.3 KG,3.8 KG,YES,31-Mar-2026,Health facility: private,CARDIO RESPIRATORY ARREST SECONDARY TO SEVERE HYPOXIA AND RESPIRATORY FAILURE
+62,New Health City Hospital,Apr-26,b/o  Kirti Amol Ingle,mrs.kirti Amol Ingle,male,OBC,3 days,"indira nagar ,galli no 5, bodhisatva budhha vihar ,nagpur     mo no-9021753012/983416223",,KAPIL NAGAR UPHC,Health facility private,0.780gms,0.780gms,,04-May-2026,Health facility private,Extreme Pre Term / ELBW / with septicemiawith intraventricular Hemorrahg with refractory shock
+63,New Health City Hospital,Apr-26,b/o dr Gunjan Rahul Vyas,mrs. Gunjan Rahul Vyas,female,OBC,22 days,"46,Madhav Nagar, behind dominozzs pizza, Nagpur                            mo no-7757020995/9823080581",,,Health facility private,0.460gms,0.460gms,,04-Jul-2026,Health facility private,Extreme preterm / Extreme Low birth weight / Grade -IV RDS / Septic Shock / NEC
+65,HOME,Apr-26,B/O MANISHA JAWARASI UIKEY,MANISHA JAWARASI UIKEY,Male,GENERAL,9 DAYS,"TAKSHASHILA NAGAR ,NAGPUR,   8815254743",,KAPIL NAGAR,PUBLIC,2.5 KG,,,20-Apr-2026,HOME,CONGENITAL CARDIAC ANOMALY
+70,GMCH NAGPUR,May-26,B/O Ranu Pavan Jamunpane,,male,SC,1 day,shahu layout datta wadi nagpur,,,GMCH NAGPUR,,1.2kg,No,11-May-2026,GMCH NAGPUR,early onset sepsis with cardiogenic shock
+71,GMCH NAGPUR,May-26,B/O Sneha Pavan Sukhdeve,,female,SC,9 days,raut nagar dighori nagpur,,,GMCH NAGPUR,,1.46 kg,No,12-May-2026,GMCH NAGPUR,late onset sepsis with septic shock with disseminated intravascular coagulation
+73,GMCH NAGPUR,May-26,B/O Pallavi Akash Chinchurkar,,male,OBC,8 days,sanjay nagar nagpur,,,GMCH NAGPUR,,1.065kg,No,14-May-2026,GMCH NAGPUR,early onset sepsis with septic shock with disseminated intravascular coagulation with pulmonary haemorrhage
+74,GMCH NAGPUR,May-26,B/O Sayali Yogesh Sonwane,,male,OBC,4 days,bhandeplot nagpur,,,GMCH NAGPUR,,1.66kg,No,15-May-2026,GMCH NAGPUR,early onset sepsis with NEC 3B with perforation peritonitis with septic shock
+80,GMCH NAGPUR,May-26,B/O Priya Gaurav Ramteke,,female,SC,3 days,"plot. No. 46, new pawan shakti nagar, wathoda, nagpur",,,GMCH NAGPUR,,600gm,No,26-May-2026,GMCH NAGPUR,early onset sepsis with septic shock
+81,GMCH NAGPUR,May-26,B/O Gauri Yogesh Jodh,,male,OBC,3 days,jatlapur narkhed nagpur,,,GMCH NAGPUR,,1.640kg,No,29-May-2026,GMCH NAGPUR,refractory hypoglycemia with refractory cardiogenic shock
+82,GMCH NAGPUR,May-26,B/O Jyotsana Rajendra Padole,,male,OBC,3 days,raut nagar dighori nagpur,,,GMCH NAGPUR,,1.175kg,No,30-May-2026,GMCH NAGPUR,early onset sepsis with septic shock with pulmonary haemorrhage
+83,GMCH NAGPUR,May-26,B/O Priyanka Suraj Vidya,,male,OBC,2 days,subhash nagar nagpur,,,GMCH NAGPUR,,2.4 kg,No,30-May-2026,GMCH NAGPUR,congenital pneumonia with early onset sepsis with septic shock
+84,Gmch Nagpur,May-26,Riday Bharat Raut,,male,SC,14 month,shirsada pauni bhandara,,,Gmch nagpur,,2.1 KG,,01-May-2026,Gmch nagpur,suspected metabolic disorder with status epilepticus with severe acute respiratory distress syndrome
+89,Gmch nagpur,May-26,Vedanti Rahangdale,,female,GENERAL,8 month,manewada nagpur,,,Gmch nagpur,,2 KG,,21-May-2026,Gmch nagpur,severe anemia with sepsis with septic shocj with multiorgan dysfunction syndrome
+90,Gmch nagpur,May-26,Tanishka Akash bisen,,female,GENERAL,6 month,pardi nagpur,,,Gmch nagpur,,2.1 KG,,21-May-2026,Gmch nagpur,severe anemia with suspected sturge weber syndrome with raised intracranial pressure with neurogenic shock
+93,Gmch nagpur,May-26,B/O Sujata Revaram Pawar,,female,GENERAL,6 days,Nagpur,,,Gmch nagpur,,2.1 kg,No,05-May-2026,Gmch nagpur,preterm with lbw with HMD type 2 with culture positive sepsis with septic shock with acute respiratory distress syndrome
+109,Gmch nagpur,May-26,B/O Anjani Sarvesh Upajane,,male,OBC,20 days,Nagpur,,,Gmch nagpur,,2.9 kg,No,24-May-2026,Gmch nagpur,late onset sepsis with AKI with septic shock
+110,Gmch nagpur,May-26,B/O Shital Shailesh Ikankar,,female,OBC,7 days,Nagpur,,,Gmch nagpur,,1.7 kg,No,25-May-2026,Gmch nagpur,HMD 3 with ACHD with bilateral CTEV with suspected skeletal dysplasia with LOS with septic shock with AKI
+111,Gmch nagpur,May-26,B/O Reshma Sheikh Rafik,,male,GENERAL,8 days,Nagpur,,,Gmch nagpur,,2 kg,No,27-May-2026,Gmch nagpur,Septicemia with septic shock with CRA in a case of end to end ileo ileal anastamosis
+112,Gmch nagpur,May-26,B/o Afarim Wasim Khan,,male,GENERAL,5 days,Nagpur,,,Gmch nagpur,,2.7 kg,No,27-May-2026,Gmch nagpur,HIE 3 with alte onset sepsis with ARDS with AKI
+113,Gmch nagpur,May-26,B/O Nasreen Parveen Qureshi,,male,GENERAL,6 days,Nagpur,,,Gmch nagpur,,1.5 kg,No,28-May-2026,Gmch nagpur,early onset sepsis with meningitis with AKI with sptic shock
+115,Gmch nagpur,May-26,B/o Gangeshwari Sudhir Bhalehar,,female,OBC,6 days,Nagpur,,,Gmch nagpur,,2.9 kg,No,28-May-2026,Gmch nagpur,septic shock with CRA with peripheral circulatory failure in  case of jejono ileal anastamosis
+118,IGGMC NAGPUR,May-26,B/O KIMMI SURAJ PASWAN,KIMMI SURAJ PASWAN,FEMALE,GENERAL,DAY 1,"KAMPTEE ROAD, 2 NO NAKA KHASALA, MASALA, RAJATOWN, NAGPUR. 9801043525",,,PUBLIC,1730,1.73 KG,,05-Mar-2026,PUBLIC,GRADE 3 HYALINE MEMBRANE DISEASE WITH RESPIRATORY DISTRESS WITH GRADE II IVH IN A MODERATE PRETERM AND LOW BIRTH WEIGHT NEONATE
+119,IGGMC NAGPUR,May-26,B/O KHUSHBOO AFAQUE HAIDERI,KHUSHBOO AFAQUE HAIDERI,MALE,GENERAL,DAY 17,"HASANABAD, KAMPTEE, NAGPUR. 8999264985",,,PUBLIC,2320,2.32 KG,,05-Aug-2026,PUBLIC,TYPE I RESPIRATORY FAILURE WITH VENTILATOR ASSOCIATED PNEUMONIA WITH EARLY ONSET SEPSIS WITH SEPTIC SHOCK WITH GRADE 3 RESPIRATORY DISTRESS SYNDROME IN A LATE PRETERM AND LOW BIRTH WEIGHT NEONATE
+122,IGGMC NAGPUR,May-26,B/O ALINA AHAM SHARAFAT ALI MANSARI,ALINA AHAM SHARAFAT ALI MANSARI,MALE,GENERAL,DAY 4,"WARD NO 4, , WALRI COLONY, NAGPUR. 8668228647",,,PUBLIC,2450,2.45 KG,,14-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION
+127,IGGMC NAGPUR,May-26,B/O NIKITA DHAMMARATNA WASNIK,NIKITA DHAMMARATNA WASNIK,FEMALE,GENERAL,DAY 6,"PLOT NO 152, KADU LAYOUT, NARI, NAGPUR. 7083497871",,,PUBLIC,1380,1.38 KG,,18-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SHOCK IN A MODERATE PRETERM AND LOW BIRTH WEIGHT NEONATE
+128,IGGMC NAGPUR,May-26,B/O SANOBAR JAFAR SHEIKH,SANOBAR JAFAR SHEIKH,FEMALE,GENERAL,DAY 3,"BANGALI PANJA, LENDI TALAO, NEAR ARJUN KIRANA STORE, NAGPUR. 969921125",,,PUBLIC,1250,1.25 KG,,19-May-2026,PUBLIC,DISSEMINATED INTRAVASCULAR COAGULATION WITH REFRACTORY SEPTIC SHOCK WITH EARLY ONSET SEPSIS
+129,IGGMC NAGPUR,May-26,B/O SANA FIRDOUS MOHAMMAD UMAIR ANSARI,SANA FIRDOUS MOHAMMAD UMAIR ANSARI,FEMALE,GENERAL,DAY 4,"MOMINPURA, KAHRISTAN ROAD, NAGPUR. 9922397791",,,PUBLIC,2050,2.05 KG,,20-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVSCULAR COAGULATION IN LATE PRETERM AND LOW BIRTH WEIGHT NEONATE
+130,IGGMC NAGPUR,May-26,B/O SHEETAL PANKAJ KAMBLE,SHEETAL PANKAJ KAMBLE,FEMALE,GENERAL,DAY 9,"ADARSH COLONY, RAMTEK, NAGPUR. 9970067166",,,PUBLIC,1600,1.6 KG,,23-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED  INTRAVASCULAR COAGULATION IN LOW BIRTH WEIGHT INTRAUTERINE GROWTH RETARDATION NEONATE
+131,IGGMC NAGPUR,May-26,B/O RUPALI RAJESH NIKOSE,RUPALI RAJESH NIKOSE,MALE,GENERAL,DAY 12,"ZINGABAI TAKALI, MANKAPUR, NAGPUR. 9175156602",,,PUBLIC,1500,1.5 KG,,24-May-2026,PUBLIC,SEVERE PERSISTENT PULMONARY HYPERTENSION WITH MECONIUM ASPIRATION SYNDROME IN LATE PRETERM NEONATE
+132,IGGMC NAGPUR,May-26,B/O NEEMA BHUPENDRA SONWANI,NEEMA BHUPENDRA SONWANI,FEMALE,GENERAL,DAY 4,"PLOT NO 1745/B/976/A, KUNDATILAL GUPTA NAGAR, AMBEDKAR MARG NAGPUR. 8928863592",,,PUBLIC,1400,1.4 KG,,26-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN MODRATE PRETERM AND VERY LOW BIRTH WEIGHT NEONATE
+133,IGGMC NAGPUR,May-26,B/O SEETA SANDIP SAHU,SEETA SANDIP SAHU,MALE,GENERAL,DAY 11,"PILI NADI, RAMBAI NAGAR, DAL MILL COMPANY, PLOT NO 1110, NAGPUR.9307025830",,,PUBLIC,2000,2 KG,,28-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH PERSISTENT PULMONARY HYPERTENSION  IN MODRATE PRETERM NEONATE
+134,IGGMC NAGPUR,May-26,B/O PARVEEN SHAHJAD KHAN,PARVEEN SHAHJAD KHAN,MALE,GENERAL,DAY 29,"SANT GYANESHWAR SOCIETY, MANKAPUR, NAGPUR. 7666418462",,,PUBLIC,1870,1.87 KG,,30-May-2026,PUBLIC,LATE ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN TERM AND LOW BIRTH WEIGHT NEONATE
+135,IGGMC NAGPUR,May-26,B/O RUPALI KAILASH KHADSE,RUPALI KAILASH KHADSE,FEMALE,GENERAL,DAY 15,"WD NO 2, OPP TO NETAJI SEHORI, KHAPA, NAGPUR. 9326531382",,,PUBLIC,1740,1.74 KG,,30-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN MODRATE PRETERM AND VERY LOW BIRTH WEIGHT NEONATE
+136,IGGMC NAGPUR,May-26,B/O SIYA VISHAL TURKEL,SIYA VISHAL TURKEL,MALE,GENERAL,DAY 12,"NAIK TALV, BAIRANGIPURA, NAGPUR. 7517537266",,,PUBLIC,2900,2.9 KG,,30-May-2026,PUBLIC,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION WITH PERSISTENT PULMONARY HYPERTENSION  IN EARLY  PRETERM  NEONATE
+137,IGGMC NAGPUR,May-26,ZOHAN DAUD KHAN,ZOHAN DAUD KHAN,MALE,GENERAL,1YEAR,"PLOT NO 13, NEAR KHATIJA MASJID, RAUT NAGAR, NAGPUR. 8483031451",,,PUBLIC,,9 KG,,20-May-2026,PUBLIC,CARDIORESPIRATORY ARREST IN A SUSPECTED CASE OF MENINGITIS WITH SHOCK
+143,"MAX HOSPITAL, MANKAPUR , NAGPUR",May-26,BABY GIRL DIKSHA SUMEDH RAMTEKE,DIKSHA RAMTEKE,FEMALE,OBC,1 DAY,"Alexis Hospital, Nagpur",,,"MAX HOSPITAL, MANKAPUR , NAGPUR",2.0 KG,2.0 KG,,05-Apr-2026,-,SEVERE BIRTH ASPHYXIA HEMORRHAGIC SHOCK SEVERE ANAEMIA
+147,New Health City Hospital & Research Center,May-26,B/o Rutuja harshal deshmukh,mrs Rutuja harshal deshmukh,MALE,OBC,8 days,Statue of indhira gandhi house no-17 shantinagar nagpur                     mobile no-9021605225/9422809670,,,Health facility private,800 gm,800 gm,,05-Apr-2026,Health facility private,
+149,New Health City Hospital & Research Center,May-26,Mast Charvik Pitambar Halmare,mrs chetana pitambar halmare,MALE,OBC,3 year,Lakhani lava nagpur                              mobile no-9403373629/9403373629,,,Health facility private,2.2 Kg,14 kg,,05-Sep-2026,Health facility private,
+155,NELSON HOSPITAL NAGPUR,May-26,Pallavi,,MALE,obc,12 days,"Flat no 901 ,9 th floorA wing shree nagari 1 ,near ensara metro park VTC,pipla,nagpur,? 9767224546",,,Health facility private,860 gm,860 gm,,16-May-2026,Health Facility Private,Extremely preterm with Extreme low birth weight with Intraparenchymal bleed with midline shift with Severe thrombocytopenia with Septic shock with Culture positive septicaemia – Klebsiella pneumonia with Neonatal seizures with Apnea of prematurity with Anaemia of prematurity with Acute kidney injury with Respiratory distress syndrome with Haemodynamically signiicant PDA with Neonatal jaundice
+159,Suretech hospital,May-26,Mrs Samreen Bano Mujahad Ahemad,,Male,GENERAL,4 days,"At post H/78,Near Sharique Kirana Store, Yogi Arvind Nagar, Uppalwadi, Nagpur-440026",,,Health facility private,2800 gm,2.4 kg,No,05-Sep-2026,Health Facility Private,Terminal cardiorespiratory arrest with cardiogenic shock with sudden infant death syndrome
+161,Nelson hospital,May-26,Rukhasar khatun,,MALE,GENERAL,1 yrs,"Plot no 86 , kalmana road , minimata nagar , bhandewadi , nagpur , ? 8830457155",,,Health Facility Private,2.6 kg,7.3 kg,,15-Apr-2026,Health Facility Private,Septic shock with Severe Septicemia with DIC with Left large acute ischemic cerebral infarct in a operated case of Intracardiac Repair.
+163,AERO HOSPITAL,May-26,B/O AFREEN PARVEEN SHEIKH SHAHID,AFREEN PARVEEN SHEIKH SHAHID,MALE,GENERAL,10 DAYS,PLOT NO 19 SARTAJ COLONY BADA TAJ BAGH ASHIRWAD NAGAR NAGPUR 440024,,,Health Facility Private,,2.917 KG,,05-Jul-2026,Health facility: private,CARDIAC ARREST RESPIRATORY FAILURE SECONDARY TO PULMONARY HEMORRHAGE WITH SEPSIS WITH SEPTIC SHOCK WITH ARDS WITH MULTIORGAN INVOLVEMENT WITH SEVERE PPHN
+166,GMCH NAGPUR,Jun-26,b/o Swati jagdish pardhi,Swati jagdish pardhi,FEMALE,ST,1 DAY,"Besa ,Nagpur             9623846904",,,"GMC, NAGPUR",1090g,,no,06-Apr-2026,"GMC, NAGPUR","Extreme preterm (26+2 weeks), acyanotic congenital heart disease (2 mm patent ductus arteriosus), 3mm osatrial septal defect, Hyaline membrane disease, cardiogenic shock, pulmonary hemorrhage."
+172,GMCH NAGPUR,Jun-26,b/o Naina Dipak Mendhe,Naina Dipak Mendhe,FEMALE,SC,2 DAY,"Somwaripeth, Nagpur               9960925502",,,"GMC, NAGPUR",850g,,no,06-Dec-2026,"GMC, NAGPUR","Very preterm 28wks extreme low birth weight ,hyaline membrne disease stage 4 acyanotic congenital heart disease with early onset sepsis with septic shock with pulmonary haemorrhage"
+173,GMCH NAGPUR,Jun-26,b/o Sonam akash patil,sonam akash patil,MALE,OBC,1 DAY,"Indiramata Nagar,Nagpur       8208862273",,,"GMC, NAGPUR",1500g,,no,13-Jun-2026,"GMC, NAGPUR",very preterm with very Low birth weight with Hypoxic ischemic encephalopathy stage 3 with hyaline membrane disease stage 4 in anamalous baby
+174,GMCH NAGPUR,Jun-26,b/o Ishika ganesh telang (twinB),Ishika ganesh telang,FEMALE,GENERAL,4 DAY,"NEAR CHAKOLE HOSPITAL ,JUNA BAGADGANJ Kumbharti,Nagpur        8378028536",,BABULBAN UPHC,"GMC, NAGPUR",1100g,,no,17-Jun-2026,"GMC, NAGPUR",late preterm (36wks) with Very low birth weight (1.1kg) with 2nd of monochorionic diamniotic twin with Early onset sepsis with Necrotising enterocolitis with refractory septic shock with Disseminated intravascular coagulopathy
+176,GMCH NAGPUR,Jun-26,b/o chaitali nitin chauhan,chaitali nitin chauhan,MALE,OBC,4 DAY,"Process Sabahgrah,Narela, Nagpur              9890352453",,NARSALA UPHC,"GMC, NAGPUR",2160g,,no,21-Jun-2026,"GMC, NAGPUR",late preterm (36.1wks) low birth wt(2.16) symmetrical intrauterine growth restriction with early onset sepsis with hypoglycemia with Disseminated intravascular coagulopathy with refractory shock
+177,GMCH NAGPUR,Jun-26,b/o Sangita Ramswarup chauhan,Sangita Ramswarup chauhan,MALE,ST,5 DAYS,"Bhandarwadi Railway Station,Nagpur        9604496290",,BHANDEWADI UPHC,"GMC, NAGPUR",1230g,,no,23-Jun-2026,"GMC, NAGPUR","Very preterm (31+4 weeks) with very low birth weight (1.1 kg), symmetrical intrauterine growth restriction (IUGR), with early-onset sepsis and refractory septic shock, disseminated intravascular coagulation (DIC) with pulmonary haemorrhage."
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+196,GMCH NAGPUR,Jun-26,Azamat Rehmat sheikh,Rehmat sheikh,MALE,GENERAL,4 MONTH,"Bada tajbagh , Nagpur",,,"GMC, NAGPUR",,2.1 KG,,18-Jun-2026,"GMC, NAGPUR",Septicemia with shock with cardio respiratory arrest with peripheral circulatory failure
+197,GMCH NAGPUR,Jun-26,Hasan sheikh Irshad liyas sheikh,Irshad liyas sheikh,MALE,GENERAL,2 YEAR,Mankapur Nagpur,,AYUSH UPHC,"GMC, NAGPUR",,2.1 KG,,20-Jun-2026,"GMC, NAGPUR",Acute disseminated Encephalomyelitis viral encephalitis
+,,,,,,,,,,,,,,,,,
+199,GMCH NAGPUR,Jun-26,Shourya Rajesh Udan,Rajesh udan,MALE,OBC,2years,"Chandranagar, Nagpur",,BABULKHEDA UPHC,"GMC, NAGPUR",,2.1 KG,,22-Jun-2026,"GMC, NAGPUR",a/c/o Accidental fall from 1st floor with right front hurt lobe with depressed fracture with right FIP craniotomy with evolution of Hematoma
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+203,GMCH NAGPUR,Jun-26,Varmika abhishek Joni,Abhishek Joni,FEMALE,GENERAL,11 months,"Hanuman Nagar, Nagpur",,,"GMC, NAGPUR",,1.9 KG,,30-Jun-2026,"GMC, NAGPUR",Pulmonary Artery stenosis with left pulmonary hypertension with cardiogenic shock
+,,,,,,,,,,,,,,,,,
+205,IGGMC HOSPITAL NAGPUR,Jun-26,B/O SNEHA RAKESH KATANGALE,SNEHA KATANGALE,MALE,GENERAL,DAY 8,AT SAMATA NAGAR NARA NAGPUR       93256283183,,,PUBLIC,2.77,2.77 KG,,06-Jan-2026,"IGGMC, NAGPUR",SEVERE PERINATAL ASPHYXIA WITH HYPOXIC  ISCHEMIC ENCEPHALOPATHY  STAGE 3
+206,IGGMC HOSPITAL NAGPUR,Jun-26,B/O shamim bano,shamim bano,MALE,GENERAL,DAY 4,"TIPUSULTAN CHOWK, NAGPUR. 7057626908",,MOMINPURA UPHC,PUBLIC,1180,1180,,06-Jan-2026,"IGGMC, NAGPUR",DISSEMINATED INTRAVASCULAR COAGULATION WITHH EARLY ONSET SEPIIS WITH REFRACTORY  SHOCK WITH EARLY PRETERM VERY LOW BIRTH WEIGHT NEONATE
+,,,,,,,,,,,,,,,,,
+208,IGGMC HOSPITAL NAGPUR,Jun-26,B/O BHAGYASHREE RAJESH NIMJE TWIN A,BHAGYASHREE RAJESH NIMJE,MALE,GENERAL,DAY 2,PLOT 10 SAMTA NAGAR NEAR JANTA AATA CHAKKI NAGPUR 8657012278,,,PUBLIC,820,820,,06-Jul-2026,"IGGMC, NAGPUR",TYPE 1 RESPIRATORY FAILURE WITH GRADE 2 INTRAVENTRICULAR HEMORRHAGE WITH HMD 3  IN EXTREME LOW BIRTH AND EXTREME PRETERM NEONATE .
+209,IGGMC HOSPITAL NAGPUR,Jun-26,B/O BHAGYASHREE RAJESH NIMJE TWIN B,BHAGYASHREE RAJESH NIMJE,MALE,GENERAL,DAY 3,PLOT 10 SAMTA NAGAR NEAR JANTA AATA CHAKKI NAGPUR 8657012278,,,PUBLIC,850,850,,06-Aug-2026,"IGGMC, NAGPUR",TYPE 1 RESPIRATORY FAILURE WITH GRADE 2 INTRAVENTRICULAR  WITH HMD 3  IN EXTREME LOW BIRTH AND EXTREME PRETERM NEONATE .
+210,IGGMC HOSPITAL NAGPUR,Jun-26,BO YASHI PRASHANT DHONGRE,YASHI PRASHANT DHONGRE,MALE,GENERAL,DAY 2,MOTHA INDARA SHIV MANDIR BRAVARTI NAGPUR BUDDHA VIHAR NAGPUR 9890880447,,,PUBLIC,740,740,,06-Oct-2026,IGGMC NAGPUR,TYPE I RESPIRATORY FAILURE WITH GRADE 3 INTRAVASCULAR HEMORRHAGE IN EXTREME LOW BIRTH WEIGHT AND EXTREME PRETERM
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+213,IGGMC HOSPITAL NAGPUR,Jun-26,BO SALONI ROSHAN BAISALE,SALONI ROSHAN BAISALE,FEMALE,GENERAL,DAY 1,"AT AMNER, WARUD, AMRAWATI. 9527862128",,HANSAPURI UPHC,PUBLIC,1640,1640,,18-Jun-2026,IGGMC NAGPUR,GRADE 2 INTRAVASCULAR HAEMORHAGE WITH GRADE 4 RDS WITH EOS WITH REFRACTORY SEPTIC SHOCK   LOW BIRTH WEIGHT AND MODERATE PRETERM
+214,IGGMC HOSPITAL NAGPUR,Jun-26,BO SIMA DIPAK BARPATRE,SIMA DIPAK BARAPATRE,MALE,GENERAL,DAY 7,NEAR HANUMAN TEMPLE BHANKHEDA NAGPUR,,NETAJI UPHC,PUBLIC,1590,1590,,19-Jun-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN LOW BIRTH WEIGHT MODERATE PRETERM NEONATE
+215,IGGMC HOSPITAL NAGPUR,Jun-26,BO DIKSHA VENASH CHARLEE,DIKSHA VENASH CHARLEE,MALE,GENERAL,DAY 4,"KHALSA CITE NEAR MATA MANDIR MOTER NAGAR NAGPUR,8956556548",,INDORA UPHC,PUBLIC,1150,1150,,20-Jun-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN VERY  LOW BIRTH WEIGHT EARLY PRETERM NEONATE WITH ALBINISM
+216,IGGMC HOSPITAL NAGPUR,Jun-26,BO AFREEN BANO MOHAMMAD KALEEM ANSARI,AFREEN BANO,MALE,GENERAL,6 hrs,PLOT NO 75 SHANIWAR BAZAR ROAD INDIRA COOP SOCIETY NEAR MESHRAM ATTA CHAKKI UPAKWADI  NAGPUR,,,PUBLIC,2550,2.55,,21-Jun-2026,IGGMC NAGPUR,CARDIOPULMONARY ARREST WITH SEVERE PERINATAL ASPHYXIA IN A FULL TERM NEONATE
+217,IGGMC HOSPITAL NAGPUR,Jun-26,BO PRIYANKA AMAL RAMTEKE,PRIYANKA AMAL RAMTEKE,MALE,GENERAL,DAY 3,VIKY KIRANA STORE CHRISTIAN COLONY MECASABAGH LUMBINI NAGAR JARIPATKA NAGPUR  8261027674,,INDORA UPHC,PUBLIC,2430,2.3,,23-Jun-2026,IGGMC NAGPUR,CARDIOPULMONARY ARREST WITH REFRACTORY PERSISTENT PULMONARY HYPERTENSION MECONIUM ASPIRATION SYNDROME
+,,,,,,,,,,,,,,,,,
+219,IGGMC HOSPITAL NAGPUR,Jun-26,BO GAYATRI NILESH GAWADKAR,GAYATRI NILESH GAWADKAR,MALE,GENERAL,DAY 3,GHORADKAR KIRANA STORE NAAN WASTI WARD NO 1 JARIPATKA NAGPUR.                  9834410175,,,PUBLIC,765,765,,26-Jun-2026,IGGMC NAGPUR,GRADE 3 RESPIRATORY DISTRESS SYNDROME WITH GRADE 4 INTRAVENTRICULAR HEMORRHAGE IN EXTREME LOW BIRTH WEIGHT EXTREME PRETERM NEONATE
+220,IGGMC HOSPITAL NAGPUR,Jun-26,BO NAZMEEN MOHAMMAD WASIM AKRAM QUERESHI,NAZMEEN QUERESHI,FEMALE,GENERAL,DAY 8,AFREEN GUEST HOUSE NATH SAHWB ROAD MQSUB PURA MOMINPURA NAGPUR,,,PUBLIC,1580,1580,,26-Jun-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH VENTILATOR ASSOCIATED PNEUMONIA IN A LOW BIRTH WEIGHT EARLY PRETERM NEONATE
+221,IGGMC HOSPITAL NAGPUR,Jun-26,b/0 KARISHMA MAHENDRA NIMJE TWIN B,KARISHMA MAHENDRA NIMJE,MALE,GENERAL,DAY 4,TANDAPETH NEAR KAMLE ATTA CHAKI NAGPUR,,,PUBLIC,1210,1.2,,27-Jun-2026,"IGGMC, NAGPUR",CARDIORESPIRATORY ARREST WITH EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH VENTILATOR ASSOCIATED PNEMONIA IN EARLY PRETERM WITH VERY LOW BIRTH WEIGHT NEONATE
+222,IGGMC HOSPITAL NAGPUR,Jun-26,B/O KARISHMA MAHENDRA NIMJE TWINA,KARISHMA MAHENDRA NIMJE,MALE,GENERAL,DAY 5,TANDAPETH NEAR KAMLE ATTA CHAKI NAGPUR,,,PUBLIC,1230,1.2,,28-Jun-2026,"IGGMC, NAGPUR",CARDIORESPIRATORY ARREST WITH EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK IN EARLY PRETERM WITH VERY LOW BIRTH WEIGHT NEONATE
+223,IGGMC HOSPITAL NAGPUR,Jun-26,b/0 PRAMILA TILAK KAVE,PRAMILA TILAK KAVE,FEMALE,GENERAL,DAY 4,HOUSE NO 1640 NEAR HANUMAN MANDIR NAGPUR 8623046731,,,PUBLIC,1500,1500,,28-Jun-2026,"IGGMC, NAGPUR",SEVERE BIRTH ASPHYXIA WITH REFRACTORY PERSISTENT PULMONARY HYPERTENSION OF NEW BORN WITH CARDIOGENIC SHOCK WITH LATE ONSET SEPSIS IN MODERATE PRETERM AND LOW BIRTH WEIGHT NEONATE
+224,IGGMC HOSPITAL NAGPUR,Jun-26,B/0 BHUMIKA KOMAL THELKA,BHUMIKA KOMAL THELKA,FEMALE,GENERAL,DAY 3,PLOT NO 93 DURGA NAGAR BHANDEWADI NAGPUR 9325856961,,BHARATWADA UPHC,PUBLIC,1740,1740,,29-Jun-2026,"IGGMC, NAGPUR",REFRACTORY SEPTIC SHOCK WITH EARLY ONSET SEPSIS IN A PRETERM AND LOW BIRTH WEIGHT NEONATE
+225,IGGMC HOSPITAL NAGPUR,Jun-26,INAYA AKASH MURADE,,FEMALE,GENERAL,1years,JUNI PARDI HANUMAN MANDIR NAGPUR,,HIWARI NAGAR UPHC,PUBLIC,,2.0 KG,,16-Jun-2026,"IGGMC, NAGPUR",CARDIOPULMONARY ARREST
+,,,,,,,,,,,,,,,,,
+227,DAGA HOSPITAL,Jun-26,B/o Priti Satish Patle,Priti Satish Patle,female,OBC,8 Days,"ayodhya nagar at - Kalmana , Nagpur 7972662950",,,PUBLIC,,2.3 kg,,14-Jun-2026,DMH,Pulmonary Hemorrhage with refractory Shock
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+236,New Health City Hospital,Jun-26,B/o Melina Ankit Shende,Mrs. Melina Ankit Shende,Female,obc,18 Days,"Plot no. 16 second bus stop Karim layout gopal nagar, Trimurti nagar nagpur                 Mo No. 8766556568 / 8600700652",,,PRIVATE,1.500 Kg,1.600 kg,,17-Jun-2026,Health facility private,"Preterm with Low birth weight Respratory distress grade IV, sepsis with shock, metabolism encephalogy with Refractory seizure with IVH grade II"
+,,,,,,,,,,,,,,,,,
+238,kingsway hospital,Jun-26,BABY OF AMMI MANDAVIA-2,MRS. AMMI MANDAVIA,Male,GENERAL,2 DAYS,ARIHANT TOWER-2 WATHODA BAGADGANJ NAGPUR PHONE NO-7026664273,,HIWARI NAGAR UPHC,PRIVATE,,1970 GRAM,Yes,18-Jun-2026,NIL,PRETERM/2ND OF TWINS SEPTICEMIA WITH SEPTIC SHOCK PULMONARY HAEMORRHAGE
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+241,New Health City Hospital,Jun-26,B/O OF ANJU ASHOK TIWARI,ANJU ASHOK TIWARI,Male,GENERAL,25 DAYS,"GOREKHEDE ,SURENDRAGADH,NAGPUR,9552519864",,FUTALA UPHC,PUBLIC,2.5 KG,2.5 KG,NO,12-Jun-2026,PRIVATE,BREATHING DEFICULTITY WITH SEPSIC
+242,GMCH NAGPUR,Jul-26,b/o Rachana Lakhan Sahu,Rachana Lakhan Sahu,male,GENERAL,4 days,"Laxmi nagar, Nagpur               9834272064",,BHARATWADA UPHC,gmc nagpur,1 kg,,no,06-Jul-2026,gmc nagpur,Late preterm with very low birth weight with severe intrauterine growth restriction with hyaline membrane disease stage 1 with early onset sepsis with necrotising enetrocolitis stage 2b with respiratory septic shock with pulmonary hemorrhage
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+252,GMCH NAGPUR,Jul-26,b/o karishma sharad hedaoo,karishma sharad hedaoo,male,SC,6 day,nagpur,,PACHPAOLI UPHC,gmc nagpur,1.2kg,,no,11-Jul-2026,gmc nagpur,moderate preterm with very low birth weight with RDS with early onset sepsis with disseminated intravascular coagulation with shock
+,,,,,,,,,,,,,,,,,
+254,GMCH NAGPUR,Jul-26,b/o karina chatrapal  kurre,karina chatrapal kurre,male,OBC,4 day,near public school wadi nagpur 9511244303,,,gmc nagpur,1.5 kg,,no,13-Jul-2026,gmc nagpur,septicemia with septick shock with cardiorespiratory arrest in operated case of left congenital diaphragmatic hernia with left open CDH  reapir
+255,GMCH NAGPUR,Jul-26,b/o nikita atul dahake,nikita atul dahake,male,OBC,3 day,sainagar wadi nagpur9764806509,,FUTALA UPHC,gmc nagpur,2.8 kg,,no,13-Jul-2026,gmc nagpur,late vonset sepsis with deodenal atressia with right side pneumothorax with septick shock
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+262,GMCH NAGPUR,Jul-26,b/o ravina raju sirsam,ravina raju sirsam,male,SC,4 days,pandhurna chindwara 7828856836,,,gmc nagpur,2.3 kg,,no,21-Jul-2026,gmc nagpur,septicemia  with septick shock with CRA with suspected case of hirschprung disease
+263,GMCH NAGPUR,Jul-26,b/o ranjana rahul meshram,ranjana rahul meshram,male,SC,4 days,wathoda nagpur,,,gmc nagpur,2.3 kg,,no,21-Jul-2026,gmc nagpur,early onset sepsis with septic shock with congenital pneumonia with cardiorespitratory arrest
+,,,,,,,,,,,,,,,,,
+265,GMCH NAGPUR,Jul-26,b/o shabnam shahanavaj sheikh,shabnam shahanavaj sheikh,male,GENERAL,4 days,indramata nagar  nagpur,,KUNDANLAL GUPTA UPHC,gmc nagpur,0.968 kg,,no,24-Jul-2026,gmc nagpur,very preterm with extremly low birth weight with apnea of prematurity with early onset sepsis with septick shock
+266,GMCH NAGPUR,Jul-26,b/o ziba kailash wanjari,ziba kailash wanjari,female,OBC,6 days,nandanwan nagpur9168822906,,NANDANWAN UPHC,gmc nagpur,2.83 kg,,no,25-Jul-2026,gmc nagpur,septicemia with septick shock with small bowel atressia with exploratory laparotomy done
+,,,,,,,,,,,,,,,,,
+268,GMCH NAGPUR,Jul-26,b/o laxmi nikhil walke,laxmi nikhil walke,male,SC,5 days,jaibhim chouk vidhya nagar nagpur8378062199,,,gmc nagpur,1kg,,no,26-Jul-2026,gmc nagpur,preterm with low birth weight with EOSwith DIC with pulmonary hemorrhage
+,,,,,,,,,,,,,,,,,
+270,GMCH NAGPUR,Jul-26,b/o neha sashikant nane,neha sashikant  nane,female,OBC,8 days,nagpur,,,gmc nagpur,1.4 kg,,no,28-Jul-2026,gmc nagpur,very low birth weight with RDS with sepsis with septick shock with pulmonary haemorrhage
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+273,GMCH NAGPUR,Jul-26,b/o vasu khan pathan,vasu khan pathan,female,GENERAL,9 days,tajbag nagpur91409768271,,,gmc nagpur,1.8 kg,,no,31-Jul-2026,gmc nagpur,septicemia with septick shock with CRA with perforation peritonitis  with laparotomy done with gastric perforation repair done
+274,GMCH NAGPUR,Jul-26,b/o vaishnavi shankar pachare,vaishnavi shankar pachare,female,SC,1 days,karachgaon gandhighar warud amravati9356984521,,,gmc nagpur,1.3 kg,,no,31-Jul-2026,gmc nagpur,preterm with low birth weight  cause of death not confirmed
+290,IGGMC NAGPUR,Jul-26,B/O NAHIDA MOHAMMAD SHAMSHAD PARVEEN,SHAMSHAD PARVEEN,FEMALE,GENERAL,DAY 1,"AT PILI NADI ,TIPUSULTAN CHOWK SANGHASH NAGAR NAGPUR",,,IGGMC NAGPUR,680,,680,07-Jul-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH INTRAVENTRICULAR HEMMORRHAGE IN EXTREMELY LBW AND EXTREME PRETERM NEONATE
+,,,,,,,,,,,,,,,,,
+292,IGGMC NAGPUR,Jul-26,B/O AKANSHA NITIN UKE,AKANSHA UKE,MALE,GENERAL,DAY 3,"5208 WARD NO 5,HINGNA ROAD ZENDA CHOWK RAJIV NAGAR VANADONGARI",,,IGGMC NAGPUR,1010,,1.01KG,07-Dec-2026,IGGMC NAGPUR,"CARDIO RESPIRATORY ARREST WITH REFRACTORY PERSISTENT PULMONARY HYPERTENSION OF NEWBORN WITH GRADE 3 RESPIRATORY DISTRESS SYNDROME IN A EXTREME PRETERM,VERY LOW BIRTH WEIGHT NEONATE"
+293,IGGMC NAGPUR,Jul-26,B/O SAROJ GOLU SANDHIYA,SAROJ SANDHIYA,MALE,GENERAL,DAY 8,DASHRATH NAGAR GITTIKHADAN NAGPUR,,,IGGMC NAGPUR,1300,,1.3 KG,14-Jul-2026,IGGMC NAGPUR,DISSEMINATED INTRAVASCULAR COAGULATION WITH REFRACTORY SEPTIC SHOCK WITH VENTRICULITIS WITH EARLY ONSET OF SEPSIS IN VERY PRETERM AND VERY LOW BIRTH WEIGHT NEONATE
+294,IGGMC NAGPUR,Jul-26,B/O FIRDOUS ASIF SHEIKH,FIRDOUS SHEIKH,FEMALE,GENERAL,DAY 15,AT KONDHALI TAQ:KATOL DIST NAGPUR,,,IGGMC NAGPUR,2430,,2.43KG,20-Jul-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH DISSEMINATED HSV WITH REFRATORY SEPTIC SHOCK WITH REFRACTORY HYPOGLYCEMIA IN A TERM NEONATE
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+297,IGGMC NAGPUR,Jul-26,B/O KIRAN DIPAK NIMALKAR (TWIN A),KIRAN NIMALKAR,MALE,GENERAL,DAY 2,VIJAY NAGAR KULMANAD MARKET NEAR SHIV MANDIR NAGPUR 9579324714,,Bharatwada uphc,IGGMC NAGPUR,1260,,1.26KG,24-Jul-2026,IGGMC NAGPUR,STAGE 3 RESPIRATORY DISTRESS SYNDROME WITH CARDIOGENIC SHOCK WITH VERY PRETERM AND VERY LOW BIRTH WEIGHT NEONATE
+298,IGGMC NAGPUR,Jul-26,B/O KIRAN DIPAK NIMALKAR(TWIN B),KIRAN NIMALKAR,MALE,GENERAL,DAY 2,VIJAY NAGAR KULMANAD MARKET NEAR SHIV MANDIR NAGPUR 9579324714,,Bharatwada uphc,IGGMC NAGPUR,1080,,1.08KG,24-Jul-2026,IGGMC NAGPUR,PULMONARY HEMORRHAGE WITH SEPTIC SHOCK WITH DIC IN A VERY PRETERM MCDA TWIN WITH VERY LOW BIRTH WEIGHT NEONATE
+,,,,,,,,,,,,,,,,,
+300,IGGMC NAGPUR,Jul-26,BO KIRTI DIVAKAR MOROLIYA,KIRTI DIVAKAR MOROLIYA 0,FEMALE,GENERAL,DAY 5,C/o DIVAKAR MOROLIYA 121GODHANI NAGPUR,,,IGGMC NAGPUR,1390,,1.39 KG,27-Jul-2026,IGGMC NAGPUR,MULTI ORGAN DYSFUNCTION SYNDROME WITH REFRACTORY SEPTIC SHOCK WITH EARLY ONSET SEPSIS IN MODERATE PRETERM AND VERY LOW BIRTH WEIGHT
+301,IGGMC NAGPUR,Jul-26,B/O RINKU KUMARI RITIK PANDIT,RINKU KUMARI,FEMALE,GENERAL,DAY 2,"PLOT NO 37 PARDI NAKA NO 5 ,SHIVAM NAGAR PRIDGAON KAMPTEE NAGPUR 7083860655",,,IGGMC NAGPUR,2180,,2.18 KG,28-Jul-2026,IGGMC NAGPUR,HYPOXIC ISCHEMIC ENCEPHALOPATHY STAGE 3 WITH REFRACTORY CARDIOGENIC SHOCK IN LOW BIRTH WEIGHT AND LATE PRETERM NEONATE
+302,IGGMC NAGPUR,Jul-26,B/O RESHMA MOH SABIR SHEIKH,RESHMA SABIR SHEIKH,MALE,GENERAL,DAY 5,PLOT NO 353 NEAR SHAHEEN DIARY MANEW SHAKH LAYOUT HUDKESHWAR NAGPUR,,,IGGMC NAGPUR,1410,,1.41 KG,29-Jul-2026,IGGMC NAGPUR,DISSEMINATED INTRAVASCULAR COAGULOPATHY WITH PURPURA FULMINANS WITH SMALL FOR GESTATIONAL AGE WITH SEVERE IUGR WITH MICROCEPAPHLY IN LATE PRETERM AND VERY LBW DYSMORPHIC NEONATE
+303,IGGMC NAGPUR,Jul-26,B/O UMME AIMAN SHEIKH,,FEMALE,GENERAL,3 months,TIPU SULTAN CHOWK NAGPUR 9588637263,,Garib Nawaj UPHC,IGGMC NAGPUR,,,3.8KG,14-Jul-2026,IGGMC NAGPUR,CARDIOGENIC SHOCK WITH CONGESTIVE CARDIAC FAILURE IN CASE OF TRICUSPID ATRESIA WITH VENTRICULAR SEPTAL DEFECT
+304,Daga Memorial Hospital Nagpur,Jul-26,B/o Pushpa Anand Dongari,Pushpa Anand Dongari,female,GENERAL,17 Days,"Indira Nagar , Nagpur",,bharatwada uphc,DMH,,1.25 kg,,17-Jul-2026,DMH,VLBW/MAS/RDS/Septic Shock/Respiratory Failure
+305,Daga Memorial Hospital Nagpur,Jul-26,B/o Shabnam Rizwan Shaikh,Shabnam Rizwan Shaikh,Male,GENERAL,3 Days,"Jaitala, Nagpur",,,DMH,,2.2 kg,Yes,10/7/26 at 4.40 pm,DMH,Sudden Infant Death  Respiratory Shock with LBW with Preterm
+306,"Mogre Nursing Home, Nagpur",Jul-26,MARIYAM ABDUL NADEEM FATEMA,ABDUL NADEEM FATEMA,Male,GENERAL,7.MONTHS 15 DAYS,HASANBAGH MO.9763738491,,Nandanwan UPHC,,5.29kg,5.01,No,07-Feb-2026,Private Hospital,COMPLATE COLLAPSE WITH SEVERE PNEMONITIS WITH SEPSIS WITH CADIOGENIC Cardiogenic shock
+307,"Mogre Nursing Home, Nagpur",Jul-26,BO SHABISTHAN ISHRAT,SHABISTHAN ISHRAT,Male,GENERAL,7 DAY,NEAR HAJ HOUSE MOHD. ALI CHOWK  BHALDARPURA -MO-9665781140,,,,1kg,1.185KG,no,07-Dec-2026,Private Hospital,EXTREME PRETERM 25-26 WEEKS VLBW WITH RDS
+308,New Health City Hospital & Research Center,Jul-26,B/O Nivedita Ananta Ghormare,Mrs. Nivedita Ananta Ghormare,female,OBC,28 Days,Polt no. 130 Dubey nagar Hudkeshwar Nagpur-440034      Mo.No.  8149049184 / 7743840430,,,Health facility private,2.7 Kg,2.220 Kg,,14-Jul-2026,Health facility private,Full term with Appropriate Gestational Age with Maple syrup urinne desease with Metabolic Encephalopathy
+,,,,,,,,,,,,,,,,,
+310,kingsway hospital,Jul-26,BABY OF NIKITA DAKHALE,MRS.NIKITA DAKHALE,female,GENERAL,2 DAYS,NAGALWADI WANADONGRI WADI NAGPUR PHONE NO-9595105810,,,NIL,1070 GRAM,,Yes,10-Jul-2026,NIL,SEVERE METABOLIC ACIDOSIS WITH EARLY ONSET NEONATAL SEPSIS WITH PREMATURITY WITH LOW BIRTH WEIGHT
+311,Nelson hospital,Jul-26,B/o Yogeshwari Satpaise,Yogeshwari,Male,OBC,22 day,"Fule nagar,ward no 03, VTC Tekadi gondegaon,Nagpur,? 9673980943",,,Health Facility Public,2.6 kg,2.66 kg,,04-Jul-2026,Health Facility Private,Refractory shock with Complex congenital heart disease with Large VSD with LV Dysfunction with Severe PAH with Probable Sepsis
+312,Nelson hospital,Jul-26,B/o Koyal Madavi,Koyal,female,OBC,6 days,"Ward no 1,Bori Khairi ,VTC,Nagpur,? 9511796918",,,Health facility: private,2kg,2kg,,09-Jul-2026,Health Facility Private,Severe Persistent Pulmonary Hypertension Of The Newborn/ Refractory Shock/ Hypoxic Ischemic Encephalopathy With Birth Asphyxia With Meconium Aspiration Syndrome C
+313,COLOURS HOSPITAL,Jul-26,CHINTANSHI AVINASH KAGALI,SONIYA AVINASH KAGALI,female,OBC,"1 YEAR ,4 MONTHS","PLOT NO 58,LAXMI APT. NEAR NIT GARDEN ,KUKADE LAYOUT , JOSHIWADI, NAGPUR,",,,PRIVATE,,,,05-Jul-2026,Private Hospital,HEART DISEASE
+314,HOME,Jul-26,B/O RAGINI SACHIN CHAUHAN,RAGINI SACHIN CHAUHAN,MALE,SC,26 DAYS,"TEMPORARY ADD. AZAD NAGAR , GITTIKHADAN, KATOLROAD,NAGPUR,      PERMANT ADD. NAGLOK NAGPUR",,,JANTA HOSPITAL,840GMS,,,09-Jun-2026,TRANSIST,PRETERM WITH LOW BIRTH
+315,HOME,Jul-26,B/O NAGMA SHAKIR KHAN,NAGMA SHAKIR KHAN,MALE,GENERAL,2 HRS,"WCL COLONY , CIVIL LINE, NAGPUR",,,NELSON HOSPITAL,550 GMS,,,22-Jul-2026,TRANSIST,EXTREME PRETERM / EXTREMLY LOW BIRTH WEIGHT
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
+1.0,GMCH NAGPUR,Jun-26,b/o uma ankit kubade,Uma ankit kubade,FEMALE,OBC,5 DAYS,"Neharla, Adyad ,Bhandara           8459778594",,,"GMC, NAGPUR",900g,,no,06-Feb-2026,"GMC, NAGPUR","Very preterm (28 weeks), extremely low birth weight (900 g) with hyaline membrane disease, early onset sepsis with acyanotic congenital heart disease, PDA with tiny atrial septal defect, pulmonary hemorrhage"
+2.0,GMCH NAGPUR,Jun-26,b/o Mayuri nitesh Dhanvijay,Mayuri nitesh Dhanvijay,FEMALE,ST,1 DAY,"At brahmpuri ,  chandrapur                    7972266256",,,"GMC, NAGPUR",1800g,,no,06-Mar-2026,"GMC, NAGPUR","Day 1/Female, moderate preterm (33+4 weeks), low birth weight (1810 g), hypoxic ischemic encephalopathy Grade III with isoimmune hemolytic disease of newborn with cardiogenic shock"
+3.0,GMCH NAGPUR,Jun-26,b/o Swati jagdish pardhi,Swati jagdish pardhi,FEMALE,ST,1 DAY,"Besa ,Nagpur             9623846904",,,"GMC, NAGPUR",1090g,,no,06-Apr-2026,"GMC, NAGPUR","Extreme preterm (26+2 weeks), acyanotic congenital heart disease (2 mm patent ductus arteriosus), 3mm osatrial septal defect, Hyaline membrane disease, cardiogenic shock, pulmonary hemorrhage."
+4.0,GMCH NAGPUR,Jun-26,b/o Nikita gaurav kalambe,Nikita gaurav kalambe,FEMALE,OBC,2 DAY,"Mohgaon, haveli, sausar pandhurna, MP                  9144367796",,,"GMC, NAGPUR",1405g,,no,06-Mar-2026,"GMC, NAGPUR","Very preterm (30 weeks), very low birth weight with hyaline membrane disease Stage III, Acyanotic congenital heart disease PDA with septic shock,  DIC, pulmonary hemorrhage."
+5.0,GMCH NAGPUR,Jun-26,b/o Shamshida bee abdul kalam qureshi,Shamshida bee abdul kalam qureshi,MALE,GENERAL,18 DAY,"Bhagatsingh ward,seoni,MP",,,"GMC, NAGPUR",1150g,,no,06-Jul-2026,"GMC, NAGPUR","Very preterm (30+1 weeks), very low birth weight (1120 g), acyanotic congenital heart disease with hyaline membrane disease Stage 3, early onset sepsis with disseminated intravascular coagulation, bilateral pneumothorax, necrotizing enterocolitis Stage II-B with perforation peritonitis, septic shock with pulmonary hemorrhage"
+6.0,GMCH NAGPUR,Jun-26,b/o Sushila kishor jamunpane,Sushila kishor jamunpane,MALE,OBC,1 DAY,"Nagardhan,Ramtek  ,Nagpur        7709059707",,,"GMC, NAGPUR",2550g,,no,06-Sep-2026,"GMC, NAGPUR","Hypoxic ischemic encephalopathy stage 1, meconium aspiration syndrome, acyanotic congenital heart disease (4mm Patent ductus arteriosus), with right sided pneumothorax with persistent  pulmonary hypertension with cardiogenic shock."
+7.0,GMCH NAGPUR,Jun-26,b/o Manisha santosh uplikar,Manisha santosh uplikar,MALE,OBC,7 DAY,"Narwa, ralandar, pandhurna        7498832450",,,"GMC, NAGPUR",875g,,no,06-Sep-2026,"GMC, NAGPUR","Very preterm with extreme low birth weight, Acyanotic congenital heart disease with patent ductus arteriosus with hypoxic ischemic encephalopathy Stage II with hyaline membrane disease Stage IV"
+8.0,GMCH NAGPUR,Jun-26,b/o Sushma Shivkumar kumre,Sushma Shivkumar kumre,FEMALE,SC,3 DAY,"Pawani,  dewalapura ,bhandara                  9637434004",,,"GMC, NAGPUR",950g,,no,06-Oct-2026,"GMC, NAGPUR",early preterm(26+4) with extreme low birth weight hyaline membrane disease grade 4 with Early onset sepsis
+9.0,GMCH NAGPUR,Jun-26,b/o Naina Dipak Mendhe,Naina Dipak Mendhe,FEMALE,SC,2 DAY,"Somwaripeth, Nagpur               9960925502",,,"GMC, NAGPUR",850g,,no,06-Dec-2026,"GMC, NAGPUR","Very preterm 28wks extreme low birth weight ,hyaline membrne disease stage 4 acyanotic congenital heart disease with early onset sepsis with septic shock with pulmonary haemorrhage"
+10.0,GMCH NAGPUR,Jun-26,b/o Sonam akash patil,sonam akash patil,MALE,OBC,1 DAY,"Indiramata Nagar,Nagpur       8208862273",,,"GMC, NAGPUR",1500g,,no,13-Jun-2026,"GMC, NAGPUR",very preterm with very Low birth weight with Hypoxic ischemic encephalopathy stage 3 with hyaline membrane disease stage 4 in anamalous baby
+11.0,GMCH NAGPUR,Jun-26,b/o Ishika ganesh telang (twinB),Ishika ganesh telang,FEMALE,GENERAL,4 DAY,"NEAR CHAKOLE HOSPITAL ,JUNA BAGADGANJ Kumbharti,Nagpur        8378028536",,BABULBAN UPHC,"GMC, NAGPUR",1100g,,no,17-Jun-2026,"GMC, NAGPUR",late preterm (36wks) with Very low birth weight (1.1kg) with 2nd of monochorionic diamniotic twin with Early onset sepsis with Necrotising enterocolitis with refractory septic shock with Disseminated intravascular coagulopathy
+12.0,GMCH NAGPUR,Jun-26,b/o Sonam alfaz shah,Sonam alfaz shah,FEMALE,GENERAL,5 DAYS,"Chikhali,Kalmana, Nagpur              7822825948",,,"GMC, NAGPUR",1300g,,no,21-Jun-2026,"GMC, NAGPUR","Very preterm (30.1 weeks) with very low birth weight (1.3 kg) with hypoxic ischemic encephalopathy Stage III with Necrotizing Enterocolitis (NEC) Stage II B, Grade IV germinal matrix haemorrhage, acyanotic congenital heart disease, secundum atrial septal defect, early onset sepsis with septic shock, disseminated intravascular coagulation (DIC), organ dysfunction, and pulmonary haemorrhage"
+13.0,GMCH NAGPUR,Jun-26,b/o chaitali nitin chauhan,chaitali nitin chauhan,MALE,OBC,4 DAY,"Process Sabahgrah,Narela, Nagpur              9890352453",,NARSALA UPHC,"GMC, NAGPUR",2160g,,no,21-Jun-2026,"GMC, NAGPUR",late preterm (36.1wks) low birth wt(2.16) symmetrical intrauterine growth restriction with early onset sepsis with hypoglycemia with Disseminated intravascular coagulopathy with refractory shock
+14.0,GMCH NAGPUR,Jun-26,b/o Sangita Ramswarup chauhan,Sangita Ramswarup chauhan,MALE,SC,5 DAYS,"Bhandarwadi Railway Station,Nagpur        9604496290",,BHANDEWADI UPHC,"GMC, NAGPUR",1230g,,no,23-Jun-2026,"GMC, NAGPUR","Very preterm (31+4 weeks) with very low birth weight (1.1 kg), symmetrical intrauterine growth restriction (IUGR), with early-onset sepsis and refractory septic shock, disseminated intravascular coagulation (DIC) with pulmonary haemorrhage."
+15.0,GMCH NAGPUR,Jun-26,b/o sukhbati omkar ahate,sukhbati omkar ahate,FEMALE,OBC,3 DAY,"Chindwada,Nagpur   9301108304",,,"GMC, NAGPUR",1200g,,no,26-Jun-2026,"GMC, NAGPUR","very preterm 30wks ,very Low birth weight,hyaline membrane disease stage 4 with acyanotic congenital heart disease with early onset sepsis with refractory septic shock"
+16.0,GMCH NAGPUR,Jun-26,B/O Archana Roshan Meshram,,MALE,SC,4 DAY,"Mahadula Koradi , 7666756673",,,"GMC, NAGPUR",,1.63 kg,No,06-Apr-2026,"GMC, NAGPUR",Hypoplastic left heart synrome with pda with severe coarctation of aorta with severe PAH with cardiogenic shock
+17.0,GMCH NAGPUR,Jun-26,B/O Roshani Shivam  Bandewar,,MALE,OBC,1 DAY,"Chinwada , MP , 8989778875",,,"GMC, NAGPUR",,1.80 KG,No,06-May-2026,"GMC, NAGPUR",moderate PT with extreme LBW with VSD with DIC with septic shock
+18.0,GMCH NAGPUR,Jun-26,B/O Purma Dinesh Chauriya,,FEMALE,OBC,2 DAY,"Chindwada , MP , 9309005940",,,"GMC, NAGPUR",,2.83 kg,No,06-Jun-2026,"GMC, NAGPUR",complex congenital heart disease with cardiogenic shock
+19.0,GMCH NAGPUR,Jun-26,B/O Sonu Praful Khobragade,,MALE,SC,19 DAY,"Bela , Bhandara , 8806226907",,,"GMC, NAGPUR",,1.6 kg,No,06-Aug-2026,"GMC, NAGPUR",late PT with SGA with LBW twin A with PDA with mild PAH with mild MR with moderate TR with culture positive sepsis with AKI with refractory septic shock with DIC
+20.0,GMCH NAGPUR,Jun-26,B/O Priya Sandip Zagde,,MALE,OBC,6 DAY,"Pipra Umred Nagpur , 9226398941",,,"GMC, NAGPUR",,2.4 kg,No,06-Sep-2026,"GMC, NAGPUR",FT SGA suspected hirschsprungs with LOS with meningitis with AKI with refractory septic shock with DIC
+21.0,GMCH NAGPUR,Jun-26,B/O Asha Sandip Uikey,,FEMALE,ST,57 DAYS,"Chindwada , MP , 8103608598",,,"GMC, NAGPUR",,1.4 kg,No,06-Nov-2026,"GMC, NAGPUR",PT LBW with aggressive ROP with gross communicating hydrocephalus with LOS
+22.0,GMCH NAGPUR,Jun-26,B/O Hemlata Rutan Dhanjule,,MALE,OBC,1 DAY,"Bhandara , 7720918672",,,"GMC, NAGPUR",,1.68 kg,No,06-Dec-2026,"GMC, NAGPUR",FT LBW Asymmetrical IUGR with MAS with CHD wuith cardiorespiratory failure
+23.0,GMCH NAGPUR,Jun-26,B/O Kiran Yogesh Dambhare,,FEMALE,SC,8 DAY,"NEAR Daga Hospital , BHIWAPUR,Nagpur , 9112297459",,,"GMC, NAGPUR",,900 gms,No,14-Jun-2026,"GMC, NAGPUR",VPT ELBW  with HMD grade 4 with EOS with intracranial haemorrhahe with septic shock
+24.0,GMCH NAGPUR,Jun-26,D/O Heena Mukesh Uikey,,FEMALE,ST,10 DAY,"Lakhni , Bhandara , 8390589645",,,"GMC, NAGPUR",,2.01 kg,No,16-Jun-2026,"GMC, NAGPUR",septicemia with septic shock with CRA with peripheral circulatory collapse in a operated case of TEF
+25.0,GMCH NAGPUR,Jun-26,B/O Seema Tuchar  Chopde,,FEMALE,OBC,28 DAY,"Karanja Umari , Wardha , 9096891769",,,"GMC, NAGPUR",,3.9 kg,No,16-Jun-2026,"GMC, NAGPUR",RDS with seizure disorder with refractory septic shock with septicemia with DIC
+26.0,GMCH NAGPUR,Jun-26,B/O Manisha Sanjay Ghatare,,MALE,OBC,4 DAY,"Sonegaon , Bhandara , 8007288227",,,"GMC, NAGPUR",,2.3 kg,No,20-Jun-2026,"GMC, NAGPUR",FT SGA severe PPHN with heart failutre with AKI
+27.0,GMCH NAGPUR,Jun-26,B/O Kamal Rakesh Mohurle,,MALE,OBC,13 DAY,"Chandrapur , 8080281839",,,"GMC, NAGPUR",,1.6 kg,No,23-Jun-2026,"GMC, NAGPUR",septicemia with septic shock with CRA with peripheral circulatory failure in a operated case of TEF
+28.0,GMCH NAGPUR,Jun-26,B/O Dolly Bhushan Ninave,,FEMALE,OBC,1 DAY,"Thamsar , Bhandara , 8983687497",,,"GMC, NAGPUR",,820 gms,No,25-Jun-2026,"GMC, NAGPUR",VPT ELBW severe IUGR with status epilepticus with neurogenic shock
+29.0,GMCH NAGPUR,Jun-26,B/O Kanchan Bhanduji Raut,,FEMALE,OBC,6 DAY,"Jalgaon , 9673947781",,,"GMC, NAGPUR",,1.6 kgs,No,27-Jun-2026,"GMC, NAGPUR",PT LBW with congenital pnuemonia with AKI with septic shock with DIC with pulmonary haemorrhage
+30.0,GMCH NAGPUR,Jun-26,B/O Vijaya Ganpat Madawi,,MALE,SC,11 DAY,"Marampali Gadchiroli , 8999542050",,,"GMC, NAGPUR",,1.41 kg,No,28-Jun-2026,"GMC, NAGPUR",CRA with peripheral circulatory failure in a case of cloacal bladder extrophy
+31.0,GMCH NAGPUR,Jun-26,B/O Manisha Akash Dongre,,MALE,SC,11 DAY,"Damangaon , Amravati , 7038890601",,,"GMC, NAGPUR",,1.93 kg,No,29-Jun-2026,"GMC, NAGPUR",FT EOS refractory hypoglycemia with PPHN with ARDS with septic shock
+32.0,GMCH NAGPUR,Jun-26,Vipasana Sandip Ramteke,Sandip Ramteke,FEMALE,SC,11 MONTH,Pipri Deshpande Pongorna Chandrapur,,,"GMC, NAGPUR",,2.2 KG,,14-Jun-2026,"GMC, NAGPUR",Bilateral nephrocalcinosis with obstructive uropathy with bilateral Dj Stening done with urosepsis with septic shock
+33.0,GMCH NAGPUR,Jun-26,Azamat Rehmat sheikh,Rehmat sheikh,MALE,GENERAL,4 MONTH,"Bada tajbagh , Nagpur",,,"GMC, NAGPUR",,2.1 KG,,18-Jun-2026,"GMC, NAGPUR",Septicemia with shock with cardio respiratory arrest with peripheral circulatory failure
+34.0,GMCH NAGPUR,Jun-26,Hasan sheikh Irshad liyas sheikh,Irshad liyas sheikh,MALE,GENERAL,2 YEAR,Mankapur Nagpur,,AYUSH UPHC,"GMC, NAGPUR",,2.1 KG,,20-Jun-2026,"GMC, NAGPUR",Acute disseminated Encephalomyelitis viral encephalitis
+35.0,GMCH NAGPUR,Jun-26,Shlok Amrit Shende,Amrit shende,MALE,SC,6 MONTH,Bhandara Maharashtra,,,"GMC, NAGPUR",,1.9 KG,,21-Jun-2026,"GMC, NAGPUR",Congenital Hemophagocytic with septic shock
+36.0,GMCH NAGPUR,Jun-26,Shourya Rajesh Udan,Rajesh udan,MALE,OBC,2years,"Chandranagar, Nagpur",,BABULKHEDA UPHC,"GMC, NAGPUR",,2.1 KG,,22-Jun-2026,"GMC, NAGPUR",a/c/o Accidental fall from 1st floor with right front hurt lobe with depressed fracture with right FIP craniotomy with evolution of Hematoma
+37.0,GMCH NAGPUR,Jun-26,Rounak nikhil Sidam,Nikhil Sidam,MALE,SC,1years,Parasgoan nagpur,,,"GMC, NAGPUR",,2.1 KG,,22-Jun-2026,"GMC, NAGPUR",Acute Fulminant Liver failure with refractory hypocalcemia with disseminated coagulation
+38.0,GMCH NAGPUR,Jun-26,Yug Sani Yadav,Sani Yadav,MALE,OBC,1 yr 6 months,Chakher Navegoan Nagpur,,,"GMC, NAGPUR",,2.2 KG,,25-Jun-2026,"GMC, NAGPUR",Acute encephalitic syndrome with septic shock
+39.0,GMCH NAGPUR,Jun-26,Aarya Vijay Niswade,Vijay niswade,FEMALE,SC,6months,At Jarul Tah Warul Dist Amravati,,,"GMC, NAGPUR",,2.1 KG,,28-Jun-2026,"GMC, NAGPUR",Lower respiratory infection with severe Acute Respiratory syndrome With sepsis with septic shock
+40.0,GMCH NAGPUR,Jun-26,Varmika abhishek Joni,Abhishek Joni,FEMALE,GENERAL,11 months,"Hanuman Nagar, Nagpur",,,"GMC, NAGPUR",,1.9 KG,,30-Jun-2026,"GMC, NAGPUR",Pulmonary Artery stenosis with left pulmonary hypertension with cardiogenic shock
+41.0,GMCH NAGPUR,Jun-26,Ashwini Avinash Bhavre,Avinash Bhavre,FEMALE,OBC,5 months,"At Kuhagawn Pimpari , Amravati Maharashtra",,,"GMC, NAGPUR",,1.9 KG,,07-Jan-2026,"GMC, NAGPUR",Chronic Kidney Disease stage 5 with Bilateral nephromegaly under evaluation with severe sepsis
+42.0,IGGMC HOSPITAL NAGPUR,Jun-26,B/O SNEHA RAKESH KATANGALE,SNEHA KATANGALE,MALE,GENERAL,DAY 8,AT SAMATA NAGAR NARA NAGPUR       93256283183,,,PUBLIC,2.77,2.77 KG,,06-Jan-2026,"IGGMC, NAGPUR",SEVERE PERINATAL ASPHYXIA WITH HYPOXIC  ISCHEMIC ENCEPHALOPATHY  STAGE 3
+43.0,IGGMC HOSPITAL NAGPUR,Jun-26,B/O shamim bano,shamim bano,MALE,GENERAL,DAY 4,"TIPUSULTAN CHOWK, NAGPUR. 7057626908",,MOMINPURA UPHC,PUBLIC,1180,1180,,06-Jan-2026,"IGGMC, NAGPUR",DISSEMINATED INTRAVASCULAR COAGULATION WITHH EARLY ONSET SEPIIS WITH REFRACTORY  SHOCK WITH EARLY PRETERM VERY LOW BIRTH WEIGHT NEONATE
+44.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO RUCHITA DHEERAJ BHARVE,RUCHITA DHIRAJ BHARVE,FEMALE,GENERAL,DAY 7,AZADNAGAR TUMSAR BHANDARA  7822091576,,,PUBLIC,1500,1500,,30-Jun-2026,"IGGMC, NAGPUR",EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION WITH LOW BIRTH WEIGHT WITH MODERATE PRETERM NEONATE
+45.0,IGGMC HOSPITAL NAGPUR,Jun-26,B/O BHAGYASHREE RAJESH NIMJE TWIN A,BHAGYASHREE RAJESH NIMJE,MALE,GENERAL,DAY 2,PLOT 10 SAMTA NAGAR NEAR JANTA AATA CHAKKI NAGPUR 8657012278,,,PUBLIC,820,820,,06-Jul-2026,"IGGMC, NAGPUR",TYPE 1 RESPIRATORY FAILURE WITH GRADE 2 INTRAVENTRICULAR HEMORRHAGE WITH HMD 3  IN EXTREME LOW BIRTH AND EXTREME PRETERM NEONATE .
+46.0,IGGMC HOSPITAL NAGPUR,Jun-26,B/O BHAGYASHREE RAJESH NIMJE TWIN B,BHAGYASHREE RAJESH NIMJE,MALE,GENERAL,DAY 3,PLOT 10 SAMTA NAGAR NEAR JANTA AATA CHAKKI NAGPUR 8657012278,,,PUBLIC,850,850,,06-Aug-2026,"IGGMC, NAGPUR",TYPE 1 RESPIRATORY FAILURE WITH GRADE 2 INTRAVENTRICULAR  WITH HMD 3  IN EXTREME LOW BIRTH AND EXTREME PRETERM NEONATE .
+47.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO YASHI PRASHANT DHONGRE,YASHI PRASHANT DHONGRE,MALE,GENERAL,DAY 2,MOTHA INDARA SHIV MANDIR BRAVARTI NAGPUR BUDDHA VIHAR NAGPUR 9890880447,,,PUBLIC,740,740,,06-Oct-2026,IGGMC NAGPUR,TYPE I RESPIRATORY FAILURE WITH GRADE 3 INTRAVASCULAR HEMORRHAGE IN EXTREME LOW BIRTH WEIGHT AND EXTREME PRETERM
+48.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO SAYDABEE SHEIKH SHAHZAD,SAYDA BEE SHEIKH SHAHZAD,MALE,GENERAL,DAY 3,CHINDWADA MP 9589631079,,,PUBLIC,800,800,,13-Jun-2026,IGGMC NAGPUR,GRADE 4 INTRAVASCULAR HAEMORHAGE WITH TYPE 1 RESPIRATORY FAILURE IN AN EXTREMELY LOW BIRTH WEIGHT AND EXTREME PRETERM
+49.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO SARASWATI MUKESH BHADAVI,BO SARASWATI MUKESH BHADAVI,FEMALE,GENERAL,DAY 4,"POST KHUSAPUR POST MANEGAON RAMTEK, DISTRICT NAGPUR",,,PUBLIC,1244,1244,,16-Jun-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN MODRATE PRETERM AND LOW BIRTH WEIGHT NEONATE
+50.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO SALONI ROSHAN BAISALE,SALONI ROSHAN BAISALE,FEMALE,GENERAL,DAY 1,"AT AMNER, WARUD, AMRAWATI. 9527862128",,HANSAPURI UPHC,PUBLIC,1640,1640,,18-Jun-2026,IGGMC NAGPUR,GRADE 2 INTRAVASCULAR HAEMORHAGE WITH GRADE 4 RDS WITH EOS WITH REFRACTORY SEPTIC SHOCK   LOW BIRTH WEIGHT AND MODERATE PRETERM
+51.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO SIMA DIPAK BARPATRE,SIMA DIPAK BARAPATRE,MALE,GENERAL,DAY 7,NEAR HANUMAN TEMPLE BHANKHEDA NAGPUR,,NETAJI UPHC,PUBLIC,1590,1590,,19-Jun-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN LOW BIRTH WEIGHT MODERATE PRETERM NEONATE
+52.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO DIKSHA VENASH CHARLEE,DIKSHA VENASH CHARLEE,MALE,GENERAL,DAY 4,"KHALSA CITE NEAR MATA MANDIR MOTER NAGAR NAGPUR,8956556548",,INDORA UPHC,PUBLIC,1150,1150,,20-Jun-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN VERY  LOW BIRTH WEIGHT EARLY PRETERM NEONATE WITH ALBINISM
+53.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO AFREEN BANO MOHAMMAD KALEEM ANSARI,AFREEN BANO,MALE,GENERAL,6 hrs,PLOT NO 75 SHANIWAR BAZAR ROAD INDIRA COOP SOCIETY NEAR MESHRAM ATTA CHAKKI UPAKWADI  NAGPUR,,,PUBLIC,2550,2.55,,21-Jun-2026,IGGMC NAGPUR,CARDIOPULMONARY ARREST WITH SEVERE PERINATAL ASPHYXIA IN A FULL TERM NEONATE
+54.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO PRIYANKA AMAL RAMTEKE,PRIYANKA AMAL RAMTEKE,MALE,GENERAL,DAY 3,VIKY KIRANA STORE CHRISTIAN COLONY MECASABAGH LUMBINI NAGAR JARIPATKA NAGPUR  8261027674,,INDORA UPHC,PUBLIC,2430,2.3,,23-Jun-2026,IGGMC NAGPUR,CARDIOPULMONARY ARREST WITH REFRACTORY PERSISTENT PULMONARY HYPERTENSION MECONIUM ASPIRATION SYNDROME
+55.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO SARASWATA MUKESH BHALAVI TWIN A,SARASWATA BHALAVI,FEMALE,GENERAL,DAY 12,AT KHARSAPAR POST MANGAON TAQ RAMTEK DIST NAGPUR,,,PUBLIC,1290,1290,,24-May-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH DISSEMINATED INTRAVASCULAR COAGULATION IN A VERY LOW BIRTH WEIGHT AND MODERATE PRETERM NEONATE
+56.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO GAYATRI NILESH GAWADKAR,GAYATRI NILESH GAWADKAR,MALE,GENERAL,DAY 3,GHORADKAR KIRANA STORE NAAN WASTI WARD NO 1 JARIPATKA NAGPUR.                  9834410175,,,PUBLIC,765,765,,26-Jun-2026,IGGMC NAGPUR,GRADE 3 RESPIRATORY DISTRESS SYNDROME WITH GRADE 4 INTRAVENTRICULAR HEMORRHAGE IN EXTREME LOW BIRTH WEIGHT EXTREME PRETERM NEONATE
+57.0,IGGMC HOSPITAL NAGPUR,Jun-26,BO NAZMEEN MOHAMMAD WASIM AKRAM QUERESHI,NAZMEEN QUERESHI,FEMALE,GENERAL,DAY 8,AFREEN GUEST HOUSE NATH SAHWB ROAD MQSUB PURA MOMINPURA NAGPUR,,,PUBLIC,1580,1580,,26-Jun-2026,IGGMC NAGPUR,EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH VENTILATOR ASSOCIATED PNEUMONIA IN A LOW BIRTH WEIGHT EARLY PRETERM NEONATE
+58.0,IGGMC HOSPITAL NAGPUR,Jun-26,b/0 KARISHMA MAHENDRA NIMJE TWIN B,KARISHMA MAHENDRA NIMJE,MALE,GENERAL,DAY 4,TANDAPETH NEAR KAMLE ATTA CHAKI NAGPUR,,,PUBLIC,1210,1.2,,27-Jun-2026,"IGGMC, NAGPUR",CARDIORESPIRATORY ARREST WITH EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK WITH VENTILATOR ASSOCIATED PNEMONIA IN EARLY PRETERM WITH VERY LOW BIRTH WEIGHT NEONATE
+59.0,IGGMC HOSPITAL NAGPUR,Jun-26,B/O KARISHMA MAHENDRA NIMJE TWINA,KARISHMA MAHENDRA NIMJE,MALE,GENERAL,DAY 5,TANDAPETH NEAR KAMLE ATTA CHAKI NAGPUR,,,PUBLIC,1230,1.2,,28-Jun-2026,"IGGMC, NAGPUR",CARDIORESPIRATORY ARREST WITH EARLY ONSET SEPSIS WITH REFRACTORY SEPTIC SHOCK IN EARLY PRETERM WITH VERY LOW BIRTH WEIGHT NEONATE
+60.0,IGGMC HOSPITAL NAGPUR,Jun-26,b/0 PRAMILA TILAK KAVE,PRAMILA TILAK KAVE,FEMALE,GENERAL,DAY 4,HOUSE NO 1640 NEAR HANUMAN MANDIR NAGPUR 8623046731,,,PUBLIC,1500,1500,,28-Jun-2026,"IGGMC, NAGPUR",SEVERE BIRTH ASPHYXIA WITH REFRACTORY PERSISTENT PULMONARY HYPERTENSION OF NEW BORN WITH CARDIOGENIC SHOCK WITH LATE ONSET SEPSIS IN MODERATE PRETERM AND LOW BIRTH WEIGHT NEONATE
+61.0,IGGMC HOSPITAL NAGPUR,Jun-26,B/0 BHUMIKA KOMAL THELKA,BHUMIKA KOMAL THELKA,FEMALE,GENERAL,DAY 3,PLOT NO 93 DURGA NAGAR BHANDEWADI NAGPUR 9325856961,,BHARATWADA UPHC,PUBLIC,1740,1740,,29-Jun-2026,"IGGMC, NAGPUR",REFRACTORY SEPTIC SHOCK WITH EARLY ONSET SEPSIS IN A PRETERM AND LOW BIRTH WEIGHT NEONATE
+62.0,IGGMC HOSPITAL NAGPUR,Jun-26,INAYA AKASH MURADE,,FEMALE,GENERAL,1years,JUNI PARDI HANUMAN MANDIR NAGPUR,,HIWARI NAGAR UPHC,PUBLIC,,2.0 KG,,16-Jun-2026,"IGGMC, NAGPUR",CARDIOPULMONARY ARREST
+63.0,IGGMC HOSPITAL NAGPUR,Jun-26,SHAHNAWAZ SAFIQUE SHEIKH,,MALE,GENERAL,5years,CHANKAPUR WARD NO2 SAONER NAGPUR,,,PUBLIC,,2.1 KG,,17-Jun-2026,IGGMC NAGPUR,ASPIRATION PNEUMONIA
+64.0,DAGA HOSPITAL,Jun-26,B/o Priti Satish Patle,Priti Satish Patle,female,OBC,8 Days,"ayodhya nagar at - Kalmana , Nagpur 7972662950",,,PUBLIC,,2.3 kg,,14-Jun-2026,DMH,Pulmonary Hemorrhage with refractory Shock
+65.0,DAGA HOSPITAL,Jun-26,B/o Mayuri Rakesh  Malve,Mayuri Rakesh  Malve,male,OBC,2 Days,"at - Khat , Dist Nagpur",,,PUBLIC,,2.5 kg,,21/6/26 at 1.30 am,DMH,BA with HIE III with Refractory Shock with Cardio respiratory arrest
+66.0,NELSON HOSPITAL,Jun-26,B/o Reema Kawre,Reema,Male,obc,5 days,"Ward no. 11,naditola ,budbuda ,balaghat , madhya pradesh,Phone No.9826419113",,,PRIVATE,2.8 kg,2.8 kg,,06-Jan-2026,Health Facility Private,Refractory shock with disseminated intravascular coagulation with pneumonia with meconium aspiration syndrome with respiratory distress with neonatal seizure with probable sepsis with term with AGA with TAB with male 2.7 kg
+67.0,NELSON HOSPITAL,Jun-26,B/o nagma Khan,Nagma,Female,General,13 days,"Jamsher khan ,water tank ,near ashok ward , seoni , madhya pradesh,? 9340114297",,,PRIVATE,2.1 kg,2.1 kg,,06-Jan-2026,Health Facility Private,Post operative case of resection anastomic in case of intestinal perforation with subacuit obstruction refractory shock disseminated intravascular coagulation with neonatal seizure with severe thrombocytopenia with neonatal sepsis with late preterm with appropriate of gestational AGA
+68.0,NELSON HOSPITAL,Jun-26,Mast. Kiyansh Motghare,Manisha,Male,obc,1 yrs,"Kotgal , Pardikupi, gadchiroli ,? 8888189643",,,PUBLIC,2 kg,7.11 kg,,06-Jan-2026,Health Facility Private,Sepsis with Refractory septic shock with Multiorgan Failure In a K/c/o Tetralogy of fallot Status post Intracardiac repair
+69.0,NELSON HOSPITAL,Jun-26,Mast. Lokesh Domar Sahu,Manisha,Male,obc,1 yrs,"Domar Sahu,Ruha ,Durg,Chattisgarh,? 9307338705",,,PRIVATE,3 kg,10 kg,,15-Jun-2026,Health Facility Private,Refractory Shock (Fluid & Catecholamine Resistant) with Non Ketotic Hypoglycemia with Encephalopathy with Left Ventricular Dysfunction with Bilateral Pleural effusion C
+70.0,NELSON HOSPITAL,Jun-26,B/o Tameshwari Kaware,Tameshwari,Male,obc,2 days,"Ward no 05,Palhera,Tingipur,Balaghat,Madhya pradesh,? 7974009409",,,PRIVATE,3 kg,3 kg,,17-Jun-2026,Health Facility Private,Term/ AGA with Refractory shock with Severe PPHN with MODS with Respiratory Distress
+71.0,NELSON HOSPITAL,Jun-26,B/o Renuka Mishra,Renuka,Male,obc,3days,"ward no 20 mashra bhojnalaya railway station ,chhinwara madhya pradesh,? 9300698760",,,PRIVATE,2.4 kg,2.4kg,,24-Jun-2026,Health Facility Private,Severe persistent pulmonary hypertension with refractory shock with air leak syndrome with HIE II with term with AGA with NCIAB with RD with birth asphyxia 12.4 Kg on 24.06.2026
+72.0,New Health City Hospital,Jun-26,B/O Poonam Nishant Vairagade,Mrs. Poonam Nishant Vairagade,Male,obc,5 Days,"Thana Petrolpump, Dist-Bhandara-441906                   Mo. No.7350411819/   8421920930",,,PRIVATE,2.705 Kg,2.705 Kg,,06-Jun-2026,Health facility private,Term with Multiorgan Dysfunction with Inborn Error of Metabolism
+73.0,New Health City Hospital,Jun-26,B/o Melina Ankit Shende,Mrs. Melina Ankit Shende,Female,obc,18 Days,"Plot no. 16 second bus stop Karim layout gopal nagar, Trimurti nagar nagpur                 Mo No. 8766556568 / 8600700652",,,PRIVATE,1.500 Kg,1.600 kg,,17-Jun-2026,Health facility private,"Preterm with Low birth weight Respratory distress grade IV, sepsis with shock, metabolism encephalogy with Refractory seizure with IVH grade II"
+74.0,New Health City Hospital,Jun-26,B/o Ashwini Nameshwar Dharukar,Mrs. Ashwini Nameshwar Dharukar,Female,obc,23 Days,"Ward no. 3 Amravati Road near jain mandir Bajargaon Nagpur, Lava nagpur                                   Mo no. 9657170769 / 8329987013",,,PRIVATE,2.760 Kg,2.890 kg,,18-Jun-2026,Health facility private,Full term with Sepsis with Refractory septal shock with Refractory Seizures
+75.0,kingsway hospital,Jun-26,BABY OF AMMI MANDAVIA-2,MRS. AMMI MANDAVIA,Male,General,2 DAYS,ARIHANT TOWER-2 WATHODA BAGADGANJ NAGPUR PHONE NO-7026664273,,HIWARI NAGAR UPHC,PRIVATE,,1970 GRAM,Yes,18-Jun-2026,NIL,PRETERM/2ND OF TWINS SEPTICEMIA WITH SEPTIC SHOCK PULMONARY HAEMORRHAGE
+76.0,kingsway hospital,Jun-26,BABY OF ANJALI WAGH(TWIN-1),MRS. ANJALI WAGH,Female,General,4 DAYS,FLAT NO 3004 B-WING AKAR HEIGHTS UMRED NAGPUR PHONE NO-7798546361,,,PRIVATE,600 GRAM,,Yes,27-Jun-2026,NIL,GRADE 4 IVH ACUTE RENAL FAILURE EXTREME PREMATURITY
+77.0,kingsway hospital,Jun-26,BABY OF ANJALI WAGH(TWIN-2),MRS. ANJALI WAGH,Male,General,7 DAYS,FLAT NO 3004 B-WING AKAR HEIGHTS UMRED NAGPUR PHONE NO-7798546361,,,PRIVATE,575 GRAM,,YES,30-Jun-2026,NIL,ACUTE RENAL FAILURE DUE TO EXTREME PREMATURITY
+78.0,New Health City Hospital,Jun-26,B/O OF ANJU ASHOK TIWARI,ANJU ASHOK TIWARI,Male,General,25 DAYS,"GOREKHEDE ,SURENDRAGADH,NAGPUR,9552519864",,FUTALA UPHC,PUBLIC,2.5 KG,2.5 KG,NO,12-Jun-2026,PRIVATE,BREATHING DEFICULTITY WITH SEPSIC
