@@ -438,242 +438,7 @@ function updateActiveChips() {
   });
 }
 
-// Render dynamic filter controls based on active module
-function renderFilterControls() {
-  const container = document.getElementById('filter-grid-container');
-  const isCdr = appState.activeModule === 'CDR';
 
-  if (isCdr) {
-    container.innerHTML = `
-      <div class="filter-group">
-        <label for="filter-gender"><i class="fas fa-venus-mars"></i> Child Gender</label>
-        <select id="filter-gender" class="filter-select">
-          <option value="ALL">All Genders</option>
-          <option value="MALE">Male</option>
-          <option value="FEMALE">Female</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="filter-age-bracket"><i class="fas fa-baby"></i> Age Bracket</label>
-        <select id="filter-age-bracket" class="filter-select">
-          <option value="ALL">All Age Brackets</option>
-          <option value="Day 0 - 1 (<24-48h)">Day 0 - 1 (<24-48h)</option>
-          <option value="Early Neonatal (1-7 Days)">Early Neonatal (1-7 Days)</option>
-          <option value="Late Neonatal (8-28 Days)">Late Neonatal (8-28 Days)</option>
-          <option value="Post-Neonatal (1-12 Months)">Post-Neonatal (1-12 Mos)</option>
-          <option value="Child (1 - 5 Years)">Child (1 - 5 Years)</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="filter-place"><i class="fas fa-hospital-alt"></i> Place of Death</label>
-        <select id="filter-place" class="filter-select">
-          <option value="ALL">All Places</option>
-          <option value="Public Hospital (GMC/IGGMC/Daga)">Public (GMC/IGGMC/Daga)</option>
-          <option value="Private Hospital">Private Hospitals</option>
-          <option value="Home">Home Deaths</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="filter-cause"><i class="fas fa-stethoscope"></i> Clinical Cause</label>
-        <select id="filter-cause" class="filter-select">
-          <option value="ALL">All Cause Groups</option>
-          <option value="Sepsis & Septic Shock">Sepsis & Septic Shock</option>
-          <option value="Respiratory / RDS / Pneumonia">Respiratory / RDS / Pneumonia</option>
-          <option value="Prematurity & Low Birth Weight">Prematurity & LBW</option>
-          <option value="Congenital Anomalies & Heart Diseases">Congenital Heart & Anomalies</option>
-          <option value="Birth Asphyxia & Aspiration">Birth Asphyxia & Aspiration</option>
-          <option value="Infections & Illness">Infections & Illness</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <button id="btn-reset-filters" class="btn-reset-filters" title="Clear active filters">
-          <i class="fas fa-undo"></i> Reset Filters
-        </button>
-      </div>
-    `;
-  } else {
-    container.innerHTML = `
-      <div class="filter-group">
-        <label for="filter-timing"><i class="fas fa-hourglass-half"></i> Timing of Death</label>
-        <select id="filter-timing" class="filter-select">
-          <option value="ALL">All Timings</option>
-          <option value="Postpartum (PNC)">Postpartum (PNC)</option>
-          <option value="Antepartum (ANC)">Antepartum (ANC)</option>
-          <option value="Intrapartum (Delivery)">Intrapartum (Delivery)</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="filter-age-bracket"><i class="fas fa-female"></i> Mother's Age</label>
-        <select id="filter-age-bracket" class="filter-select">
-          <option value="ALL">All Age Groups</option>
-          <option value="< 20 Yrs (Adolescent)">< 20 Yrs (Adolescent)</option>
-          <option value="20 - 24 Yrs">20 - 24 Yrs</option>
-          <option value="25 - 29 Yrs">25 - 29 Yrs</option>
-          <option value="30 - 34 Yrs">30 - 34 Yrs</option>
-          <option value="35+ Yrs">35+ Yrs</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="filter-place"><i class="fas fa-hospital-alt"></i> Place of Death</label>
-        <select id="filter-place" class="filter-select">
-          <option value="ALL">All Places</option>
-          <option value="Public Hospital (GMC/DH)">Public Hospital (GMC/DH)</option>
-          <option value="Private Hospital">Private Hospital</option>
-          <option value="Home">Home</option>
-          <option value="In Transit / On Road">In Transit / On Road</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <label for="filter-cause"><i class="fas fa-stethoscope"></i> Clinical Cause</label>
-        <select id="filter-cause" class="filter-select">
-          <option value="ALL">All Causes</option>
-          <option value="Hemorrhage / PPH / Severe Anemia">Hemorrhage / PPH / Severe Anemia</option>
-          <option value="Hypertensive Disorders / Eclampsia">Eclampsia / Hypertension</option>
-          <option value="Sepsis & Severe Infections">Sepsis & Severe Infections</option>
-          <option value="Cardiac Failure & Heart Disease">Cardiac Failure & Heart Disease</option>
-          <option value="Hepatic / Liver Disorders">Hepatic / Liver Disorders</option>
-        </select>
-      </div>
-
-      <div class="filter-group">
-        <button id="btn-reset-filters" class="btn-reset-filters" title="Clear active filters">
-          <i class="fas fa-undo"></i> Reset Filters
-        </button>
-      </div>
-    `;
-  }
-
-  // Bind change listeners on dynamically added selects
-  const dynamicSelects = container.querySelectorAll('select');
-  dynamicSelects.forEach(sel => sel.addEventListener('change', onDynamicFilterChange));
-  const resetBtn = document.getElementById('btn-reset-filters');
-  if (resetBtn) resetBtn.addEventListener('click', resetAllFilters);
-}
-
-function onDynamicFilterChange() {
-  const isCdr = appState.activeModule === 'CDR';
-  if (isCdr) {
-    appState.filters.sex = document.getElementById('filter-gender') ? document.getElementById('filter-gender').value : 'ALL';
-  } else {
-    appState.filters.deathTiming = document.getElementById('filter-timing') ? document.getElementById('filter-timing').value : 'ALL';
-  }
-  appState.filters.ageGroup = document.getElementById('filter-age-bracket') ? document.getElementById('filter-age-bracket').value : 'ALL';
-  appState.filters.podGroup = document.getElementById('filter-place') ? document.getElementById('filter-place').value : 'ALL';
-  appState.filters.causeCategory = document.getElementById('filter-cause') ? document.getElementById('filter-cause').value : 'ALL';
-
-  appState.currentPage = 1;
-  applyFilters();
-}
-
-function resetAllFilters() {
-  appState.filters = {
-    year: 'ALL',
-    podGroup: 'ALL',
-    category: 'ALL',
-    ageGroup: 'ALL',
-    causeCategory: 'ALL',
-    sex: 'ALL',
-    deathTiming: 'ALL',
-    parity: 'ALL',
-    search: ''
-  };
-
-  const sInput = document.getElementById('search-input');
-  if (sInput) sInput.value = '';
-
-  renderFilterControls();
-  appState.currentPage = 1;
-  applyFilters();
-  showToast('Filters reset', 'info');
-}
-
-function applyFilters() {
-  const isCdr = appState.activeModule === 'CDR';
-  const rawList = isCdr ? (appState.allData.cdr || []) : (appState.allData.mdr || []);
-  const f = appState.filters;
-  const activeYear = appState.activeYear;
-
-  appState.filteredData = rawList.filter(r => {
-    if (activeYear !== 'ALL' && r.year !== activeYear) return false;
-    if (f.podGroup !== 'ALL' && r.podGroup !== f.podGroup) return false;
-    if (f.ageGroup !== 'ALL' && r.ageGroup !== f.ageGroup) return false;
-    if (f.causeCategory !== 'ALL' && r.causeCategory !== f.causeCategory) return false;
-
-    if (isCdr) {
-      if (f.sex !== 'ALL' && r.sex !== f.sex) return false;
-    } else {
-      if (f.deathTiming !== 'ALL' && r.deathTiming !== f.deathTiming) return false;
-    }
-
-    if (f.search) {
-      const q = f.search;
-      if (isCdr) {
-        const match = (r.childName && r.childName.toLowerCase().includes(q)) ||
-                      (r.motherName && r.motherName.toLowerCase().includes(q)) ||
-                      (r.cause && r.cause.toLowerCase().includes(q)) ||
-                      (r.village && r.village.toLowerCase().includes(q)) ||
-                      (r.block && r.block.toLowerCase().includes(q)) ||
-                      (r.placeOfDeath && r.placeOfDeath.toLowerCase().includes(q));
-        if (!match) return false;
-      } else {
-        const match = (r.deceasedName && r.deceasedName.toLowerCase().includes(q)) ||
-                      (r.cause && r.cause.toLowerCase().includes(q)) ||
-                      (r.address && r.address.toLowerCase().includes(q)) ||
-                      (r.placeOfDeath && r.placeOfDeath.toLowerCase().includes(q));
-        if (!match) return false;
-      }
-    }
-    return true;
-  });
-
-  updateActiveChips();
-  renderKpis(appState.filteredData);
-  renderAllCharts(appState.filteredData);
-  renderTable();
-}
-
-function updateActiveChips() {
-  const container = document.getElementById('filter-active-chips');
-  container.innerHTML = '';
-  const chips = [];
-
-  if (appState.activeYear !== 'ALL') chips.push(`Year: ${appState.activeYear}`);
-  const isCdr = appState.activeModule === 'CDR';
-  const f = appState.filters;
-
-  if (isCdr) {
-    if (f.sex !== 'ALL') chips.push(`Sex: ${f.sex}`);
-  } else {
-    if (f.deathTiming !== 'ALL') chips.push(`Timing: ${f.deathTiming}`);
-  }
-  if (f.ageGroup !== 'ALL') chips.push(`Age: ${f.ageGroup}`);
-  if (f.podGroup !== 'ALL') chips.push(`Place: ${f.podGroup}`);
-  if (f.causeCategory !== 'ALL') chips.push(`Cause: ${f.causeCategory}`);
-  if (f.search) chips.push(`Search: "${f.search}"`);
-
-  if (chips.length === 0) {
-    const total = appState.filteredData.length;
-    container.innerHTML = `<span style="font-size:0.75rem; color:var(--text-muted);">Showing all ${total} ${isCdr ? 'child deaths' : 'maternal deaths'} across registered years</span>`;
-    return;
-  }
-
-  chips.forEach(c => {
-    const el = document.createElement('span');
-    el.className = 'kpi-pill';
-    el.style.background = isCdr ? 'rgba(99, 102, 241, 0.2)' : 'rgba(244, 63, 94, 0.2)';
-    el.style.color = isCdr ? '#818cf8' : '#fb7185';
-    el.style.border = `1px solid ${isCdr ? 'rgba(99, 102, 241, 0.4)' : 'rgba(244, 63, 94, 0.4)'}`;
-    el.textContent = c;
-    container.appendChild(el);
-  });
-}
 
 // Render dynamic Executive KPI cards
 function renderKpis(data) {
@@ -1089,191 +854,60 @@ function renderDistrictChart(data, theme) {
   }
 }
 
-// 4. Clinical Cause Classification Chart
-function renderCausesChart(data, theme, isCdr) {
-  const counts = {};
-  data.forEach(r => {
-    const c = r.causeCategory || 'Other / Unspecified';
-    counts[c] = (counts[c] || 0) + 1;
-  });
 
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  const labels = sorted.map(s => s[0]);
-  const values = sorted.map(s => s[1]);
-
-  const ctx = document.getElementById('chart-causes').getContext('2d');
-  if (appState.charts.causes) appState.charts.causes.destroy();
-
-  appState.charts.causes = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Cases',
-        data: values,
-        backgroundColor: [
-          palette.rose,
-          palette.blue,
-          palette.purple,
-          palette.amber,
-          palette.emerald,
-          palette.cyan,
-          palette.orange
-        ],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: theme.tooltipBg,
-          titleColor: theme.tooltipText,
-          bodyColor: theme.tooltipText,
-          borderColor: theme.tooltipBorder,
-          borderWidth: 1
-        }
-      },
-      scales: {
-        x: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
-        y: {
-          grid: { display: false },
-          ticks: {
-            color: theme.textColor,
-            font: { family: 'Plus Jakarta Sans', size: 10 },
-            callback: function(val) {
-              const label = this.getLabelForValue(val);
-              return label.length > 25 ? label.substr(0, 25) + '...' : label;
-            }
-          }
-        }
-      }
-    }
-  });
-}
-
-function renderTrendChart(data, theme, isCdr) {
-  const years = ['2023-24', '2024-25', '2025-26', '2026-27'];
-  const counts = years.map(y => data.filter(r => r.year === y).length);
-
-  const ctx = document.getElementById('chart-trend').getContext('2d');
-  if (appState.charts.trend) appState.charts.trend.destroy();
-
-  const accentColor = isCdr ? palette.indigo : palette.rose;
-
-  appState.charts.trend = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: years,
-      datasets: [{
-        label: isCdr ? 'Child Deaths (CDR)' : 'Maternal Deaths (MDR)',
-        data: counts,
-        backgroundColor: accentColor,
-        borderRadius: 8,
-        barThickness: 45
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: theme.tooltipBg,
-          titleColor: theme.tooltipText,
-          bodyColor: theme.tooltipText,
-          borderColor: theme.tooltipBorder,
-          borderWidth: 1
-        }
-      },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: theme.textColor, font: { family: 'Plus Jakarta Sans', weight: '600' } } },
-        y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
-      }
-    }
-  });
-}
-
-function renderCausesChart(data, theme, isCdr) {
-  const counts = {};
-  data.forEach(r => {
-    const c = r.causeCategory || 'Other / Unspecified';
-    counts[c] = (counts[c] || 0) + 1;
-  });
-
-  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
-  const labels = sorted.map(s => s[0]);
-  const values = sorted.map(s => s[1]);
-
-  const ctx = document.getElementById('chart-causes').getContext('2d');
-  if (appState.charts.causes) appState.charts.causes.destroy();
-
-  appState.charts.causes = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: 'Demises',
-        data: values,
-        backgroundColor: [
-          palette.rose,
-          palette.blue,
-          palette.purple,
-          palette.amber,
-          palette.emerald,
-          palette.cyan,
-          palette.orange
-        ],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: theme.tooltipBg,
-          titleColor: theme.tooltipText,
-          bodyColor: theme.tooltipText,
-          borderColor: theme.tooltipBorder,
-          borderWidth: 1
-        }
-      },
-      scales: {
-        x: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
-        y: {
-          grid: { display: false },
-          ticks: {
-            color: theme.textColor,
-            font: { family: 'Plus Jakarta Sans', size: 10 },
-            callback: function(val) {
-              const label = this.getLabelForValue(val);
-              return label.length > 25 ? label.substr(0, 25) + '...' : label;
-            }
-          }
-        }
-      }
-    }
-  });
-}
 
 function renderPodChart(data, theme, isCdr) {
+  const canvas = document.getElementById('chart-pod');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (appState.charts.pod) appState.charts.pod.destroy();
+
+  // Categorize into clear categories matching screenshot:
+  // Public Hospital (GMC/IGGMC/Daga), Public Hospital, Private Hospital, Home
   const counts = {};
   data.forEach(r => {
-    const p = r.podGroup || 'Hospital';
+    let p = r.podGroup || r.placeOfDeath || 'Public Hospital';
+    const pl = (p || '').toLowerCase();
+    if (pl.includes('home')) {
+      p = 'Home';
+    } else if (pl.includes('private')) {
+      p = 'Private Hospital';
+    } else if (pl.includes('gmc') || pl.includes('iggmc') || pl.includes('daga') || pl.includes('mayo')) {
+      p = 'Public Hospital (GMC/IGGMC/Daga)';
+    } else if (pl.includes('public') || pl.includes('hospital') || pl.includes('health facility')) {
+      p = 'Public Hospital';
+    } else {
+      p = r.podGroup || 'Public Hospital (GMC/IGGMC/Daga)';
+    }
     counts[p] = (counts[p] || 0) + 1;
   });
 
-  const labels = Object.keys(counts);
-  const values = Object.values(counts);
+  // Ensure preferred display order
+  const order = ['Public Hospital (GMC/IGGMC/Daga)', 'Public Hospital', 'Private Hospital', 'Home'];
+  const labels = [];
+  const values = [];
+  order.forEach(o => {
+    if (counts[o] !== undefined) {
+      labels.push(o);
+      values.push(counts[o]);
+    }
+  });
+  // Add any remaining keys
+  Object.keys(counts).forEach(k => {
+    if (!labels.includes(k)) {
+      labels.push(k);
+      values.push(counts[k]);
+    }
+  });
 
-  const ctx = document.getElementById('chart-pod').getContext('2d');
-  if (appState.charts.pod) appState.charts.pod.destroy();
+  const podColors = {
+    'Public Hospital (GMC/IGGMC/Daga)': '#6366f1', // Indigo
+    'Public Hospital': '#38bdf8',                 // Cyan/Blue
+    'Private Hospital': '#f43f5e',                // Rose / Red
+    'Home': '#10b981'                             // Emerald Green
+  };
+
+  const bgColors = labels.map(l => podColors[l] || palette.amber);
 
   appState.charts.pod = new Chart(ctx, {
     type: 'doughnut',
@@ -1281,15 +915,24 @@ function renderPodChart(data, theme, isCdr) {
       labels: labels,
       datasets: [{
         data: values,
-        backgroundColor: [palette.indigo, palette.blue, palette.rose, palette.emerald, palette.amber],
-        borderWidth: 0
+        backgroundColor: bgColors,
+        borderWidth: 0,
+        hoverOffset: 4
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
-        legend: { position: 'right', labels: { color: theme.textColor, font: { size: 10 }, boxWidth: 12 } },
+        legend: {
+          position: 'right',
+          labels: {
+            color: theme.textColor,
+            font: { size: 10, weight: '600' },
+            boxWidth: 12,
+            padding: 8
+          }
+        },
         tooltip: {
           backgroundColor: theme.tooltipBg,
           titleColor: theme.tooltipText,
@@ -1304,48 +947,71 @@ function renderPodChart(data, theme, isCdr) {
 }
 
 function renderAgeBreakdownChart(data, theme, isCdr) {
+  const canvas = document.getElementById('chart-breakdown-1');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (appState.charts.breakdown1) appState.charts.breakdown1.destroy();
+
   let labels = [];
   let counts = [];
+  let bgColors = [];
+
+  const titleEl = document.getElementById('chart-title-breakdown-1');
+  const subEl = document.getElementById('chart-sub-breakdown-1');
 
   if (isCdr) {
-    document.getElementById('chart-title-breakdown-1').innerHTML = '<i class="fas fa-baby" style="color:var(--accent-amber);"></i> Child Age at Demise';
-    document.getElementById('chart-sub-breakdown-1').textContent = 'Early Neonatal vs Late Neonatal vs Child stages';
+    if (titleEl) titleEl.innerHTML = '<i class="fas fa-child" style="color:var(--accent-amber);"></i> Child Age at Demise';
+    if (subEl) subEl.textContent = 'Early Neonatal vs Late Neonatal vs Child stages';
     labels = ['Day 0-1', '1-7 Days', '8-28 Days', '1-12 Mos', '1-5 Yrs'];
-    const groups = [
-      'Day 0 - 1 (<24-48h)',
-      'Early Neonatal (1-7 Days)',
-      'Late Neonatal (8-28 Days)',
-      'Post-Neonatal (1-12 Months)',
-      'Child (1 - 5 Years)'
+    counts = [
+      data.filter(r => (r.ageGroup && (r.ageGroup.includes('Day 0') || r.ageGroup.includes('<24')))).length,
+      data.filter(r => (r.ageGroup && r.ageGroup.includes('1-7 Days'))).length,
+      data.filter(r => (r.ageGroup && r.ageGroup.includes('8-28 Days'))).length,
+      data.filter(r => (r.ageGroup && (r.ageGroup.includes('1-12') || r.ageGroup.includes('Post-Neonatal')))).length,
+      data.filter(r => (r.ageGroup && (r.ageGroup.includes('1 - 5') || r.ageGroup.includes('Child')))).length
     ];
-    counts = groups.map(g => data.filter(r => r.ageGroup === g).length);
+    // Colors matching screenshot: Day 0-1 (Rose), 1-7 Days (Orange), 8-28 Days (Amber), 1-12 Mos (Indigo/Blue), 1-5 Yrs (Emerald)
+    bgColors = ['#f43f5e', '#f97316', '#f59e0b', '#6366f1', '#10b981'];
   } else {
-    document.getElementById('chart-title-breakdown-1').innerHTML = '<i class="fas fa-female" style="color:var(--accent-amber);"></i> Mother Age Demographics';
-    document.getElementById('chart-sub-breakdown-1').textContent = 'Adolescent and maternal age brackets';
+    if (titleEl) titleEl.innerHTML = '<i class="fas fa-female" style="color:var(--accent-amber);"></i> Mother Age Demographics';
+    if (subEl) subEl.textContent = 'Adolescent and maternal age brackets';
     labels = ['< 20 Yrs', '20-24 Yrs', '25-29 Yrs', '30-34 Yrs', '35+ Yrs'];
-    const groups = ['< 20 Yrs (Adolescent)', '20 - 24 Yrs', '25 - 29 Yrs', '30 - 34 Yrs', '35+ Yrs'];
-    counts = groups.map(g => data.filter(r => r.ageGroup === g).length);
+    counts = [
+      data.filter(r => (r.ageGroup && r.ageGroup.includes('< 20'))).length,
+      data.filter(r => (r.ageGroup && r.ageGroup.includes('20 - 24'))).length,
+      data.filter(r => (r.ageGroup && r.ageGroup.includes('25 - 29'))).length,
+      data.filter(r => (r.ageGroup && r.ageGroup.includes('30 - 34'))).length,
+      data.filter(r => (r.ageGroup && r.ageGroup.includes('35+'))).length
+    ];
+    bgColors = ['#f43f5e', '#f97316', '#f59e0b', '#6366f1', '#10b981'];
   }
-
-  const ctx = document.getElementById('chart-breakdown-1').getContext('2d');
-  if (appState.charts.breakdown1) appState.charts.breakdown1.destroy();
 
   appState.charts.breakdown1 = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [{
+        label: isCdr ? 'Child Demises' : 'Maternal Demises',
         data: counts,
-        backgroundColor: [palette.rose, palette.orange, palette.amber, palette.indigo, palette.emerald],
+        backgroundColor: bgColors,
         borderRadius: 6
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: theme.tooltipBg,
+          titleColor: theme.tooltipText,
+          bodyColor: theme.tooltipText,
+          borderColor: theme.tooltipBorder,
+          borderWidth: 1
+        }
+      },
       scales: {
-        x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
+        x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } },
         y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
       }
     }
@@ -1353,41 +1019,70 @@ function renderAgeBreakdownChart(data, theme, isCdr) {
 }
 
 function renderSecondaryBreakdownChart(data, theme, isCdr) {
+  const canvas = document.getElementById('chart-breakdown-2');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (appState.charts.breakdown2) appState.charts.breakdown2.destroy();
+
   let labels = [];
   let counts = [];
+  let bgColors = [];
+
+  const titleEl = document.getElementById('chart-title-breakdown-2');
+  const subEl = document.getElementById('chart-sub-breakdown-2');
 
   if (isCdr) {
-    document.getElementById('chart-title-breakdown-2').innerHTML = '<i class="fas fa-balance-scale" style="color:var(--accent-emerald);"></i> Birth Weight Profile';
-    document.getElementById('chart-sub-breakdown-2').textContent = 'ELBW (<1kg), VLBW (1-1.5kg), LBW (1.5-2.5kg), Normal';
+    if (titleEl) titleEl.innerHTML = '<i class="fas fa-balance-scale" style="color:var(--accent-emerald);"></i> Birth Weight Profile';
+    if (subEl) subEl.textContent = 'ELBW (<1kg), VLBW (1–1.5kg), LBW (1.5–2.5kg), Normal';
     labels = ['<1000g', '1-1.5kg', '1.5-2.5kg', '>=2.5kg', 'Unknown'];
-    const groups = ['ELBW (<1000g)', 'VLBW (1000-1499g)', 'LBW (1500-2499g)', 'Normal (>=2500g)', 'Unknown'];
-    counts = groups.map(g => data.filter(r => r.birthWeightCategory === g).length);
+    counts = [
+      data.filter(r => (r.birthWeightCategory && r.birthWeightCategory.includes('ELBW'))).length,
+      data.filter(r => (r.birthWeightCategory && r.birthWeightCategory.includes('VLBW'))).length,
+      data.filter(r => (r.birthWeightCategory && (r.birthWeightCategory.includes('LBW') && !r.birthWeightCategory.includes('VLBW') && !r.birthWeightCategory.includes('ELBW')))).length,
+      data.filter(r => (r.birthWeightCategory && r.birthWeightCategory.includes('Normal'))).length,
+      data.filter(r => (!r.birthWeightCategory || r.birthWeightCategory === 'Unknown')).length
+    ];
+    // Colors matching screenshot: <1000g (Purple), 1-1.5kg (Sky Blue), 1.5-2.5kg (Amber), >=2.5kg (Emerald), Unknown (Rose)
+    bgColors = ['#a855f7', '#38bdf8', '#f59e0b', '#10b981', '#f43f5e'];
   } else {
-    document.getElementById('chart-title-breakdown-2').innerHTML = '<i class="fas fa-clock" style="color:var(--accent-emerald);"></i> Demise Timing in Pregnancy';
-    document.getElementById('chart-sub-breakdown-2').textContent = 'Antepartum (ANC), Intrapartum, Postpartum (PNC)';
+    if (titleEl) titleEl.innerHTML = '<i class="fas fa-clock" style="color:var(--accent-emerald);"></i> Demise Timing in Pregnancy';
+    if (subEl) subEl.textContent = 'Antepartum (ANC), Intrapartum, Postpartum (PNC)';
     labels = ['Postpartum (PNC)', 'Antepartum (ANC)', 'Intrapartum (Delivery)', 'Unspecified'];
-    counts = labels.map(l => data.filter(r => r.deathTiming === l).length);
+    counts = [
+      data.filter(r => (r.deathTiming && r.deathTiming.includes('Postpartum'))).length,
+      data.filter(r => (r.deathTiming && r.deathTiming.includes('Antepartum'))).length,
+      data.filter(r => (r.deathTiming && r.deathTiming.includes('Intrapartum'))).length,
+      data.filter(r => (!r.deathTiming || r.deathTiming.includes('Unspecified'))).length
+    ];
+    bgColors = ['#a855f7', '#38bdf8', '#f59e0b', '#f43f5e'];
   }
-
-  const ctx = document.getElementById('chart-breakdown-2').getContext('2d');
-  if (appState.charts.breakdown2) appState.charts.breakdown2.destroy();
 
   appState.charts.breakdown2 = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [{
+        label: isCdr ? 'Infants' : 'Mothers',
         data: counts,
-        backgroundColor: [palette.purple, palette.blue, palette.amber, palette.emerald, palette.rose],
+        backgroundColor: bgColors,
         borderRadius: 6
       }]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: theme.tooltipBg,
+          titleColor: theme.tooltipText,
+          bodyColor: theme.tooltipText,
+          borderColor: theme.tooltipBorder,
+          borderWidth: 1
+        }
+      },
       scales: {
-        x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
+        x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } },
         y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
       }
     }
