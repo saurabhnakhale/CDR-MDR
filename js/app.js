@@ -7,7 +7,7 @@
 const appState = {
   allData: { cdr: [], mdr: [], meta: {} },
   activeModule: 'CDR', // 'CDR' or 'MDR'
-  activeYear: 'ALL',   // 'ALL', '2023-24', '2024-25', '2025-26', '2026-27'
+  activeYears: new Set(['ALL']), // Set of selected years e.g. Set(['2023-24', '2024-25']) or Set(['ALL'])
   filteredData: [],
   currentPage: 1,
   pageSize: 12,
@@ -117,12 +117,38 @@ function setupEventListeners() {
   document.getElementById('tab-btn-cdr').addEventListener('click', () => switchModule('CDR'));
   document.getElementById('tab-btn-mdr').addEventListener('click', () => switchModule('MDR'));
 
-  // Year chips selector
+  // Multi-select Year chips selector
   document.querySelectorAll('.year-chip').forEach(btn => {
     btn.addEventListener('click', () => {
-      document.querySelectorAll('.year-chip').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-      appState.activeYear = btn.getAttribute('data-year');
+      const selectedYear = btn.getAttribute('data-year');
+      const allYears = ['2023-24', '2024-25', '2025-26', '2026-27'];
+
+      if (selectedYear === 'ALL') {
+        // Clicking "All Years" resets to ALL only
+        appState.activeYears.clear();
+        appState.activeYears.add('ALL');
+      } else {
+        // If ALL was currently selected, clear it first
+        if (appState.activeYears.has('ALL')) {
+          appState.activeYears.clear();
+        }
+
+        // Toggle the clicked year
+        if (appState.activeYears.has(selectedYear)) {
+          appState.activeYears.delete(selectedYear);
+        } else {
+          appState.activeYears.add(selectedYear);
+        }
+
+        // If no years remain selected or all 4 years are selected, revert to ALL
+        if (appState.activeYears.size === 0 || allYears.every(y => appState.activeYears.has(y))) {
+          appState.activeYears.clear();
+          appState.activeYears.add('ALL');
+        }
+      }
+
+      // Update UI chip classes
+      updateYearChipsUI();
       appState.currentPage = 1;
       applyFilters();
     });
@@ -335,7 +361,29 @@ function onDynamicFilterChange() {
   applyFilters();
 }
 
+function updateYearChipsUI() {
+  document.querySelectorAll('.year-chip').forEach(btn => {
+    const y = btn.getAttribute('data-year');
+    const isSelected = appState.activeYears.has(y);
+    if (isSelected) {
+      btn.classList.add('active');
+      if (!btn.querySelector('.chip-check') && y !== 'ALL') {
+        const icon = document.createElement('i');
+        icon.className = 'fas fa-check-circle chip-check';
+        btn.prepend(icon);
+      }
+    } else {
+      btn.classList.remove('active');
+      const icon = btn.querySelector('.chip-check');
+      if (icon) icon.remove();
+    }
+  });
+}
+
 function resetAllFilters() {
+  appState.activeYears = new Set(['ALL']);
+  updateYearChipsUI();
+
   appState.filters = {
     year: 'ALL',
     facility: 'ALL',
@@ -361,10 +409,11 @@ function applyFilters() {
   const isCdr = appState.activeModule === 'CDR';
   const rawList = isCdr ? (appState.allData.cdr || []) : (appState.allData.mdr || []);
   const f = appState.filters;
-  const activeYear = appState.activeYear;
+  const isAllYears = appState.activeYears.has('ALL');
 
   appState.filteredData = rawList.filter(r => {
-    if (activeYear !== 'ALL' && r.year !== activeYear) return false;
+    // Multi-year filter: check if record's year is among selected activeYears
+    if (!isAllYears && !appState.activeYears.has(r.year)) return false;
     if (f.facility !== 'ALL' && r.facility !== f.facility) return false;
     if (f.areaCategory !== 'ALL' && r.areaCategory !== f.areaCategory) return false;
     if (f.district !== 'ALL' && r.district !== f.district) return false;
@@ -409,7 +458,11 @@ function updateActiveChips() {
   container.innerHTML = '';
   const chips = [];
 
-  if (appState.activeYear !== 'ALL') chips.push(`Year: ${appState.activeYear}`);
+  if (!appState.activeYears.has('ALL')) {
+    const sortedYears = Array.from(appState.activeYears).sort();
+    chips.push(`Years: ${sortedYears.join(', ')}`);
+  }
+
   const isCdr = appState.activeModule === 'CDR';
   const f = appState.filters;
 
@@ -759,8 +812,12 @@ function renderFacilityChart(data, theme) {
       }
     });
   } else {
-    // Yearly breakdown Bar Chart
-    const years = ['2023-24', '2024-25', '2025-26', '2026-27'];
+    // Yearly breakdown Bar Chart (adapts dynamically to multi-selected years or all 4 years)
+    const allYears = ['2023-24', '2024-25', '2025-26', '2026-27'];
+    const years = appState.activeYears.has('ALL') 
+      ? allYears 
+      : allYears.filter(y => appState.activeYears.has(y));
+
     const datasets = facilities.map(fac => {
       const counts = years.map(y => data.filter(r => r.facility === fac && r.year === y).length);
       const color = facilityColors[fac] || palette.blue;
@@ -856,7 +913,11 @@ function renderAreaChart(data, theme) {
       }
     });
   } else {
-    const years = ['2023-24', '2024-25', '2025-26', '2026-27'];
+    const allYears = ['2023-24', '2024-25', '2025-26', '2026-27'];
+    const years = appState.activeYears.has('ALL') 
+      ? allYears 
+      : allYears.filter(y => appState.activeYears.has(y));
+
     const datasets = areas.map(a => {
       const counts = years.map(y => data.filter(r => r.areaCategory === a && r.year === y).length);
       return {

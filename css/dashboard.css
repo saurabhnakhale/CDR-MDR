@@ -390,6 +390,9 @@ body {
 }
 
 .year-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   padding: 0.4rem 0.85rem;
   border-radius: var(--radius-full);
   font-size: 0.78rem;
@@ -399,11 +402,13 @@ body {
   border: 1px solid var(--border-subtle);
   cursor: pointer;
   transition: var(--transition);
+  user-select: none;
 }
 
 .year-chip:hover {
   border-color: var(--border-hover);
   color: var(--text-primary);
+  transform: translateY(-1px);
 }
 
 .year-chip.active {
@@ -411,6 +416,12 @@ body {
   color: #0b0f19;
   border-color: var(--accent-blue);
   font-weight: 800;
+  box-shadow: 0 0 12px rgba(56, 189, 248, 0.35);
+}
+
+.year-chip .chip-check {
+  font-size: 0.68rem;
+  display: inline-block;
 }
 
 /* Filter Toolbar */
