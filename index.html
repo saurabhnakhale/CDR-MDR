@@ -130,14 +130,14 @@
       </div>
     </section>
 
-    <!-- Secondary Charts Section: MDR District Wise, Causes, and Demographics -->
-    <section class="charts-grid-two-col">
-      <!-- 3. District Wise Analysis (Special focus for MDR) -->
+    <!-- Secondary Charts Section: District Wise Analysis -->
+    <section style="margin-bottom: 0;">
+      <!-- 3. District Wise Analysis (Special focus for MDR & Regional Trends) -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title-group">
-            <h2 id="chart-title-district"><i class="fas fa-city" style="color:var(--accent-amber);"></i> District Wise Case Distribution (MDR)</h2>
-            <span id="chart-sub-district" class="chart-subtitle">Deceased cases by residence district / region</span>
+            <h2 id="chart-title-district"><i class="fas fa-city" style="color:var(--accent-amber);"></i> District Wise Case Distribution</h2>
+            <span id="chart-sub-district" class="chart-subtitle">Case volume by residence district / region</span>
           </div>
           <div class="temporal-toggle-group" id="toggle-district-temporal">
             <button class="btn-temporal active" data-period="monthly">Monthly</button>
@@ -148,17 +148,46 @@
           <canvas id="chart-district"></canvas>
         </div>
       </div>
+    </section>
 
-      <!-- 4. Clinical Cause Classification -->
+    <!-- Three Specific Charts: Place of Death, Age at Demise, Birth Weight Profile -->
+    <section class="charts-grid-three-col">
+      <!-- 4. Place of Death Donut Chart -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title-group">
-            <h2 id="chart-title-causes"><i class="fas fa-stethoscope" style="color:var(--accent-rose);"></i> Clinical Causes Classification</h2>
-            <span class="chart-subtitle">Primary assigned epidemiological conditions</span>
+            <h2><i class="fas fa-hospital-user" style="color:var(--accent-cyan);"></i> Place of Death</h2>
+            <span class="chart-subtitle">Tertiary Public vs Private vs Home</span>
           </div>
         </div>
         <div class="chart-canvas-container">
-          <canvas id="chart-causes"></canvas>
+          <canvas id="chart-pod"></canvas>
+        </div>
+      </div>
+
+      <!-- 5. Age Demographics Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2 id="chart-title-breakdown-1"><i class="fas fa-child" style="color:var(--accent-amber);"></i> Child Age at Demise</h2>
+            <span id="chart-sub-breakdown-1" class="chart-subtitle">Early Neonatal vs Late Neonatal vs Child stages</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-breakdown-1"></canvas>
+        </div>
+      </div>
+
+      <!-- 6. Birth Weight Profile Chart -->
+      <div class="chart-card">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2 id="chart-title-breakdown-2"><i class="fas fa-balance-scale" style="color:var(--accent-emerald);"></i> Birth Weight Profile</h2>
+            <span id="chart-sub-breakdown-2" class="chart-subtitle">ELBW (&lt;1kg), VLBW (1–1.5kg), LBW (1.5–2.5kg), Normal</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-breakdown-2"></canvas>
         </div>
       </div>
     </section>

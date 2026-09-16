@@ -845,8 +845,14 @@ function renderAllCharts(data) {
   // 3. District Wise Analysis (Special focus for MDR & regional surveillance)
   renderDistrictChart(data, theme);
 
-  // 4. Clinical Cause Classification Chart
-  renderCausesChart(data, theme, isCdr);
+  // 4. Place of Death Donut Chart
+  renderPodChart(data, theme, isCdr);
+
+  // 5. Child Age at Demise (or Mother Age in MDR)
+  renderAgeBreakdownChart(data, theme, isCdr);
+
+  // 6. Birth Weight Profile (or Pregnancy Demise Timing in MDR)
+  renderSecondaryBreakdownChart(data, theme, isCdr);
 }
 
 // 1. Health Facility Wise Chart (Monthly / Yearly)
