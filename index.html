@@ -93,68 +93,72 @@
       <!-- Injected dynamically based on active module -->
     </section>
 
-    <!-- Primary Charts Section -->
+    <!-- Primary Charts Section: Facility & Area Wise Analysis with Monthly/Yearly Toggle -->
     <section class="charts-grid-two-col">
+      <!-- 1. Health Facility Wise Analysis -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title-group">
-            <h2 id="chart-title-trend"><i class="fas fa-chart-line" style="color:var(--accent-indigo);"></i> Mortality Trajectory Trend</h2>
-            <span id="chart-sub-trend" class="chart-subtitle">Case volume trend across timeline</span>
+            <h2 id="chart-title-facility"><i class="fas fa-hospital-alt" style="color:var(--accent-indigo);"></i> Health Facility Wise Analysis</h2>
+            <span class="chart-subtitle">GMC, IGGMC, DAGA, NMC (Urban), Private Hospital, Home</span>
+          </div>
+          <div class="temporal-toggle-group" id="toggle-facility-temporal">
+            <button class="btn-temporal active" data-period="monthly">Monthly</button>
+            <button class="btn-temporal" data-period="yearly">Yearly</button>
           </div>
         </div>
         <div class="chart-canvas-container">
-          <canvas id="chart-trend"></canvas>
+          <canvas id="chart-facility"></canvas>
         </div>
       </div>
 
+      <!-- 2. Area Wise Analysis -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title-group">
-            <h2 id="chart-title-causes"><i class="fas fa-stethoscope" style="color:var(--accent-rose);"></i> Clinical Causes Classification</h2>
-            <span class="chart-subtitle">Grouped primary epidemiological condition clusters</span>
+            <h2 id="chart-title-area"><i class="fas fa-map-marked-alt" style="color:var(--accent-blue);"></i> Area Wise Analysis</h2>
+            <span class="chart-subtitle">NMC (Urban), Rural, Other District, Other State</span>
+          </div>
+          <div class="temporal-toggle-group" id="toggle-area-temporal">
+            <button class="btn-temporal active" data-period="monthly">Monthly</button>
+            <button class="btn-temporal" data-period="yearly">Yearly</button>
           </div>
         </div>
         <div class="chart-canvas-container">
-          <canvas id="chart-causes"></canvas>
+          <canvas id="chart-area"></canvas>
         </div>
       </div>
     </section>
 
-    <!-- Secondary Charts Section -->
-    <section class="charts-grid-three-col">
+    <!-- Secondary Charts Section: MDR District Wise, Causes, and Demographics -->
+    <section class="charts-grid-two-col">
+      <!-- 3. District Wise Analysis (Special focus for MDR) -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title-group">
-            <h2><i class="fas fa-hospital-alt" style="color:var(--accent-blue);"></i> Place of Death</h2>
-            <span class="chart-subtitle">Tertiary Public vs Private vs Home</span>
+            <h2 id="chart-title-district"><i class="fas fa-city" style="color:var(--accent-amber);"></i> District Wise Case Distribution (MDR)</h2>
+            <span id="chart-sub-district" class="chart-subtitle">Deceased cases by residence district / region</span>
+          </div>
+          <div class="temporal-toggle-group" id="toggle-district-temporal">
+            <button class="btn-temporal active" data-period="monthly">Monthly</button>
+            <button class="btn-temporal" data-period="yearly">Yearly</button>
           </div>
         </div>
         <div class="chart-canvas-container">
-          <canvas id="chart-pod"></canvas>
+          <canvas id="chart-district"></canvas>
         </div>
       </div>
 
+      <!-- 4. Clinical Cause Classification -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title-group">
-            <h2 id="chart-title-breakdown-1"><i class="fas fa-child" style="color:var(--accent-amber);"></i> Age Demographics</h2>
-            <span id="chart-sub-breakdown-1" class="chart-subtitle">Age cohort analysis</span>
+            <h2 id="chart-title-causes"><i class="fas fa-stethoscope" style="color:var(--accent-rose);"></i> Clinical Causes Classification</h2>
+            <span class="chart-subtitle">Primary assigned epidemiological conditions</span>
           </div>
         </div>
         <div class="chart-canvas-container">
-          <canvas id="chart-breakdown-1"></canvas>
-        </div>
-      </div>
-
-      <div class="chart-card">
-        <div class="chart-header">
-          <div class="chart-title-group">
-            <h2 id="chart-title-breakdown-2"><i class="fas fa-balance-scale" style="color:var(--accent-emerald);"></i> Clinical Parameter</h2>
-            <span id="chart-sub-breakdown-2" class="chart-subtitle">Birth weight / Delivery timing profile</span>
-          </div>
-        </div>
-        <div class="chart-canvas-container">
-          <canvas id="chart-breakdown-2"></canvas>
+          <canvas id="chart-causes"></canvas>
         </div>
       </div>
     </section>

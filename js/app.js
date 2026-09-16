@@ -11,32 +11,41 @@ const appState = {
   filteredData: [],
   currentPage: 1,
   pageSize: 12,
+  temporalViews: {
+    facility: 'monthly', // 'monthly' or 'yearly'
+    area: 'monthly',
+    district: 'yearly'
+  },
   filters: {
     year: 'ALL',
-    podGroup: 'ALL',
-    category: 'ALL',
+    facility: 'ALL',
+    areaCategory: 'ALL',
+    district: 'ALL',
     ageGroup: 'ALL',
     causeCategory: 'ALL',
     // CDR specific
     sex: 'ALL',
     // MDR specific
     deathTiming: 'ALL',
-    parity: 'ALL',
     search: ''
   },
-  charts: {},
-  // Published worksheets registry
-  sheetGids: {
-    'CDR 23-24': { gid: '185476409', type: 'CDR', year: '2023-24' },
-    'CDR 24-25': { gid: '1166650958', type: 'CDR', year: '2024-25' },
-    'CDR 25-26': { gid: '713354507', type: 'CDR', year: '2025-26' },
-    'CDR 26-27': { gid: '1478695836', type: 'CDR', year: '2026-27' },
-    'MDR 23-24': { gid: '2012130671', type: 'MDR', year: '2023-24' },
-    'MDR 24-25': { gid: '416132890', type: 'MDR', year: '2024-25' },
-    'MDR 25-26': { gid: '481951976', type: 'MDR', year: '2025-26' },
-    'MDR 26-27': { gid: '1127478700', type: 'MDR', year: '2026-27' }
-  },
-  baseUrl: 'https://docs.google.com/spreadsheets/d/e/2PACX-1vTYY8-MSo8PZnT8ooA_suhCPM5aXPP4pOztl0UcHJWbkdlaSYNgqdA28uzQtny5sQgwX-D0wnWnxc_b/pub?output=csv'
+  charts: {}
+};
+
+const facilityColors = {
+  'GMC': '#6366f1',
+  'IGGMC': '#38bdf8',
+  'DAGA': '#f59e0b',
+  'NMC (Urban)': '#10b981',
+  'Private Hospital': '#a855f7',
+  'Home': '#ef4444'
+};
+
+const areaColors = {
+  'NMC (Urban)': '#38bdf8',
+  'Rural': '#10b981',
+  'Other District': '#f97316',
+  'Other State': '#ec4899'
 };
 
 const palette = {
@@ -119,6 +128,11 @@ function setupEventListeners() {
     });
   });
 
+  // Temporal toggle buttons (Monthly vs Yearly)
+  setupTemporalToggle('toggle-facility-temporal', 'facility');
+  setupTemporalToggle('toggle-area-temporal', 'area');
+  setupTemporalToggle('toggle-district-temporal', 'district');
+
   // Modal handlers
   document.getElementById('modal-close-btn').addEventListener('click', closeModal);
   document.getElementById('case-modal').addEventListener('click', (e) => {
@@ -154,28 +168,274 @@ function setupEventListeners() {
   }
 }
 
+function setupTemporalToggle(containerId, chartKey) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+  const buttons = container.querySelectorAll('.btn-temporal');
+  buttons.forEach(btn => {
+    btn.addEventListener('click', () => {
+      buttons.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      appState.temporalViews[chartKey] = btn.getAttribute('data-period');
+      renderAllCharts(appState.filteredData);
+    });
+  });
+}
+
 // Switch between Child Death Review (CDR) and Maternal Death Review (MDR)
 function switchModule(mod) {
   appState.activeModule = mod;
   appState.currentPage = 1;
 
-  // Toggle button styling
   const cdrBtn = document.getElementById('tab-btn-cdr');
   const mdrBtn = document.getElementById('tab-btn-mdr');
+  const distCardTitle = document.getElementById('chart-title-district');
+  const distSub = document.getElementById('chart-sub-district');
+
   if (mod === 'CDR') {
     cdrBtn.classList.add('active');
     mdrBtn.classList.remove('active');
     document.getElementById('filter-module-label').textContent = 'CDR (Child Mortality) Surveillance Filters';
     document.getElementById('table-main-title').innerHTML = '<i class="fas fa-baby" style="color:var(--accent-blue); margin-right:6px;"></i> Child Death Review (CDR) Case Explorer';
+    if (distCardTitle) distCardTitle.innerHTML = '<i class="fas fa-city" style="color:var(--accent-amber);"></i> Area & District Distribution (CDR)';
+    if (distSub) distSub.textContent = 'Cases by residence location & district';
   } else {
     mdrBtn.classList.add('active');
     cdrBtn.classList.remove('active');
     document.getElementById('filter-module-label').textContent = 'MDR (Maternal Mortality) Surveillance Filters';
     document.getElementById('table-main-title').innerHTML = '<i class="fas fa-female" style="color:var(--accent-rose); margin-right:6px;"></i> Maternal Death Review (MDR) Case Explorer';
+    if (distCardTitle) distCardTitle.innerHTML = '<i class="fas fa-city" style="color:var(--accent-amber);"></i> District Wise Case Distribution (MDR)';
+    if (distSub) distSub.textContent = 'Maternal death distribution across Vidarbha, Maharashtra & Neighbouring States';
   }
 
   renderFilterControls();
   applyFilters();
+}
+
+// Render dynamic filter controls based on active module
+function renderFilterControls() {
+  const container = document.getElementById('filter-grid-container');
+  const isCdr = appState.activeModule === 'CDR';
+
+  container.innerHTML = `
+    <!-- 1. Health Facility Filter -->
+    <div class="filter-group">
+      <label for="filter-facility"><i class="fas fa-hospital-alt"></i> Health Facility</label>
+      <select id="filter-facility" class="filter-select">
+        <option value="ALL">All Facilities (6 Types)</option>
+        <option value="GMC">GMC (Govt Medical College)</option>
+        <option value="IGGMC">IGGMC (Mayo Hospital)</option>
+        <option value="DAGA">DAGA Memorial Hospital</option>
+        <option value="NMC (Urban)">NMC (Urban UPHC/Zones)</option>
+        <option value="Private Hospital">Private Hospitals / Nursing Homes</option>
+        <option value="Home">Home Deaths</option>
+      </select>
+    </div>
+
+    <!-- 2. Area Wise Filter -->
+    <div class="filter-group">
+      <label for="filter-area"><i class="fas fa-map-marked-alt"></i> Area Wise</label>
+      <select id="filter-area" class="filter-select">
+        <option value="ALL">All Areas (4 Categories)</option>
+        <option value="NMC (Urban)">NMC (Urban)</option>
+        <option value="Rural">Rural</option>
+        <option value="Other District">Other District</option>
+        <option value="Other State">Other State</option>
+      </select>
+    </div>
+
+    <!-- 3. District Filter (Especially for MDR) -->
+    <div class="filter-group">
+      <label for="filter-district"><i class="fas fa-city"></i> District</label>
+      <select id="filter-district" class="filter-select">
+        <option value="ALL">All Districts</option>
+        <option value="Nagpur">Nagpur</option>
+        <option value="Chandrapur">Chandrapur</option>
+        <option value="Amravati">Amravati</option>
+        <option value="Bhandara">Bhandara</option>
+        <option value="Gondia">Gondia</option>
+        <option value="Yavatmal">Yavatmal</option>
+        <option value="Gadchiroli">Gadchiroli</option>
+        <option value="Akola">Akola</option>
+        <option value="Washim">Washim</option>
+        <option value="Chhindwara (MP)">Chhindwara (MP)</option>
+        <option value="Seoni (MP)">Seoni (MP)</option>
+        <option value="Balaghat (MP)">Balaghat (MP)</option>
+      </select>
+    </div>
+
+    ${isCdr ? `
+      <div class="filter-group">
+        <label for="filter-gender"><i class="fas fa-venus-mars"></i> Child Gender</label>
+        <select id="filter-gender" class="filter-select">
+          <option value="ALL">All Genders</option>
+          <option value="MALE">Male</option>
+          <option value="FEMALE">Female</option>
+        </select>
+      </div>
+    ` : `
+      <div class="filter-group">
+        <label for="filter-timing"><i class="fas fa-hourglass-half"></i> Demise Timing</label>
+        <select id="filter-timing" class="filter-select">
+          <option value="ALL">All Timings</option>
+          <option value="Postpartum (PNC)">Postpartum (PNC)</option>
+          <option value="Antepartum (ANC)">Antepartum (ANC)</option>
+          <option value="Intrapartum (Delivery)">Intrapartum (Delivery)</option>
+        </select>
+      </div>
+    `}
+
+    <div class="filter-group">
+      <label for="filter-cause"><i class="fas fa-stethoscope"></i> Clinical Cause</label>
+      <select id="filter-cause" class="filter-select">
+        <option value="ALL">All Causes</option>
+        ${isCdr ? `
+          <option value="Sepsis & Septic Shock">Sepsis & Septic Shock</option>
+          <option value="Respiratory / RDS / Pneumonia">Respiratory / RDS / Pneumonia</option>
+          <option value="Prematurity & Low Birth Weight">Prematurity & LBW</option>
+          <option value="Congenital Anomalies & Heart Diseases">Congenital Anomalies & CHD</option>
+          <option value="Birth Asphyxia & Aspiration">Birth Asphyxia & Aspiration</option>
+          <option value="Infections & Illness">Infections & General Illness</option>
+        ` : `
+          <option value="Hemorrhage / PPH / Severe Anemia">Hemorrhage / PPH / Anemia</option>
+          <option value="Hypertensive Disorders / Eclampsia">Eclampsia / Hypertension</option>
+          <option value="Sepsis & Severe Infections">Sepsis & Severe Infections</option>
+          <option value="Cardiac Failure & Heart Disease">Cardiac Failure & Heart Disease</option>
+          <option value="Hepatic / Liver Disorders">Hepatic / Liver Disorders</option>
+        `}
+      </select>
+    </div>
+
+    <div class="filter-group">
+      <button id="btn-reset-filters" class="btn-reset-filters" title="Clear active filters">
+        <i class="fas fa-undo"></i> Reset Filters
+      </button>
+    </div>
+  `;
+
+  container.querySelectorAll('select').forEach(sel => sel.addEventListener('change', onDynamicFilterChange));
+  const resetBtn = document.getElementById('btn-reset-filters');
+  if (resetBtn) resetBtn.addEventListener('click', resetAllFilters);
+}
+
+function onDynamicFilterChange() {
+  const isCdr = appState.activeModule === 'CDR';
+  appState.filters.facility = document.getElementById('filter-facility') ? document.getElementById('filter-facility').value : 'ALL';
+  appState.filters.areaCategory = document.getElementById('filter-area') ? document.getElementById('filter-area').value : 'ALL';
+  appState.filters.district = document.getElementById('filter-district') ? document.getElementById('filter-district').value : 'ALL';
+  appState.filters.causeCategory = document.getElementById('filter-cause') ? document.getElementById('filter-cause').value : 'ALL';
+
+  if (isCdr) {
+    appState.filters.sex = document.getElementById('filter-gender') ? document.getElementById('filter-gender').value : 'ALL';
+  } else {
+    appState.filters.deathTiming = document.getElementById('filter-timing') ? document.getElementById('filter-timing').value : 'ALL';
+  }
+
+  appState.currentPage = 1;
+  applyFilters();
+}
+
+function resetAllFilters() {
+  appState.filters = {
+    year: 'ALL',
+    facility: 'ALL',
+    areaCategory: 'ALL',
+    district: 'ALL',
+    ageGroup: 'ALL',
+    causeCategory: 'ALL',
+    sex: 'ALL',
+    deathTiming: 'ALL',
+    search: ''
+  };
+
+  const sInput = document.getElementById('search-input');
+  if (sInput) sInput.value = '';
+
+  renderFilterControls();
+  appState.currentPage = 1;
+  applyFilters();
+  showToast('Filters reset', 'info');
+}
+
+function applyFilters() {
+  const isCdr = appState.activeModule === 'CDR';
+  const rawList = isCdr ? (appState.allData.cdr || []) : (appState.allData.mdr || []);
+  const f = appState.filters;
+  const activeYear = appState.activeYear;
+
+  appState.filteredData = rawList.filter(r => {
+    if (activeYear !== 'ALL' && r.year !== activeYear) return false;
+    if (f.facility !== 'ALL' && r.facility !== f.facility) return false;
+    if (f.areaCategory !== 'ALL' && r.areaCategory !== f.areaCategory) return false;
+    if (f.district !== 'ALL' && r.district !== f.district) return false;
+    if (f.causeCategory !== 'ALL' && r.causeCategory !== f.causeCategory) return false;
+
+    if (isCdr) {
+      if (f.sex !== 'ALL' && r.sex !== f.sex) return false;
+    } else {
+      if (f.deathTiming !== 'ALL' && r.deathTiming !== f.deathTiming) return false;
+    }
+
+    if (f.search) {
+      const q = f.search;
+      if (isCdr) {
+        const match = (r.childName && r.childName.toLowerCase().includes(q)) ||
+                      (r.motherName && r.motherName.toLowerCase().includes(q)) ||
+                      (r.cause && r.cause.toLowerCase().includes(q)) ||
+                      (r.village && r.village.toLowerCase().includes(q)) ||
+                      (r.facility && r.facility.toLowerCase().includes(q)) ||
+                      (r.areaCategory && r.areaCategory.toLowerCase().includes(q));
+        if (!match) return false;
+      } else {
+        const match = (r.deceasedName && r.deceasedName.toLowerCase().includes(q)) ||
+                      (r.cause && r.cause.toLowerCase().includes(q)) ||
+                      (r.address && r.address.toLowerCase().includes(q)) ||
+                      (r.district && r.district.toLowerCase().includes(q)) ||
+                      (r.facility && r.facility.toLowerCase().includes(q));
+        if (!match) return false;
+      }
+    }
+    return true;
+  });
+
+  updateActiveChips();
+  renderKpis(appState.filteredData);
+  renderAllCharts(appState.filteredData);
+  renderTable();
+}
+
+function updateActiveChips() {
+  const container = document.getElementById('filter-active-chips');
+  container.innerHTML = '';
+  const chips = [];
+
+  if (appState.activeYear !== 'ALL') chips.push(`Year: ${appState.activeYear}`);
+  const isCdr = appState.activeModule === 'CDR';
+  const f = appState.filters;
+
+  if (f.facility !== 'ALL') chips.push(`Facility: ${f.facility}`);
+  if (f.areaCategory !== 'ALL') chips.push(`Area: ${f.areaCategory}`);
+  if (f.district !== 'ALL') chips.push(`District: ${f.district}`);
+  if (isCdr && f.sex !== 'ALL') chips.push(`Sex: ${f.sex}`);
+  if (!isCdr && f.deathTiming !== 'ALL') chips.push(`Timing: ${f.deathTiming}`);
+  if (f.causeCategory !== 'ALL') chips.push(`Cause: ${f.causeCategory}`);
+  if (f.search) chips.push(`Search: "${f.search}"`);
+
+  if (chips.length === 0) {
+    const total = appState.filteredData.length;
+    container.innerHTML = `<span style="font-size:0.75rem; color:var(--text-muted);">Showing all ${total} records across health facilities & areas</span>`;
+    return;
+  }
+
+  chips.forEach(c => {
+    const el = document.createElement('span');
+    el.className = 'kpi-pill';
+    el.style.background = isCdr ? 'rgba(99, 102, 241, 0.2)' : 'rgba(244, 63, 94, 0.2)';
+    el.style.color = isCdr ? '#818cf8' : '#fb7185';
+    el.style.border = `1px solid ${isCdr ? 'rgba(99, 102, 241, 0.4)' : 'rgba(244, 63, 94, 0.4)'}`;
+    el.textContent = c;
+    container.appendChild(el);
+  });
 }
 
 // Render dynamic filter controls based on active module
@@ -576,20 +836,317 @@ function renderAllCharts(data) {
   const theme = getChartTheme();
   const isCdr = appState.activeModule === 'CDR';
 
-  // 1. Trend Chart by Year / Timeline
-  renderTrendChart(data, theme, isCdr);
+  // 1. Health Facility Wise Analysis (GMC, IGGMC, DAGA, NMC Urban, Private, Home)
+  renderFacilityChart(data, theme);
 
-  // 2. Cause Classification Chart
+  // 2. Area Wise Analysis (NMC Urban, Rural, Other District, Other State)
+  renderAreaChart(data, theme);
+
+  // 3. District Wise Analysis (Special focus for MDR & regional surveillance)
+  renderDistrictChart(data, theme);
+
+  // 4. Clinical Cause Classification Chart
   renderCausesChart(data, theme, isCdr);
+}
 
-  // 3. Place of Death Chart
-  renderPodChart(data, theme, isCdr);
+// 1. Health Facility Wise Chart (Monthly / Yearly)
+function renderFacilityChart(data, theme) {
+  const facilities = ['GMC', 'IGGMC', 'DAGA', 'NMC (Urban)', 'Private Hospital', 'Home'];
+  const mode = appState.temporalViews.facility || 'monthly';
+  const ctx = document.getElementById('chart-facility').getContext('2d');
+  if (appState.charts.facility) appState.charts.facility.destroy();
 
-  // 4. Age Demographic Breakdown
-  renderAgeBreakdownChart(data, theme, isCdr);
+  if (mode === 'monthly') {
+    const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+    const datasets = facilities.map(fac => {
+      const counts = months.map(m => {
+        return data.filter(r => r.facility === fac && r.month && r.month.toLowerCase().startsWith(m.toLowerCase())).length;
+      });
+      return {
+        label: fac,
+        data: counts,
+        backgroundColor: facilityColors[fac] || palette.blue,
+        borderRadius: 4,
+        stack: 'facilityStack'
+      };
+    });
 
-  // 5. Secondary Clinical Breakdown (Birth weight for CDR, Delivery Timing for MDR)
-  renderSecondaryBreakdownChart(data, theme, isCdr);
+    appState.charts.facility = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: months, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
+          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
+          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  } else {
+    // Yearly breakdown
+    const years = ['2023-24', '2024-25', '2025-26', '2026-27'];
+    const datasets = facilities.map(fac => {
+      const counts = years.map(y => data.filter(r => r.facility === fac && r.year === y).length);
+      return {
+        label: fac,
+        data: counts,
+        backgroundColor: facilityColors[fac] || palette.blue,
+        borderRadius: 4,
+        stack: 'facilityYearStack'
+      };
+    });
+
+    appState.charts.facility = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: years, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
+          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 11, weight: '600' } } },
+          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  }
+}
+
+// 2. Area Wise Chart (NMC Urban, Rural, Other District, Other State)
+function renderAreaChart(data, theme) {
+  const areas = ['NMC (Urban)', 'Rural', 'Other District', 'Other State'];
+  const mode = appState.temporalViews.area || 'monthly';
+  const ctx = document.getElementById('chart-area').getContext('2d');
+  if (appState.charts.area) appState.charts.area.destroy();
+
+  if (mode === 'monthly') {
+    const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+    const datasets = areas.map(a => {
+      const counts = months.map(m => {
+        return data.filter(r => r.areaCategory === a && r.month && r.month.toLowerCase().startsWith(m.toLowerCase())).length;
+      });
+      return {
+        label: a,
+        data: counts,
+        backgroundColor: areaColors[a] || palette.blue,
+        borderRadius: 4,
+        stack: 'areaStack'
+      };
+    });
+
+    appState.charts.area = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: months, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
+          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
+          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  } else {
+    const years = ['2023-24', '2024-25', '2025-26', '2026-27'];
+    const datasets = areas.map(a => {
+      const counts = years.map(y => data.filter(r => r.areaCategory === a && r.year === y).length);
+      return {
+        label: a,
+        data: counts,
+        backgroundColor: areaColors[a] || palette.blue,
+        borderRadius: 4,
+        stack: 'areaYearStack'
+      };
+    });
+
+    appState.charts.area = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: years, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
+          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 11, weight: '600' } } },
+          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  }
+}
+
+// 3. District Wise Analysis (In MDR and regional surveillance)
+function renderDistrictChart(data, theme) {
+  const mode = appState.temporalViews.district || 'yearly';
+  const ctx = document.getElementById('chart-district').getContext('2d');
+  if (appState.charts.district) appState.charts.district.destroy();
+
+  // Aggregate top districts
+  const counts = {};
+  data.forEach(r => {
+    const d = r.district || 'Nagpur';
+    counts[d] = (counts[d] || 0) + 1;
+  });
+
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+  const topDistricts = sorted.map(s => s[0]);
+
+  if (mode === 'monthly') {
+    const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+    const top5 = topDistricts.slice(0, 5);
+    const districtPalette = [palette.indigo, palette.blue, palette.rose, palette.amber, palette.emerald];
+
+    const datasets = top5.map((dist, idx) => {
+      const countsArr = months.map(m => {
+        return data.filter(r => (r.district === dist || (!r.district && dist === 'Nagpur')) && r.month && r.month.toLowerCase().startsWith(m.toLowerCase())).length;
+      });
+      return {
+        label: dist,
+        data: countsArr,
+        backgroundColor: districtPalette[idx % districtPalette.length],
+        borderRadius: 4
+      };
+    });
+
+    appState.charts.district = new Chart(ctx, {
+      type: 'bar',
+      data: { labels: months, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
+          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
+          y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  } else {
+    // Yearly / Rank-order bar chart
+    const labels = topDistricts;
+    const values = sorted.map(s => s[1]);
+
+    appState.charts.district = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Number of Cases',
+          data: values,
+          backgroundColor: [
+            palette.indigo,
+            palette.blue,
+            palette.cyan,
+            palette.purple,
+            palette.rose,
+            palette.amber,
+            palette.emerald,
+            palette.teal,
+            palette.orange,
+            '#94a3b8'
+          ],
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+        },
+        scales: {
+          x: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } }
+        }
+      }
+    });
+  }
+}
+
+// 4. Clinical Cause Classification Chart
+function renderCausesChart(data, theme, isCdr) {
+  const counts = {};
+  data.forEach(r => {
+    const c = r.causeCategory || 'Other / Unspecified';
+    counts[c] = (counts[c] || 0) + 1;
+  });
+
+  const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  const labels = sorted.map(s => s[0]);
+  const values = sorted.map(s => s[1]);
+
+  const ctx = document.getElementById('chart-causes').getContext('2d');
+  if (appState.charts.causes) appState.charts.causes.destroy();
+
+  appState.charts.causes = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Cases',
+        data: values,
+        backgroundColor: [
+          palette.rose,
+          palette.blue,
+          palette.purple,
+          palette.amber,
+          palette.emerald,
+          palette.cyan,
+          palette.orange
+        ],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: theme.tooltipBg,
+          titleColor: theme.tooltipText,
+          bodyColor: theme.tooltipText,
+          borderColor: theme.tooltipBorder,
+          borderWidth: 1
+        }
+      },
+      scales: {
+        x: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+        y: {
+          grid: { display: false },
+          ticks: {
+            color: theme.textColor,
+            font: { family: 'Plus Jakarta Sans', size: 10 },
+            callback: function(val) {
+              const label = this.getLabelForValue(val);
+              return label.length > 25 ? label.substr(0, 25) + '...' : label;
+            }
+          }
+        }
+      }
+    }
+  });
 }
 
 function renderTrendChart(data, theme, isCdr) {
@@ -885,14 +1442,13 @@ function renderTable() {
     const tr = document.createElement('tr');
     tr.onclick = () => openCaseModal(r);
 
+    const facBadge = `<span class="badge badge-${(r.facility || 'gmc').toLowerCase().replace(/[^a-z]/g, '')}">${escapeHtml(r.facility || 'Hospital')}</span>`;
+    const areaBadge = `<span class="badge badge-${(r.areaCategory || 'nmc').toLowerCase().replace(/[^a-z]/g, '')}">${escapeHtml(r.areaCategory || 'NMC (Urban)')}</span>`;
+
     if (isCdr) {
       const sexBadge = r.sex === 'FEMALE' 
         ? `<span class="badge badge-female"><i class="fas fa-venus"></i> Female</span>`
         : `<span class="badge badge-male"><i class="fas fa-mars"></i> Male</span>`;
-
-      const podBadge = r.podGroup === 'Home' 
-        ? `<span class="badge badge-home">Home</span>`
-        : `<span class="badge badge-facility">${escapeHtml(r.placeOfDeath || 'Hospital')}</span>`;
 
       tr.innerHTML = `
         <td style="font-weight:700; color:var(--text-muted);">${r.srNo || '—'}</td>
@@ -902,17 +1458,14 @@ function renderTable() {
           <div style="font-size:0.75rem; color:var(--text-secondary);">M/o ${escapeHtml(r.motherName || 'Unknown')}</div>
         </td>
         <td>${sexBadge}</td>
-        <td><span class="badge badge-neonatal">${escapeHtml(r.rawAge || 'Unknown')}</span></td>
-        <td>${podBadge}</td>
-        <td style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+        <td>${facBadge}</td>
+        <td>${areaBadge}</td>
+        <td style="max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
           <span title="${escapeHtml(r.cause)}">${escapeHtml(r.cause)}</span>
         </td>
       `;
     } else {
       const timingBadge = `<span class="badge badge-postneonatal">${escapeHtml(r.deathTiming)}</span>`;
-      const podBadge = r.podGroup === 'Home' 
-        ? `<span class="badge badge-home">Home</span>`
-        : `<span class="badge badge-facility">${escapeHtml(r.placeOfDeath || 'Hospital')}</span>`;
 
       tr.innerHTML = `
         <td style="font-weight:700; color:var(--text-muted);">${r.srNo || '—'}</td>
@@ -921,10 +1474,10 @@ function renderTable() {
           <div style="font-weight:600; color:var(--text-primary);">${escapeHtml(r.deceasedName || 'Unknown')}</div>
           <div style="font-size:0.75rem; color:var(--text-secondary);">${escapeHtml(r.address || '')}</div>
         </td>
-        <td><span class="kpi-pill">${r.age || '—'} Yrs</span></td>
-        <td>${timingBadge}</td>
-        <td>${podBadge}</td>
-        <td style="max-width:300px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+        <td><span class="kpi-pill">${escapeHtml(r.district || 'Nagpur')}</span></td>
+        <td>${facBadge}</td>
+        <td>${areaBadge}</td>
+        <td style="max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
           <span title="${escapeHtml(r.cause)}">${escapeHtml(r.cause)}</span>
         </td>
       `;
@@ -959,24 +1512,20 @@ function openCaseModal(rec) {
         <span class="detail-value">${escapeHtml(rec.year)} • ${escapeHtml(rec.month || 'N/A')}</span>
       </div>
       <div class="detail-item">
+        <span class="detail-label">Health Facility</span>
+        <span class="detail-value" style="color:var(--accent-indigo); font-weight:700;">${escapeHtml(rec.facility)} (${escapeHtml(rec.placeOfDeath || 'Hospital')})</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Area Classification</span>
+        <span class="detail-value" style="color:var(--accent-blue); font-weight:700;">${escapeHtml(rec.areaCategory)}</span>
+      </div>
+      <div class="detail-item">
         <span class="detail-label">Village / Location</span>
         <span class="detail-value">${escapeHtml(rec.village || 'Nagpur')}</span>
       </div>
       <div class="detail-item">
-        <span class="detail-label">Place of Birth</span>
-        <span class="detail-value">${escapeHtml(rec.birthPlace || 'Not recorded')}</span>
-      </div>
-      <div class="detail-item">
         <span class="detail-label">Birth Weight Recorded</span>
         <span class="detail-value">${escapeHtml(rec.rawBirthWeight || 'Not recorded')} (${escapeHtml(rec.birthWeightCategory)})</span>
-      </div>
-      <div class="detail-item">
-        <span class="detail-label">Date of Death</span>
-        <span class="detail-value">${escapeHtml(rec.deathDate || 'N/A')}</span>
-      </div>
-      <div class="detail-item modal-full-width">
-        <span class="detail-label">Place of Death</span>
-        <span class="detail-value">${escapeHtml(rec.placeOfDeath || 'N/A')} (${escapeHtml(rec.podGroup)})</span>
       </div>
       <div class="detail-item modal-full-width">
         <span class="detail-label">Epidemiological Cause Category</span>
@@ -999,32 +1548,24 @@ function openCaseModal(rec) {
         <span class="detail-value">${escapeHtml(rec.age || 'N/A')} Yrs • ${escapeHtml(rec.caste || 'Others')}</span>
       </div>
       <div class="detail-item">
-        <span class="detail-label">Address</span>
-        <span class="detail-value">${escapeHtml(rec.address || 'Nagpur')}</span>
+        <span class="detail-label">Residence District</span>
+        <span class="detail-value" style="color:var(--accent-amber); font-weight:800; font-size:1rem;">${escapeHtml(rec.district || 'Nagpur')}</span>
       </div>
       <div class="detail-item">
-        <span class="detail-label">Year & Death Date</span>
-        <span class="detail-value">${escapeHtml(rec.year)} • DOD: ${escapeHtml(rec.deathDate || 'N/A')}</span>
+        <span class="detail-label">Area Classification</span>
+        <span class="detail-value" style="color:var(--accent-blue); font-weight:700;">${escapeHtml(rec.areaCategory)}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Health Facility</span>
+        <span class="detail-value" style="color:var(--accent-indigo); font-weight:700;">${escapeHtml(rec.facility)} (${escapeHtml(rec.placeOfDeath || 'Hospital')})</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">Timing of Death</span>
-        <span class="detail-value" style="color:var(--accent-amber); font-weight:700;">${escapeHtml(rec.deathTiming)}</span>
-      </div>
-      <div class="detail-item">
-        <span class="detail-label">ANC Visits Recorded</span>
-        <span class="detail-value">${escapeHtml(rec.ancVisits || 'Not recorded')}</span>
-      </div>
-      <div class="detail-item">
-        <span class="detail-label">Parity & Gravida</span>
-        <span class="detail-value">${escapeHtml(rec.parity || 'Not recorded')}</span>
-      </div>
-      <div class="detail-item">
-        <span class="detail-label">Pregnancy Outcome</span>
-        <span class="detail-value">${escapeHtml(rec.outcome || 'N/A')}</span>
+        <span class="detail-value" style="color:var(--accent-rose); font-weight:700;">${escapeHtml(rec.deathTiming)}</span>
       </div>
       <div class="detail-item modal-full-width">
-        <span class="detail-label">Place of Death</span>
-        <span class="detail-value">${escapeHtml(rec.placeOfDeath || 'N/A')} (${escapeHtml(rec.podGroup)})</span>
+        <span class="detail-label">Full Address / Location</span>
+        <span class="detail-value">${escapeHtml(rec.address || 'Nagpur')}</span>
       </div>
       <div class="detail-item modal-full-width">
         <span class="detail-label">Cause Category</span>
