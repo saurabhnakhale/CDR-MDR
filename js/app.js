@@ -620,7 +620,7 @@ function renderAllCharts(data) {
   renderSecondaryBreakdownChart(data, theme, isCdr);
 }
 
-// Global Data Labels Plugin for Chart.js
+// Global Data Labels Plugin for Chart.js - Always Outside / Above the bars
 const chartDataLabelsPlugin = {
   id: 'customDataLabels',
   afterDatasetsDraw(chart, args, options) {
@@ -647,50 +647,37 @@ const chartDataLabelsPlugin = {
         ctx.textAlign = 'center';
         ctx.textBaseline = 'middle';
 
-        if (isLine) {
-          // Line chart: position above or below the point
-          const x = element.x;
-          let y = element.y - 12;
-          if (y < chart.chartArea.top + 10) y = element.y + 14;
-
-          const text = String(val);
-          const width = ctx.measureText(text).width + 6;
-          ctx.fillStyle = isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)';
-          ctx.beginPath();
-          ctx.roundRect(x - width / 2, y - 7, width, 14, 3);
-          ctx.fill();
-
-          ctx.fillStyle = dataset.borderColor || defaultColor;
-          ctx.fillText(text, x, y);
-        } else if (isBar && isHorizontal) {
-          // Horizontal bar chart (e.g. District top ranking)
-          const x = element.x + 14;
+        if (isBar && isHorizontal) {
+          // Horizontal bar chart: place OUTSIDE the right edge of the bar
+          const x = element.x + 12;
           const y = element.y;
           ctx.textAlign = 'left';
           ctx.fillStyle = defaultColor;
           ctx.fillText(String(val), x, y);
         } else if (isBar) {
-          // Vertical bar chart
-          const height = Math.abs(element.base - element.y);
-          if (height > 16) {
-            // Inside the bar near the top
-            ctx.fillStyle = '#ffffff';
-            ctx.shadowColor = 'rgba(0,0,0,0.5)';
-            ctx.shadowBlur = 3;
-            ctx.fillText(String(val), element.x, element.y + 10);
-          } else {
-            // Above the bar
-            ctx.fillStyle = defaultColor;
-            ctx.fillText(String(val), element.x, element.y - 8);
-          }
+          // Vertical bar chart: place OUTSIDE / ABOVE the bar
+          const x = element.x;
+          let y = element.y - 8;
+          // Ensure it doesn't clip off the top
+          if (y < chart.chartArea.top + 6) y = chart.chartArea.top + 8;
+          
+          ctx.fillStyle = defaultColor;
+          ctx.fillText(String(val), x, y);
+        } else if (isLine) {
+          // Line chart: above the point
+          const x = element.x;
+          let y = element.y - 10;
+          if (y < chart.chartArea.top + 8) y = element.y + 12;
+
+          ctx.fillStyle = dataset.borderColor || defaultColor;
+          ctx.fillText(String(val), x, y);
         } else if (isDoughnut) {
-          // Doughnut slice label: calculate middle angle
+          // Doughnut slice label: calculate middle angle outside or centered
           const angle = (element.startAngle + element.endAngle) / 2;
           const radius = (element.innerRadius + element.outerRadius) / 2;
           const x = element.x + Math.cos(angle) * radius;
           const y = element.y + Math.sin(angle) * radius;
 
-          // Only display if slice is wide enough (> 0.25 radians)
           if (element.endAngle - element.startAngle > 0.25) {
             ctx.fillStyle = '#ffffff';
             ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
@@ -707,7 +694,7 @@ const chartDataLabelsPlugin = {
 
 Chart.register(chartDataLabelsPlugin);
 
-// 1. Health Facility Wise Chart (Monthly / Yearly) - Converted to Line Chart
+// 1. Health Facility Wise Chart (Monthly / Yearly) - Bar Chart with Data Labels Above
 function renderFacilityChart(data, theme) {
   const facilities = ['GMC', 'IGGMC', 'DAGA', 'NMC (Urban)', 'Private Hospital', 'Home'];
   const mode = appState.temporalViews.facility || 'monthly';
@@ -726,27 +713,19 @@ function renderFacilityChart(data, theme) {
       return {
         label: fac,
         data: counts,
-        borderColor: color,
         backgroundColor: color,
-        borderWidth: 2.5,
-        pointRadius: 4.5,
-        pointHoverRadius: 7,
-        pointBackgroundColor: color,
-        pointBorderColor: '#fff',
-        pointBorderWidth: 1.5,
-        tension: 0.35,
-        fill: false
+        borderRadius: 4
       };
     });
 
     appState.charts.facility = new Chart(ctx, {
-      type: 'line',
+      type: 'bar',
       data: { labels: months, datasets: datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { top: 20, right: 15, left: 10, bottom: 5 }
+          padding: { top: 22, right: 10, left: 5, bottom: 5 }
         },
         plugins: {
           legend: {
@@ -754,9 +733,7 @@ function renderFacilityChart(data, theme) {
             labels: {
               color: theme.textColor,
               font: { size: 10, weight: '600' },
-              boxWidth: 12,
-              usePointStyle: true,
-              pointStyle: 'circle'
+              boxWidth: 10
             }
           },
           tooltip: {
@@ -774,6 +751,7 @@ function renderFacilityChart(data, theme) {
           },
           y: {
             beginAtZero: true,
+            grace: '12%',
             grid: { color: theme.gridColor },
             ticks: { color: theme.textColor }
           }
@@ -781,7 +759,7 @@ function renderFacilityChart(data, theme) {
       }
     });
   } else {
-    // Yearly breakdown Line Chart
+    // Yearly breakdown Bar Chart
     const years = ['2023-24', '2024-25', '2025-26', '2026-27'];
     const datasets = facilities.map(fac => {
       const counts = years.map(y => data.filter(r => r.facility === fac && r.year === y).length);
@@ -789,27 +767,19 @@ function renderFacilityChart(data, theme) {
       return {
         label: fac,
         data: counts,
-        borderColor: color,
         backgroundColor: color,
-        borderWidth: 3,
-        pointRadius: 6,
-        pointHoverRadius: 8,
-        pointBackgroundColor: color,
-        pointBorderColor: '#fff',
-        pointBorderWidth: 2,
-        tension: 0.3,
-        fill: false
+        borderRadius: 5
       };
     });
 
     appState.charts.facility = new Chart(ctx, {
-      type: 'line',
+      type: 'bar',
       data: { labels: years, datasets: datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         layout: {
-          padding: { top: 25, right: 20, left: 10, bottom: 5 }
+          padding: { top: 24, right: 15, left: 5, bottom: 5 }
         },
         plugins: {
           legend: {
@@ -817,9 +787,7 @@ function renderFacilityChart(data, theme) {
             labels: {
               color: theme.textColor,
               font: { size: 11, weight: '600' },
-              boxWidth: 12,
-              usePointStyle: true,
-              pointStyle: 'circle'
+              boxWidth: 10
             }
           },
           tooltip: {
@@ -837,6 +805,7 @@ function renderFacilityChart(data, theme) {
           },
           y: {
             beginAtZero: true,
+            grace: '14%',
             grid: { color: theme.gridColor },
             ticks: { color: theme.textColor }
           }
@@ -875,14 +844,14 @@ function renderAreaChart(data, theme) {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { top: 15 } },
+        layout: { padding: { top: 22 } },
         plugins: {
           legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
         },
         scales: {
           x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
-          y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
         }
       }
     });
@@ -904,14 +873,14 @@ function renderAreaChart(data, theme) {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { top: 20 } },
+        layout: { padding: { top: 24 } },
         plugins: {
           legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
         },
         scales: {
           x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 11, weight: '600' } } },
-          y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          y: { beginAtZero: true, grace: '14%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
         }
       }
     });
@@ -959,19 +928,19 @@ function renderDistrictChart(data, theme) {
       options: {
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { top: 15 } },
+        layout: { padding: { top: 22 } },
         plugins: {
           legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
         },
         scales: {
           x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
-          y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
         }
       }
     });
   } else {
-    // Yearly / Rank-order horizontal bar chart
+    // Yearly / Rank-order horizontal bar chart: Labels OUTSIDE the right of the bar
     const labels = topDistricts;
     const values = sorted.map(s => s[1]);
 
@@ -1001,13 +970,13 @@ function renderDistrictChart(data, theme) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 30 } },
+        layout: { padding: { right: 35 } },
         plugins: {
           legend: { display: false },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
         },
         scales: {
-          x: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          x: { beginAtZero: true, grace: '10%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
           y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } }
         }
       }
@@ -1102,7 +1071,7 @@ function renderPodChart(data, theme, isCdr) {
   });
 }
 
-// 5. Child Age at Demise (or Mother Age in MDR) Bar Chart with Data Labels
+// 5. Child Age at Demise (or Mother Age in MDR) Bar Chart with Data Labels Above Bar
 function renderAgeBreakdownChart(data, theme, isCdr) {
   const canvas = document.getElementById('chart-breakdown-1');
   if (!canvas) return;
@@ -1156,7 +1125,7 @@ function renderAgeBreakdownChart(data, theme, isCdr) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      layout: { padding: { top: 15 } },
+      layout: { padding: { top: 22 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -1169,13 +1138,13 @@ function renderAgeBreakdownChart(data, theme, isCdr) {
       },
       scales: {
         x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } },
-        y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
       }
     }
   });
 }
 
-// 6. Birth Weight Profile (or Demise Timing in MDR) Bar Chart with Data Labels
+// 6. Birth Weight Profile (or Demise Timing in MDR) Bar Chart with Data Labels Above Bar
 function renderSecondaryBreakdownChart(data, theme, isCdr) {
   const canvas = document.getElementById('chart-breakdown-2');
   if (!canvas) return;
@@ -1228,7 +1197,7 @@ function renderSecondaryBreakdownChart(data, theme, isCdr) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      layout: { padding: { top: 15 } },
+      layout: { padding: { top: 22 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -1241,7 +1210,7 @@ function renderSecondaryBreakdownChart(data, theme, isCdr) {
       },
       scales: {
         x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } },
-        y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
       }
     }
   });
