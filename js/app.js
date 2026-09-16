@@ -620,11 +620,100 @@ function renderAllCharts(data) {
   renderSecondaryBreakdownChart(data, theme, isCdr);
 }
 
-// 1. Health Facility Wise Chart (Monthly / Yearly)
+// Global Data Labels Plugin for Chart.js
+const chartDataLabelsPlugin = {
+  id: 'customDataLabels',
+  afterDatasetsDraw(chart, args, options) {
+    if (options && options.display === false) return;
+    const { ctx } = chart;
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const defaultColor = isDark ? '#f1f5f9' : '#0f172a';
+
+    chart.data.datasets.forEach((dataset, datasetIndex) => {
+      const meta = chart.getDatasetMeta(datasetIndex);
+      if (!meta || meta.hidden) return;
+
+      const isLine = chart.config.type === 'line' || meta.type === 'line';
+      const isBar = chart.config.type === 'bar' || meta.type === 'bar';
+      const isDoughnut = chart.config.type === 'doughnut' || meta.type === 'doughnut';
+      const isHorizontal = chart.options.indexAxis === 'y';
+
+      meta.data.forEach((element, index) => {
+        const val = dataset.data ? dataset.data[index] : null;
+        if (val === null || val === undefined || val === 0) return;
+
+        ctx.save();
+        ctx.font = 'bold 10px system-ui, -apple-system, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        if (isLine) {
+          // Line chart: position above or below the point
+          const x = element.x;
+          let y = element.y - 12;
+          if (y < chart.chartArea.top + 10) y = element.y + 14;
+
+          const text = String(val);
+          const width = ctx.measureText(text).width + 6;
+          ctx.fillStyle = isDark ? 'rgba(15, 23, 42, 0.85)' : 'rgba(255, 255, 255, 0.9)';
+          ctx.beginPath();
+          ctx.roundRect(x - width / 2, y - 7, width, 14, 3);
+          ctx.fill();
+
+          ctx.fillStyle = dataset.borderColor || defaultColor;
+          ctx.fillText(text, x, y);
+        } else if (isBar && isHorizontal) {
+          // Horizontal bar chart (e.g. District top ranking)
+          const x = element.x + 14;
+          const y = element.y;
+          ctx.textAlign = 'left';
+          ctx.fillStyle = defaultColor;
+          ctx.fillText(String(val), x, y);
+        } else if (isBar) {
+          // Vertical bar chart
+          const height = Math.abs(element.base - element.y);
+          if (height > 16) {
+            // Inside the bar near the top
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = 'rgba(0,0,0,0.5)';
+            ctx.shadowBlur = 3;
+            ctx.fillText(String(val), element.x, element.y + 10);
+          } else {
+            // Above the bar
+            ctx.fillStyle = defaultColor;
+            ctx.fillText(String(val), element.x, element.y - 8);
+          }
+        } else if (isDoughnut) {
+          // Doughnut slice label: calculate middle angle
+          const angle = (element.startAngle + element.endAngle) / 2;
+          const radius = (element.innerRadius + element.outerRadius) / 2;
+          const x = element.x + Math.cos(angle) * radius;
+          const y = element.y + Math.sin(angle) * radius;
+
+          // Only display if slice is wide enough (> 0.25 radians)
+          if (element.endAngle - element.startAngle > 0.25) {
+            ctx.fillStyle = '#ffffff';
+            ctx.font = 'bold 11px system-ui, -apple-system, sans-serif';
+            ctx.shadowColor = 'rgba(0,0,0,0.6)';
+            ctx.shadowBlur = 4;
+            ctx.fillText(String(val), x, y);
+          }
+        }
+        ctx.restore();
+      });
+    });
+  }
+};
+
+Chart.register(chartDataLabelsPlugin);
+
+// 1. Health Facility Wise Chart (Monthly / Yearly) - Converted to Line Chart
 function renderFacilityChart(data, theme) {
   const facilities = ['GMC', 'IGGMC', 'DAGA', 'NMC (Urban)', 'Private Hospital', 'Home'];
   const mode = appState.temporalViews.facility || 'monthly';
-  const ctx = document.getElementById('chart-facility').getContext('2d');
+  const canvas = document.getElementById('chart-facility');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (appState.charts.facility) appState.charts.facility.destroy();
 
   if (mode === 'monthly') {
@@ -633,58 +722,124 @@ function renderFacilityChart(data, theme) {
       const counts = months.map(m => {
         return data.filter(r => r.facility === fac && r.month && r.month.toLowerCase().startsWith(m.toLowerCase())).length;
       });
+      const color = facilityColors[fac] || palette.blue;
       return {
         label: fac,
         data: counts,
-        backgroundColor: facilityColors[fac] || palette.blue,
-        borderRadius: 4,
-        stack: 'facilityStack'
+        borderColor: color,
+        backgroundColor: color,
+        borderWidth: 2.5,
+        pointRadius: 4.5,
+        pointHoverRadius: 7,
+        pointBackgroundColor: color,
+        pointBorderColor: '#fff',
+        pointBorderWidth: 1.5,
+        tension: 0.35,
+        fill: false
       };
     });
 
     appState.charts.facility = new Chart(ctx, {
-      type: 'bar',
+      type: 'line',
       data: { labels: months, datasets: datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: { top: 20, right: 15, left: 10, bottom: 5 }
+        },
         plugins: {
-          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
-          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+          legend: {
+            position: 'top',
+            labels: {
+              color: theme.textColor,
+              font: { size: 10, weight: '600' },
+              boxWidth: 12,
+              usePointStyle: true,
+              pointStyle: 'circle'
+            }
+          },
+          tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipText,
+            bodyColor: theme.tooltipText,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1
+          }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
-          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          x: {
+            grid: { display: false },
+            ticks: { color: theme.textColor, font: { size: 10, weight: '600' } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: theme.gridColor },
+            ticks: { color: theme.textColor }
+          }
         }
       }
     });
   } else {
-    // Yearly breakdown
+    // Yearly breakdown Line Chart
     const years = ['2023-24', '2024-25', '2025-26', '2026-27'];
     const datasets = facilities.map(fac => {
       const counts = years.map(y => data.filter(r => r.facility === fac && r.year === y).length);
+      const color = facilityColors[fac] || palette.blue;
       return {
         label: fac,
         data: counts,
-        backgroundColor: facilityColors[fac] || palette.blue,
-        borderRadius: 4,
-        stack: 'facilityYearStack'
+        borderColor: color,
+        backgroundColor: color,
+        borderWidth: 3,
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        pointBackgroundColor: color,
+        pointBorderColor: '#fff',
+        pointBorderWidth: 2,
+        tension: 0.3,
+        fill: false
       };
     });
 
     appState.charts.facility = new Chart(ctx, {
-      type: 'bar',
+      type: 'line',
       data: { labels: years, datasets: datasets },
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: {
+          padding: { top: 25, right: 20, left: 10, bottom: 5 }
+        },
         plugins: {
-          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
-          tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
+          legend: {
+            position: 'top',
+            labels: {
+              color: theme.textColor,
+              font: { size: 11, weight: '600' },
+              boxWidth: 12,
+              usePointStyle: true,
+              pointStyle: 'circle'
+            }
+          },
+          tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipText,
+            bodyColor: theme.tooltipText,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1
+          }
         },
         scales: {
-          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 11, weight: '600' } } },
-          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          x: {
+            grid: { display: false },
+            ticks: { color: theme.textColor, font: { size: 11, weight: '600' } }
+          },
+          y: {
+            beginAtZero: true,
+            grid: { color: theme.gridColor },
+            ticks: { color: theme.textColor }
+          }
         }
       }
     });
@@ -695,7 +850,9 @@ function renderFacilityChart(data, theme) {
 function renderAreaChart(data, theme) {
   const areas = ['NMC (Urban)', 'Rural', 'Other District', 'Other State'];
   const mode = appState.temporalViews.area || 'monthly';
-  const ctx = document.getElementById('chart-area').getContext('2d');
+  const canvas = document.getElementById('chart-area');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (appState.charts.area) appState.charts.area.destroy();
 
   if (mode === 'monthly') {
@@ -708,8 +865,7 @@ function renderAreaChart(data, theme) {
         label: a,
         data: counts,
         backgroundColor: areaColors[a] || palette.blue,
-        borderRadius: 4,
-        stack: 'areaStack'
+        borderRadius: 4
       };
     });
 
@@ -719,13 +875,14 @@ function renderAreaChart(data, theme) {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: 15 } },
         plugins: {
           legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
         },
         scales: {
           x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10 } } },
-          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
         }
       }
     });
@@ -737,8 +894,7 @@ function renderAreaChart(data, theme) {
         label: a,
         data: counts,
         backgroundColor: areaColors[a] || palette.blue,
-        borderRadius: 4,
-        stack: 'areaYearStack'
+        borderRadius: 4
       };
     });
 
@@ -748,13 +904,14 @@ function renderAreaChart(data, theme) {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: 20 } },
         plugins: {
           legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
         },
         scales: {
           x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 11, weight: '600' } } },
-          y: { stacked: true, beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          y: { beginAtZero: true, grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
         }
       }
     });
@@ -764,7 +921,9 @@ function renderAreaChart(data, theme) {
 // 3. District Wise Analysis (In MDR and regional surveillance)
 function renderDistrictChart(data, theme) {
   const mode = appState.temporalViews.district || 'yearly';
-  const ctx = document.getElementById('chart-district').getContext('2d');
+  const canvas = document.getElementById('chart-district');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
   if (appState.charts.district) appState.charts.district.destroy();
 
   // Aggregate top districts
@@ -800,6 +959,7 @@ function renderDistrictChart(data, theme) {
       options: {
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { top: 15 } },
         plugins: {
           legend: { position: 'top', labels: { color: theme.textColor, font: { size: 10, weight: '600' }, boxWidth: 10 } },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
@@ -811,7 +971,7 @@ function renderDistrictChart(data, theme) {
       }
     });
   } else {
-    // Yearly / Rank-order bar chart
+    // Yearly / Rank-order horizontal bar chart
     const labels = topDistricts;
     const values = sorted.map(s => s[1]);
 
@@ -841,6 +1001,7 @@ function renderDistrictChart(data, theme) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
+        layout: { padding: { right: 30 } },
         plugins: {
           legend: { display: false },
           tooltip: { backgroundColor: theme.tooltipBg, titleColor: theme.tooltipText, bodyColor: theme.tooltipText }
@@ -854,16 +1015,13 @@ function renderDistrictChart(data, theme) {
   }
 }
 
-
-
+// 4. Place of Death Doughnut Chart with Data Labels
 function renderPodChart(data, theme, isCdr) {
   const canvas = document.getElementById('chart-pod');
   if (!canvas) return;
   const ctx = canvas.getContext('2d');
   if (appState.charts.pod) appState.charts.pod.destroy();
 
-  // Categorize into clear categories matching screenshot:
-  // Public Hospital (GMC/IGGMC/Daga), Public Hospital, Private Hospital, Home
   const counts = {};
   data.forEach(r => {
     let p = r.podGroup || r.placeOfDeath || 'Public Hospital';
@@ -882,7 +1040,6 @@ function renderPodChart(data, theme, isCdr) {
     counts[p] = (counts[p] || 0) + 1;
   });
 
-  // Ensure preferred display order
   const order = ['Public Hospital (GMC/IGGMC/Daga)', 'Public Hospital', 'Private Hospital', 'Home'];
   const labels = [];
   const values = [];
@@ -892,7 +1049,6 @@ function renderPodChart(data, theme, isCdr) {
       values.push(counts[o]);
     }
   });
-  // Add any remaining keys
   Object.keys(counts).forEach(k => {
     if (!labels.includes(k)) {
       labels.push(k);
@@ -901,10 +1057,10 @@ function renderPodChart(data, theme, isCdr) {
   });
 
   const podColors = {
-    'Public Hospital (GMC/IGGMC/Daga)': '#6366f1', // Indigo
-    'Public Hospital': '#38bdf8',                 // Cyan/Blue
-    'Private Hospital': '#f43f5e',                // Rose / Red
-    'Home': '#10b981'                             // Emerald Green
+    'Public Hospital (GMC/IGGMC/Daga)': '#6366f1',
+    'Public Hospital': '#38bdf8',
+    'Private Hospital': '#f43f5e',
+    'Home': '#10b981'
   };
 
   const bgColors = labels.map(l => podColors[l] || palette.amber);
@@ -941,11 +1097,12 @@ function renderPodChart(data, theme, isCdr) {
           borderWidth: 1
         }
       },
-      cutout: '68%'
+      cutout: '62%'
     }
   });
 }
 
+// 5. Child Age at Demise (or Mother Age in MDR) Bar Chart with Data Labels
 function renderAgeBreakdownChart(data, theme, isCdr) {
   const canvas = document.getElementById('chart-breakdown-1');
   if (!canvas) return;
@@ -970,7 +1127,6 @@ function renderAgeBreakdownChart(data, theme, isCdr) {
       data.filter(r => (r.ageGroup && (r.ageGroup.includes('1-12') || r.ageGroup.includes('Post-Neonatal')))).length,
       data.filter(r => (r.ageGroup && (r.ageGroup.includes('1 - 5') || r.ageGroup.includes('Child')))).length
     ];
-    // Colors matching screenshot: Day 0-1 (Rose), 1-7 Days (Orange), 8-28 Days (Amber), 1-12 Mos (Indigo/Blue), 1-5 Yrs (Emerald)
     bgColors = ['#f43f5e', '#f97316', '#f59e0b', '#6366f1', '#10b981'];
   } else {
     if (titleEl) titleEl.innerHTML = '<i class="fas fa-female" style="color:var(--accent-amber);"></i> Mother Age Demographics';
@@ -1000,6 +1156,7 @@ function renderAgeBreakdownChart(data, theme, isCdr) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: 15 } },
       plugins: {
         legend: { display: false },
         tooltip: {
@@ -1018,6 +1175,7 @@ function renderAgeBreakdownChart(data, theme, isCdr) {
   });
 }
 
+// 6. Birth Weight Profile (or Demise Timing in MDR) Bar Chart with Data Labels
 function renderSecondaryBreakdownChart(data, theme, isCdr) {
   const canvas = document.getElementById('chart-breakdown-2');
   if (!canvas) return;
@@ -1042,7 +1200,6 @@ function renderSecondaryBreakdownChart(data, theme, isCdr) {
       data.filter(r => (r.birthWeightCategory && r.birthWeightCategory.includes('Normal'))).length,
       data.filter(r => (!r.birthWeightCategory || r.birthWeightCategory === 'Unknown')).length
     ];
-    // Colors matching screenshot: <1000g (Purple), 1-1.5kg (Sky Blue), 1.5-2.5kg (Amber), >=2.5kg (Emerald), Unknown (Rose)
     bgColors = ['#a855f7', '#38bdf8', '#f59e0b', '#10b981', '#f43f5e'];
   } else {
     if (titleEl) titleEl.innerHTML = '<i class="fas fa-clock" style="color:var(--accent-emerald);"></i> Demise Timing in Pregnancy';
@@ -1071,6 +1228,7 @@ function renderSecondaryBreakdownChart(data, theme, isCdr) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: { padding: { top: 15 } },
       plugins: {
         legend: { display: false },
         tooltip: {
