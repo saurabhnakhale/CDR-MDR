@@ -2,6 +2,9 @@
 mingit/
 mingit.zip
 
+# Push helpers
+push_to_github.ps1
+
 # Node/V8 temporary files
 node_modules/
 .npm/
