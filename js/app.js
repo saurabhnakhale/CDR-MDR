@@ -1449,6 +1449,14 @@ function openCaseModal(rec) {
         <span class="detail-value" style="color:var(--accent-indigo); font-weight:700;">${escapeHtml(rec.facility)} (${escapeHtml(rec.placeOfDeath || 'Hospital')})</span>
       </div>
       <div class="detail-item">
+        <span class="detail-label">Year & Reporting Month</span>
+        <span class="detail-value" style="color:var(--accent-teal); font-weight:700;">${escapeHtml(rec.year)} • ${escapeHtml(rec.month || 'N/A')}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Date of Demise</span>
+        <span class="detail-value">${escapeHtml(rec.deathDate || 'N/A')}</span>
+      </div>
+      <div class="detail-item">
         <span class="detail-label">Timing of Death</span>
         <span class="detail-value" style="color:var(--accent-rose); font-weight:700;">${escapeHtml(rec.deathTiming)}</span>
       </div>
