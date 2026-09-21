@@ -726,17 +726,53 @@ const chartDataLabelsPlugin = {
           ctx.fillText(String(val), x, y);
         } else if (isDoughnut) {
           // Doughnut slice label
-          const angle = (element.startAngle + element.endAngle) / 2;
-          const radius = (element.innerRadius + element.outerRadius) / 2;
-          const x = element.x + Math.cos(angle) * radius;
-          const y = element.y + Math.sin(angle) * radius;
+          const arcAngle = element.endAngle - element.startAngle;
+          const midAngle = (element.startAngle + element.endAngle) / 2;
 
-          if (element.endAngle - element.startAngle > 0.25) {
+          if (arcAngle > 0.22) {
+            // Large slice: draw white bold number inside the slice
+            const radius = (element.innerRadius + element.outerRadius) / 2;
+            const x = element.x + Math.cos(midAngle) * radius;
+            const y = element.y + Math.sin(midAngle) * radius;
+
             ctx.fillStyle = '#ffffff';
-            ctx.font = 'bold 11px Inter, system-ui, -apple-system, sans-serif';
+            ctx.font = 'bold 12px Inter, system-ui, -apple-system, sans-serif';
             ctx.shadowColor = 'rgba(0,0,0,0.6)';
             ctx.shadowBlur = 4;
             ctx.fillText(String(val), x, y);
+          } else {
+            // Small slice (e.g. Private hospital, Home): draw callout pointer line and label outside
+            const sliceColor = dataset.backgroundColor && dataset.backgroundColor[index] ? dataset.backgroundColor[index] : defaultColor;
+            const outerR = element.outerRadius;
+            const startX = element.x + Math.cos(midAngle) * (outerR - 2);
+            const startY = element.y + Math.sin(midAngle) * (outerR - 2);
+            
+            // Pointer elbow point
+            const lineDist = 20;
+            const elbowX = element.x + Math.cos(midAngle) * (outerR + lineDist);
+            const elbowY = element.y + Math.sin(midAngle) * (outerR + lineDist);
+
+            // Horizontal elbow tail
+            const isRightSide = Math.cos(midAngle) >= 0;
+            const tailX = elbowX + (isRightSide ? 14 : -14);
+            const tailY = elbowY;
+
+            // Draw callout pointer line
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.lineTo(elbowX, elbowY);
+            ctx.lineTo(tailX, tailY);
+            ctx.strokeStyle = sliceColor;
+            ctx.lineWidth = 1.5;
+            ctx.stroke();
+
+            // Draw label pill / text
+            ctx.font = 'bold 11px Inter, system-ui, -apple-system, sans-serif';
+            ctx.textAlign = isRightSide ? 'left' : 'right';
+            ctx.textBaseline = 'middle';
+            ctx.fillStyle = sliceColor;
+            const labelX = tailX + (isRightSide ? 4 : -4);
+            ctx.fillText(String(val), labelX, tailY);
           }
         }
         ctx.restore();
@@ -1109,6 +1145,9 @@ function renderPodChart(data, theme, isCdr) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      layout: {
+        padding: { top: 20, bottom: 20, left: 20, right: 30 }
+      },
       plugins: {
         legend: {
           position: 'right',
