@@ -270,23 +270,25 @@ function renderFilterControls() {
       </select>
     </div>
 
-    <!-- 3. District Filter (Especially for MDR) -->
+    <!-- 3. District Filter -->
     <div class="filter-group">
       <label for="filter-district"><i class="fas fa-city"></i> District</label>
       <select id="filter-district" class="filter-select">
         <option value="ALL">All Districts</option>
         <option value="Nagpur">Nagpur</option>
-        <option value="Chandrapur">Chandrapur</option>
-        <option value="Amravati">Amravati</option>
         <option value="Bhandara">Bhandara</option>
         <option value="Gondia">Gondia</option>
+        <option value="Chandrapur">Chandrapur</option>
+        <option value="Wardha">Wardha</option>
         <option value="Yavatmal">Yavatmal</option>
+        <option value="Amravati">Amravati</option>
         <option value="Gadchiroli">Gadchiroli</option>
         <option value="Akola">Akola</option>
         <option value="Washim">Washim</option>
         <option value="Chhindwara (MP)">Chhindwara (MP)</option>
-        <option value="Seoni (MP)">Seoni (MP)</option>
         <option value="Balaghat (MP)">Balaghat (MP)</option>
+        <option value="Seoni (MP)">Seoni (MP)</option>
+        <option value="Betul (MP)">Betul (MP)</option>
       </select>
     </div>
 
@@ -416,7 +418,8 @@ function applyFilters() {
     if (!isAllYears && !appState.activeYears.has(r.year)) return false;
     if (f.facility !== 'ALL' && r.facility !== f.facility) return false;
     if (f.areaCategory !== 'ALL' && r.areaCategory !== f.areaCategory) return false;
-    if (f.district !== 'ALL' && r.district !== f.district) return false;
+    const rDist = r.district || 'Nagpur';
+    if (f.district !== 'ALL' && rDist !== f.district) return false;
     if (f.causeCategory !== 'ALL' && r.causeCategory !== f.causeCategory) return false;
 
     if (isCdr) {
@@ -432,6 +435,7 @@ function applyFilters() {
                       (r.motherName && r.motherName.toLowerCase().includes(q)) ||
                       (r.cause && r.cause.toLowerCase().includes(q)) ||
                       (r.village && r.village.toLowerCase().includes(q)) ||
+                      (r.district && r.district.toLowerCase().includes(q)) ||
                       (r.facility && r.facility.toLowerCase().includes(q)) ||
                       (r.areaCategory && r.areaCategory.toLowerCase().includes(q));
         if (!match) return false;
@@ -1330,8 +1334,9 @@ function renderTable() {
         <th style="width: 90px;">Year</th>
         <th>Child & Mother's Name</th>
         <th>Gender</th>
-        <th>Age</th>
-        <th>Place of Death</th>
+        <th>District</th>
+        <th>Facility</th>
+        <th>Area</th>
         <th>Clinical Diagnosis / Cause</th>
       </tr>
     `;
@@ -1341,9 +1346,10 @@ function renderTable() {
         <th style="width: 50px;">Sr #</th>
         <th style="width: 90px;">Year</th>
         <th>Deceased Mother</th>
-        <th>Age</th>
-        <th>Timing of Demise</th>
-        <th>Place of Death</th>
+        <th>Timing / Status</th>
+        <th>District</th>
+        <th>Facility</th>
+        <th>Area</th>
         <th>Clinical Cause of Death</th>
       </tr>
     `;
@@ -1362,7 +1368,7 @@ function renderTable() {
   document.getElementById('btn-next-page').disabled = appState.currentPage >= totalPages;
 
   if (pageData.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2.5rem; color:var(--text-muted);">No records found matching the active filters.</td></tr>`;
+    tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 2.5rem; color:var(--text-muted);">No records found matching the active filters.</td></tr>`;
     return;
   }
 
@@ -1372,6 +1378,7 @@ function renderTable() {
 
     const facBadge = `<span class="badge badge-${(r.facility || 'gmc').toLowerCase().replace(/[^a-z]/g, '')}">${escapeHtml(r.facility || 'Hospital')}</span>`;
     const areaBadge = `<span class="badge badge-${(r.areaCategory || 'nmc').toLowerCase().replace(/[^a-z]/g, '')}">${escapeHtml(r.areaCategory || 'NMC (Urban)')}</span>`;
+    const distBadge = `<span class="kpi-pill" style="font-size:0.75rem;">${escapeHtml(r.district || 'Nagpur')}</span>`;
 
     if (isCdr) {
       const sexBadge = r.sex === 'FEMALE' 
@@ -1386,6 +1393,7 @@ function renderTable() {
           <div style="font-size:0.75rem; color:var(--text-secondary);">M/o ${escapeHtml(r.motherName || 'Unknown')}</div>
         </td>
         <td>${sexBadge}</td>
+        <td>${distBadge}</td>
         <td>${facBadge}</td>
         <td>${areaBadge}</td>
         <td style="max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -1402,7 +1410,8 @@ function renderTable() {
           <div style="font-weight:600; color:var(--text-primary);">${escapeHtml(r.deceasedName || 'Unknown')}</div>
           <div style="font-size:0.75rem; color:var(--text-secondary);">${escapeHtml(r.address || '')}</div>
         </td>
-        <td><span class="kpi-pill">${escapeHtml(r.district || 'Nagpur')}</span></td>
+        <td>${timingBadge}</td>
+        <td>${distBadge}</td>
         <td>${facBadge}</td>
         <td>${areaBadge}</td>
         <td style="max-width:280px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
@@ -1446,6 +1455,10 @@ function openCaseModal(rec) {
       <div class="detail-item">
         <span class="detail-label">Area Classification</span>
         <span class="detail-value" style="color:var(--accent-blue); font-weight:700;">${escapeHtml(rec.areaCategory)}</span>
+      </div>
+      <div class="detail-item">
+        <span class="detail-label">Residence District</span>
+        <span class="detail-value" style="color:var(--accent-amber); font-weight:800; font-size:1rem;">${escapeHtml(rec.district || 'Nagpur')}</span>
       </div>
       <div class="detail-item">
         <span class="detail-label">Village / Location</span>

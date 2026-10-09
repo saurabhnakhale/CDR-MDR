@@ -14,8 +14,42 @@ $mdrSheets = @(
 )
 
 # Known districts in Vidarbha / Maharashtra and neighbor states
-$districtsList = @("Nagpur", "Gondia", "Gondiya", "Bhandara", "Wardha", "Chandrapur", "Gadchiroli", "Amravati", "Yavatmal", "Akola", "Washim", "Buldhana", "Chhindwara", "Balaghat", "Seoni", "Betul", "Jabalpur")
+$districtsList = @("Nagpur", "Gondia", "Gondiya", "Bhandara", "Wardha", "Chandrapur", "Gadchiroli", "Amravati", "Yavatmal", "Akola", "Washim", "Buldhana", "Chhindwara", "Chindwada", "Balaghat", "Seoni", "Betul", "Jabalpur")
 $otherStates = @("Madhya Pradesh", "MP", "M.P.", "Chhindwara", "Balaghat", "Seoni", "Betul", "Chhattisgarh", "Telangana")
+
+function Normalize-District($d) {
+    if (-not $d) { return "Nagpur" }
+    if ($d -match '(?i)Gondia|Gondiya') { return "Gondia" }
+    if ($d -match '(?i)Nagpur') { return "Nagpur" }
+    if ($d -match '(?i)Bhandara') { return "Bhandara" }
+    if ($d -match '(?i)Wardha') { return "Wardha" }
+    if ($d -match '(?i)Chandrapur') { return "Chandrapur" }
+    if ($d -match '(?i)Gadchiroli') { return "Gadchiroli" }
+    if ($d -match '(?i)Amravati') { return "Amravati" }
+    if ($d -match '(?i)Yavatmal') { return "Yavatmal" }
+    if ($d -match '(?i)Washim') { return "Washim" }
+    if ($d -match '(?i)Akola') { return "Akola" }
+    if ($d -match '(?i)Buldhana') { return "Buldhana" }
+    if ($d -match '(?i)Chhindwara|Chindwada') { return "Chhindwara (MP)" }
+    if ($d -match '(?i)Balaghat') { return "Balaghat (MP)" }
+    if ($d -match '(?i)Seoni') { return "Seoni (MP)" }
+    if ($d -match '(?i)Betul') { return "Betul (MP)" }
+    if ($d -match '(?i)Jabalpur') { return "Jabalpur (MP)" }
+    return $d.Trim()
+}
+
+function Extract-District($text, $distRaw) {
+    if ($distRaw -and $distRaw.Trim() -ne '' -and $distRaw -ne '_') {
+        return (Normalize-District $distRaw)
+    }
+    $clean = "$text"
+    foreach ($d in $districtsList) {
+        if ($clean -match "(?i)\b$d\b") {
+            return (Normalize-District $d)
+        }
+    }
+    return "Nagpur"
+}
 
 function Classify-Facility($pod, $block, $birthPlace) {
     $text = "$pod $block $birthPlace".ToUpper()
@@ -39,7 +73,7 @@ function Classify-Area($address, $village, $areaType, $district) {
     $text = "$address $village $areaType $district".ToUpper()
     
     # Check Other State
-    if ($text -match 'MADHYA PRADESH|\bMP\b|\bM\.P\b|CHHINDWARA|BALAGHAT|SEONI|BETUL|CHHATTISGARH|TELANGANA') {
+    if ($text -match 'MADHYA PRADESH|\bMP\b|\bM\.P\b|CHHINDWARA|BALAGHAT|SEONI|BETUL|JABALPUR|CHHATTISGARH|TELANGANA') {
         return "Other State"
     }
     # Check Other District
@@ -180,8 +214,11 @@ foreach ($s in $cdrSheets) {
             if (-not $village) { $village = $r.Village }
             $areaType = ($r.'Urban/Rural/ Other State/ Other Dist.' -replace '\r|\n', ' ').Trim()
 
+            # District extraction for CDR
+            $district = Extract-District "$village $areaType $block" ""
+
             # Area exact 4 classifications: NMC (Urban), Rural, Other District, Other State
-            $areaCategory = Classify-Area "" $village $areaType ""
+            $areaCategory = Classify-Area "" $village $areaType $district
 
             $allCdr += [PSCustomObject]@{
                 recordType = "CDR"
@@ -198,6 +235,7 @@ foreach ($s in $cdrSheets) {
                 ageDays = $ageDays
                 ageGroup = $ageGroup
                 village = ($village -replace '\r|\n', ' ').Trim()
+                district = $district
                 areaType = $areaType
                 areaCategory = $areaCategory
                 facility = $facility
@@ -273,34 +311,7 @@ foreach ($s in $mdrSheets) {
                 # Extract District for MDR
                 $addr = ($m.Address -replace '\r|\n', ' ').Trim()
                 $distRaw = ($m.'District as per Residence' -replace '\r|\n', ' ').Trim()
-                $district = "Nagpur"
-
-                if ($distRaw -and $distRaw.Trim() -ne '' -and $distRaw -ne '_') {
-                    $district = $distRaw.Trim()
-                } else {
-                    # Search inside Address
-                    foreach ($dName in $districtsList) {
-                        if ($addr -match "(?i)\b$dName\b") {
-                            $district = $dName
-                            break
-                        }
-                    }
-                }
-                # Normalize district naming
-                if ($district -match '(?i)Gondia|Gondiya') { $district = "Gondia" }
-                elseif ($district -match '(?i)Nagpur') { $district = "Nagpur" }
-                elseif ($district -match '(?i)Bhandara') { $district = "Bhandara" }
-                elseif ($district -match '(?i)Wardha') { $district = "Wardha" }
-                elseif ($district -match '(?i)Chandrapur') { $district = "Chandrapur" }
-                elseif ($district -match '(?i)Gadchiroli') { $district = "Gadchiroli" }
-                elseif ($district -match '(?i)Amravati') { $district = "Amravati" }
-                elseif ($district -match '(?i)Yavatmal') { $district = "Yavatmal" }
-                elseif ($district -match '(?i)Washim') { $district = "Washim" }
-                elseif ($district -match '(?i)Akola') { $district = "Akola" }
-                elseif ($district -match '(?i)Chhindwara') { $district = "Chhindwara (MP)" }
-                elseif ($district -match '(?i)Balaghat') { $district = "Balaghat (MP)" }
-                elseif ($district -match '(?i)Seoni') { $district = "Seoni (MP)" }
-                elseif ($district -match '(?i)Betul') { $district = "Betul (MP)" }
+                $district = Extract-District $addr $distRaw
 
                 # Area Classification
                 $areaCategory = Classify-Area $addr "" "" $district
