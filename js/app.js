@@ -90,7 +90,7 @@ function updateThemeIcon(t) {
 async function loadAllDatasets() {
   showToast('Loading data from all 8 worksheets...', 'info');
   try {
-    const res = await fetch('data/dataset_all.json');
+    const res = await fetch(`data/dataset_all.json?t=${new Date().getTime()}`);
     if (!res.ok) throw new Error('dataset_all.json could not be loaded');
     const data = await res.json();
     appState.allData = data;
