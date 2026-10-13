@@ -1,4 +1,17 @@
 # Enhanced Multi-Worksheet Unified Processor for CDR & MDR
+Add-Type -AssemblyName Microsoft.VisualBasic
+
+function Parse-CsvFields($line) {
+    try {
+        $parser = New-Object Microsoft.VisualBasic.FileIO.TextFieldParser([System.IO.StringReader]::new($line))
+        $parser.SetDelimiters(",")
+        $parser.HasFieldsEnclosedInQuotes = $true
+        return $parser.ReadFields()
+    } catch {
+        return $null
+    }
+}
+
 $cdrSheets = @(
     @{ Name = "CDR 23-24"; Gid = "185476409"; Year = "2023-24" },
     @{ Name = "CDR 24-25"; Gid = "1166650958"; Year = "2024-25" },
@@ -123,6 +136,44 @@ function Parse-MdrReportingMonth($dodStr, $reviewStr, $defaultMonth = "Apr") {
     }
 
     return $defaultMonth
+}
+
+function Classify-MdrCause($clinical, $desc) {
+    $text = "$clinical $desc".ToUpper()
+    
+    # 1. Hemorrhage / PPH / APH / Obstetric Bleeding
+    if ($text -match 'HEMMORAHAGE|HEMORRHAGE|HAEMORRHAGE|BLEED|PPH\b|APH\b|ABRUPTIO|PLACENTA PREVIA|RETAINED PLACENTA|HYPOVOLEMIC SHOCK|BLOOD REACTION') {
+        return "Hemorrhage / PPH / Obstetric Bleeding"
+    }
+    # 2. Hypertensive Disorders / Eclampsia / Pre-Eclampsia / PIH / HELLP
+    if ($text -match 'ECLAMPSIA|ECLAMPSI|PRE-ECLAMPSIA|PRE ECLAMPSIA|PREECLAMPSIA|HYPERTENSION|HYPERTENSHION|PIH\b|HELLP\b|PRES\b') {
+        return "Hypertensive Disorders / Eclampsia"
+    }
+    # 3. Sepsis & Septic Shock / Severe Infections / Peritonitis
+    if ($text -match 'SEPSIS|SEPTIC|SEPTICAEMIA|SEPTICEMIA|PERITONITIS|MENINGITIS|ABSCESS') {
+        return "Sepsis & Severe Infections"
+    }
+    # 4. Heart Disease / Cardiac Failure / Cardiomyopathy / Pulmonary Edema / Embolism
+    if ($text -match 'HEART|CARDIAC|CARDIOMYOPATHY|MYOCARDITIS|PULMONARY EMBOLIS|PULMONARY EDEMA|PULMONARY ODEMA|AMINOTIC FLUID EMBOLIS|AMNIOTIC|DVT\b') {
+        return "Cardiac Failure & Pulmonary Embolism"
+    }
+    # 5. Hepatic / Liver / Jaundice
+    if ($text -match 'HEPATIC|HEPATITIS|LIVER|JAUNDICE|AFLP\b') {
+        return "Hepatic / Liver Disorders"
+    }
+    # 6. Sickle Cell Disease & Severe Anemia
+    if ($text -match 'SICKLE|ANAEMIA|ANEMIA') {
+        return "Sickle Cell Disease & Severe Anemia"
+    }
+    # 7. Respiratory / Pneumonia / TB / ARDS
+    if ($text -match 'PNEUMONIA|T\.B|TUBERCUL|RESPIRATORY|ARDS|LUNG|COV') {
+        return "Respiratory Infections / TB / Pneumonia"
+    }
+    # 8. Renal Failure
+    if ($text -match 'RENAL|KIDNEY|AKI\b|NEPHRITIS') {
+        return "Renal / Kidney Disorders"
+    }
+    return "Other Medical Causes / Awaited"
 }
 
 $allCdr = @()
@@ -258,93 +309,104 @@ $allMdr = @()
 foreach ($s in $mdrSheets) {
     $filePath = "d:\Dashboard\AIl Dashboard\CDR-MDR\data\sheet_$($s.Gid).csv"
     if (Test-Path $filePath) {
-        $rawLines = Get-Content -Path $filePath
-        $headerLine = -1
-        for ($i = 0; $i -lt [math]::Min(15, $rawLines.Count); $i++) {
-            if ($rawLines[$i] -match 'Name of Deceased Women') {
-                $headerLine = $i
-                break
+        $lines = Get-Content -Path $filePath
+        for ($i = 0; $i -lt $lines.Count; $i++) {
+            $fields = Parse-CsvFields $lines[$i]
+            if (-not $fields -or $fields.Count -lt 15) { continue }
+            
+            $srNo = $fields[0].Trim()
+            $name = $fields[1].Trim()
+            # Only process data rows having numeric Sr. No. and valid patient name (not sub-header rows like 1, 2, 3...)
+            if (-not ($srNo -match '^\d+$') -or -not $name -or $name -eq '' -or $name -match '^Name' -or ($name -match '^\d+$')) { continue }
+
+            $age = if ($fields.Count -gt 2) { ($fields[2] -replace '\r|\n', ' ').Trim() } else { "" }
+            $ageNum = 0
+            if ($age -match '(\d+)') { $ageNum = [int]$matches[1] }
+
+            $ageGroup = "Unknown"
+            if ($ageNum -gt 0) {
+                if ($ageNum -lt 20) { $ageGroup = "< 20 Yrs (Adolescent)" }
+                elseif ($ageNum -le 24) { $ageGroup = "20 - 24 Yrs" }
+                elseif ($ageNum -le 29) { $ageGroup = "25 - 29 Yrs" }
+                elseif ($ageNum -le 34) { $ageGroup = "30 - 34 Yrs" }
+                else { $ageGroup = "35+ Yrs" }
             }
-        }
-        if ($headerLine -ge 0) {
-            $mdrContent = ($rawLines[$headerLine..($rawLines.Count - 1)]) -join "`n"
-            $mdrRows = ConvertFrom-Csv -InputObject $mdrContent -ErrorAction SilentlyContinue
 
-            foreach ($m in $mdrRows) {
-                $name = $m.'Name of Deceased Women'
-                if (-not $name -or $name.Trim() -eq '' -or $name -match '^\d+$' -or $name -match '^Name') { continue }
+            $addr = if ($fields.Count -gt 3) { ($fields[3] -replace '\r|\n', ' ').Trim() } else { "" }
+            $caste = if ($fields.Count -gt 4) { (($fields[4] -replace '\r|\n', ' ').Trim()).ToUpper() } else { "OTHER" }
+            $dod = if ($fields.Count -gt 6) { ($fields[6] -replace '\r|\n', ' ').Trim() } else { "" }
+            $pod = if ($fields.Count -gt 8) { ($fields[8] -replace '\r|\n', ' ').Trim() } else { "" }
+            $facility = Classify-Facility $pod "" ""
 
-                $age = ($m.Age -replace '\r|\n', ' ').Trim()
-                $ageNum = 0
-                if ($age -match '(\d+)') { $ageNum = [int]$matches[1] }
+            # Timing of Demise: Col index 19
+            $timing = if ($fields.Count -gt 19) { ($fields[19] -replace '\r|\n', ' ').Trim().ToUpper() } else { "" }
+            $timingGroup = "Other / Unspecified"
+            if ($timing -match 'PNC') { $timingGroup = "Postpartum (PNC)" }
+            elseif ($timing -match 'ANC') { $timingGroup = "Antepartum (ANC)" }
+            elseif ($timing -match 'INTRA') { $timingGroup = "Intrapartum (Delivery)" }
 
-                $ageGroup = "Unknown"
-                if ($ageNum -gt 0) {
-                    if ($ageNum -lt 20) { $ageGroup = "< 20 Yrs (Adolescent)" }
-                    elseif ($ageNum -le 24) { $ageGroup = "20 - 24 Yrs" }
-                    elseif ($ageNum -le 29) { $ageGroup = "25 - 29 Yrs" }
-                    elseif ($ageNum -le 34) { $ageGroup = "30 - 34 Yrs" }
-                    else { $ageGroup = "35+ Yrs" }
-                }
+            # Cause description: Col index 20
+            $causeDesc = if ($fields.Count -gt 20) { ($fields[20] -replace '\r|\n', ' ').Trim() } else { "" }
 
-                $cause = $m.'Clinical cause of death (ICD10)'
-                if (-not $cause) { $cause = $m.'Cause of Death' }
-                $cause = ($cause -replace '\r|\n', ' ').Trim()
+            # Type of delay: Col index 21
+            $delayType = if ($fields.Count -gt 21) { ($fields[21] -replace '\r|\n', ' ').Trim() } else { "" }
 
-                $cu = $cause.ToUpper()
-                $causeCategory = "Other Medical Conditions"
-                if ($cu -match 'HEMORRHAGE|BLEED|PPH|APH|ANEMIA|SHOCK') { $causeCategory = "Hemorrhage / PPH / Severe Anemia" }
-                elseif ($cu -match 'ECLAMPSIA|PREECLAMPSIA|HYPERTENSION|BP') { $causeCategory = "Hypertensive Disorders / Eclampsia" }
-                elseif ($cu -match 'SEPSIS|SEPTIC|INFECTION|PNEUMONIA|COVID|MENINGITIS') { $causeCategory = "Sepsis & Severe Infections" }
-                elseif ($cu -match 'HEART|CARDIAC|CARDIOMYOPATHY|ARREST') { $causeCategory = "Cardiac Failure & Heart Disease" }
-                elseif ($cu -match 'HEPATIC|LIVER|JAUNDICE') { $causeCategory = "Hepatic / Liver Disorders" }
+            # Review date by HOM: Col index 22
+            $reviewDate = if ($fields.Count -gt 22) { ($fields[22] -replace '\r|\n', ' ').Trim() } else { "" }
 
-                $timing = ($m.'Death during ANC / Intranatal / PNC' -replace '\r|\n', ' ').Trim().ToUpper()
-                $timingGroup = "Other / Unspecified"
-                if ($timing -match 'PNC') { $timingGroup = "Postpartum (PNC)" }
-                elseif ($timing -match 'ANC') { $timingGroup = "Antepartum (ANC)" }
-                elseif ($timing -match 'INTRA') { $timingGroup = "Intrapartum (Delivery)" }
+            # District as per residence: Col index 25
+            $distRaw = if ($fields.Count -gt 25) { ($fields[25] -replace '\r|\n', ' ').Trim() } else { "" }
+            $district = Extract-District $addr $distRaw
 
-                $pod = ($m.'Place of Death SC/PHC/RH/SDH/GH/WH/DH/GMC/Private Medical College/Corporation Hospital/Private Hospital/Home/On Road' -replace '\r|\n', ' ').Trim()
-                $facility = Classify-Facility $pod "" ""
+            # Area Classification
+            $areaCategory = Classify-Area $addr "" "" $district
 
-                # Extract District for MDR
-                $addr = ($m.Address -replace '\r|\n', ' ').Trim()
-                $distRaw = ($m.'District as per Residence' -replace '\r|\n', ' ').Trim()
-                $district = Extract-District $addr $distRaw
+            # Last reported Haemoglobin: Col index 35
+            $haemoglobin = if ($fields.Count -gt 35) { ($fields[35] -replace '\r|\n', ' ').Trim() } else { "" }
 
-                # Area Classification
-                $areaCategory = Classify-Area $addr "" "" $district
+            # Clinical Cause (ICD10): Col index 36
+            $clinicalCause = if ($fields.Count -gt 36) { ($fields[36] -replace '\r|\n', ' ').Trim() } else { "" }
 
-                # Extract reporting month for MDR from Date of Death or Date of Review
-                $dod = ($m.'Date of Death' -replace '\r|\n', ' ').Trim()
-                $reviewDate = ($m.'Date of Review by HOM' -replace '\r|\n', ' ').Trim()
-                $month = Parse-MdrReportingMonth $dod $reviewDate "Apr"
+            # Primary display cause: prefer Clinical ICD10, fallback to clinical description
+            $primaryCause = $clinicalCause
+            if (-not $primaryCause -or $primaryCause -eq '' -or $primaryCause -eq '36') {
+                $primaryCause = $causeDesc
+            }
+            if (-not $primaryCause -or $primaryCause -eq '') {
+                $primaryCause = "Cause Under Investigation / Awaited"
+            }
 
-                $allMdr += [PSCustomObject]@{
-                    recordType = "MDR"
-                    year = $s.Year
-                    sheetName = $s.Name
-                    srNo = $m.'Sr. No.'
-                    deceasedName = ($name -replace '\r|\n', ' ').Trim()
-                    age = $age
-                    ageNum = $ageNum
-                    ageGroup = $ageGroup
-                    address = $addr
-                    district = $district
-                    areaCategory = $areaCategory
-                    facility = $facility
-                    caste = (($m.'Caste(SC/ST/Others)' -replace '\r|\n', ' ').Trim()).ToUpper()
-                    deathDate = $dod
-                    month = $month
-                    placeOfDeath = $pod
-                    podGroup = $facility
-                    deathTiming = $timingGroup
-                    cause = $cause
-                    causeCategory = $causeCategory
-                    delayType = ($m.'Type of Delay 1/2/3' -replace '\r|\n', ' ').Trim()
-                    haemoglobin = ($m.'Last reported Haemoglobin (Hb)' -replace '\r|\n', ' ').Trim()
-                }
+            # Standardized Clinical Cause Category
+            $causeCategory = Classify-MdrCause $clinicalCause $causeDesc
+
+            # Reporting Month
+            $month = Parse-MdrReportingMonth $dod $reviewDate "Apr"
+
+            $allMdr += [PSCustomObject]@{
+                recordType = "MDR"
+                year = $s.Year
+                sheetName = $s.Name
+                srNo = $srNo
+                deceasedName = $name
+                age = $age
+                ageNum = $ageNum
+                ageGroup = $ageGroup
+                address = $addr
+                district = $district
+                areaCategory = $areaCategory
+                facility = $facility
+                caste = $caste
+                deathDate = $dod
+                month = $month
+                placeOfDeath = $pod
+                podGroup = $facility
+                deathTiming = $timingGroup
+                cause = $primaryCause
+                clinicalCause = $clinicalCause
+                causeDescription = $causeDesc
+                causeCategory = $causeCategory
+                delayType = $delayType
+                haemoglobin = $haemoglobin
             }
         }
     }

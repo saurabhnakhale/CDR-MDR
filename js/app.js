@@ -325,11 +325,14 @@ function renderFilterControls() {
           <option value="Birth Asphyxia & Aspiration">Birth Asphyxia & Aspiration</option>
           <option value="Infections & Illness">Infections & General Illness</option>
         ` : `
-          <option value="Hemorrhage / PPH / Severe Anemia">Hemorrhage / PPH / Anemia</option>
-          <option value="Hypertensive Disorders / Eclampsia">Eclampsia / Hypertension</option>
           <option value="Sepsis & Severe Infections">Sepsis & Severe Infections</option>
-          <option value="Cardiac Failure & Heart Disease">Cardiac Failure & Heart Disease</option>
+          <option value="Hypertensive Disorders / Eclampsia">Hypertensive Disorders / Eclampsia</option>
+          <option value="Hemorrhage / PPH / Obstetric Bleeding">Hemorrhage / PPH / Bleeding</option>
+          <option value="Cardiac Failure & Pulmonary Embolism">Cardiac Failure & Embolism</option>
+          <option value="Respiratory Infections / TB / Pneumonia">Respiratory / TB / Pneumonia</option>
+          <option value="Sickle Cell Disease & Severe Anemia">Sickle Cell & Severe Anemia</option>
           <option value="Hepatic / Liver Disorders">Hepatic / Liver Disorders</option>
+          <option value="Other Medical Causes / Awaited">Other Causes / Awaited</option>
         `}
       </select>
     </div>
@@ -1274,50 +1277,113 @@ function renderSecondaryBreakdownChart(data, theme, isCdr) {
       data.filter(r => (!r.birthWeightCategory || r.birthWeightCategory === 'Unknown')).length
     ];
     bgColors = ['#a855f7', '#38bdf8', '#f59e0b', '#10b981', '#f43f5e'];
-  } else {
-    if (titleEl) titleEl.innerHTML = '<i class="fas fa-clock" style="color:var(--accent-emerald);"></i> Demise Timing in Pregnancy';
-    if (subEl) subEl.textContent = 'Antepartum (ANC), Intrapartum, Postpartum (PNC)';
-    labels = ['Postpartum (PNC)', 'Antepartum (ANC)', 'Intrapartum (Delivery)', 'Unspecified'];
-    counts = [
-      data.filter(r => (r.deathTiming && r.deathTiming.includes('Postpartum'))).length,
-      data.filter(r => (r.deathTiming && r.deathTiming.includes('Antepartum'))).length,
-      data.filter(r => (r.deathTiming && r.deathTiming.includes('Intrapartum'))).length,
-      data.filter(r => (!r.deathTiming || r.deathTiming.includes('Unspecified'))).length
-    ];
-    bgColors = ['#a855f7', '#38bdf8', '#f59e0b', '#f43f5e'];
-  }
 
-  appState.charts.breakdown2 = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: labels,
-      datasets: [{
-        label: isCdr ? 'Infants' : 'Mothers',
-        data: counts,
-        backgroundColor: bgColors,
-        borderRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      layout: { padding: { top: 22 } },
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          backgroundColor: theme.tooltipBg,
-          titleColor: theme.tooltipText,
-          bodyColor: theme.tooltipText,
-          borderColor: theme.tooltipBorder,
-          borderWidth: 1
-        }
+    appState.charts.breakdown2 = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Infants',
+          data: counts,
+          backgroundColor: bgColors,
+          borderRadius: 6
+        }]
       },
-      scales: {
-        x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } },
-        y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 22 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipText,
+            bodyColor: theme.tooltipText,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } },
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
       }
-    }
-  });
+    });
+  } else {
+    // MDR: Clinical Cause of Death Breakdown
+    if (titleEl) titleEl.innerHTML = '<i class="fas fa-stethoscope" style="color:var(--accent-emerald);"></i> Clinical Cause of Death';
+    if (subEl) subEl.textContent = 'Maternal death distribution across clinical etiologies';
+
+    const causeCategories = [
+      { name: 'Sepsis & Severe Infections', short: 'Sepsis / Infections', color: '#f43f5e' },
+      { name: 'Hypertensive Disorders / Eclampsia', short: 'Eclampsia / PIH', color: '#f59e0b' },
+      { name: 'Hemorrhage / PPH / Obstetric Bleeding', short: 'Hemorrhage / PPH', color: '#ef4444' },
+      { name: 'Cardiac Failure & Pulmonary Embolism', short: 'Cardiac / Embolism', color: '#6366f1' },
+      { name: 'Respiratory Infections / TB / Pneumonia', short: 'Respiratory / TB', color: '#38bdf8' },
+      { name: 'Sickle Cell Disease & Severe Anemia', short: 'Sickle Cell / Anemia', color: '#a855f7' },
+      { name: 'Hepatic / Liver Disorders', short: 'Hepatic / Liver', color: '#10b981' },
+      { name: 'Other Medical Causes / Awaited', short: 'Other / Awaited', color: '#94a3b8' }
+    ];
+
+    const causeCounts = {};
+    data.forEach(r => {
+      const cat = r.causeCategory || 'Other Medical Causes / Awaited';
+      causeCounts[cat] = (causeCounts[cat] || 0) + 1;
+    });
+
+    const activeList = causeCategories
+      .map(c => ({
+        label: c.short,
+        full: c.name,
+        count: causeCounts[c.name] || 0,
+        color: c.color
+      }))
+      .filter(c => c.count > 0 || data.length === 0)
+      .sort((a, b) => b.count - a.count);
+
+    labels = activeList.map(c => c.label);
+    counts = activeList.map(c => c.count);
+    bgColors = activeList.map(c => c.color);
+
+    appState.charts.breakdown2 = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Maternal Deaths',
+          data: counts,
+          backgroundColor: bgColors,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 35 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipText,
+            bodyColor: theme.tooltipText,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1,
+            callbacks: {
+              title: (items) => {
+                const idx = items[0].dataIndex;
+                return activeList[idx] ? activeList[idx].full : labels[idx];
+              }
+            }
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } }
+        }
+      }
+    });
+  }
 }
 
 // Table rendering and modal interactions
