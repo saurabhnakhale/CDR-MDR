@@ -1,4 +1,4 @@
-/**
+﻿/**
  * Child Death Review (CDR) & Maternal Death Review (MDR) Unified Dashboard
  * Across all 8 worksheets (2023-24, 2024-25, 2025-26, 2026-27)
  */
@@ -1939,7 +1939,11 @@ function debounce(fn, wait) {
 
 /* ==========================================================================
    Surveillance Reports Generator & 1-Click Word / PDF Exporters
+   (Generates Complete Dashboard Layout with KPIs & Graphical Visualizations)
    ========================================================================== */
+
+// Report charts instances store
+const reportCharts = {};
 
 function setupReportEventListeners() {
   const modSel = document.getElementById('report-module-select');
@@ -1995,9 +1999,20 @@ function getReportFilteredData() {
   return { selectedMod, cadence, year, month, cdrList, mdrList };
 }
 
+function destroyReportCharts() {
+  Object.keys(reportCharts).forEach(key => {
+    if (reportCharts[key]) {
+      try { reportCharts[key].destroy(); } catch (e) {}
+      delete reportCharts[key];
+    }
+  });
+}
+
 function generateSurveillanceReport() {
   const container = document.getElementById('report-document-container');
   if (!container) return;
+
+  destroyReportCharts();
 
   const { selectedMod, cadence, year, month, cdrList, mdrList } = getReportFilteredData();
 
@@ -2006,417 +2021,998 @@ function generateSurveillanceReport() {
   });
 
   const periodLabel = cadence === 'monthly'
-    ? `Monthly Review: ${month} (${year === 'ALL' ? 'All Years' : year})`
-    : `Annual Review: ${year === 'ALL' ? 'All Consolidated Years (2023–2027)' : `Fiscal Year ${year}`}`;
+    ? `Monthly Surveillance Review: ${month} (${year === 'ALL' ? 'All Years' : year})`
+    : `Annual Surveillance Review: ${year === 'ALL' ? 'All Consolidated Years (2023–2027)' : `Fiscal Year ${year}`}`;
 
   let docHtml = '';
 
   if (selectedMod === 'CDR') {
-    docHtml = buildCdrReportHtml(cdrList, periodLabel, generatedDate);
+    docHtml = buildCdrReportDashboardHtml(cdrList, periodLabel, generatedDate, cadence);
   } else if (selectedMod === 'MDR') {
-    docHtml = buildMdrReportHtml(mdrList, periodLabel, generatedDate);
+    docHtml = buildMdrReportDashboardHtml(mdrList, periodLabel, generatedDate, cadence);
   } else {
-    docHtml = buildCombinedReportHtml(cdrList, mdrList, periodLabel, generatedDate);
+    docHtml = buildCombinedReportDashboardHtml(cdrList, mdrList, periodLabel, generatedDate, cadence);
   }
 
   container.innerHTML = docHtml;
+
+  // Initialize and render live Chart.js charts inside report preview container
+  requestAnimationFrame(() => {
+    if (selectedMod === 'CDR') {
+      renderCdrReportCharts(cdrList, cadence);
+    } else if (selectedMod === 'MDR') {
+      renderMdrReportCharts(mdrList, cadence);
+    } else {
+      renderCombinedReportCharts(cdrList, mdrList, cadence);
+    }
+  });
+
   const statusEl = document.getElementById('report-preview-status');
   if (statusEl) {
     const count = selectedMod === 'CDR' ? cdrList.length : (selectedMod === 'MDR' ? mdrList.length : cdrList.length + mdrList.length);
-    statusEl.textContent = `Ready • ${count} Records Included`;
+    statusEl.textContent = `Ready • ${count} Records • Graphical Dashboard Mode`;
   }
 }
 
-function buildCdrReportHtml(list, periodLabel, generatedDate) {
+// Light theme configuration specifically tailored for printable reports and export docs
+function getReportChartTheme() {
+  return {
+    textColor: '#1e293b',
+    gridColor: 'rgba(0, 0, 0, 0.08)',
+    tooltipBg: '#0f172a',
+    tooltipText: '#ffffff',
+    tooltipBorder: 'rgba(0, 0, 0, 0.2)'
+  };
+}
+
+/* --------------------------------------------------------------------------
+   CDR Report Dashboard Builder (HTML + Chart Initialization)
+   -------------------------------------------------------------------------- */
+function buildCdrReportDashboardHtml(list, periodLabel, generatedDate, cadence) {
   const total = list.length;
+  const neonatalCount = list.filter(r => (r.ageGroup || '').includes('Neonatal') || (r.ageGroup || '').includes('Day 0')).length;
+  const neonatalPct = total > 0 ? ((neonatalCount / total) * 100).toFixed(1) : 0;
   const males = list.filter(r => r.sex === 'MALE').length;
   const females = list.filter(r => r.sex === 'FEMALE').length;
-  const neo = list.filter(r => (r.ageGroup || '').includes('Neonatal') || (r.ageGroup || '').includes('Day 0')).length;
-  const inst = list.filter(r => (r.facility && r.facility !== 'Home')).length;
-  const home = total - inst;
-
-  // Facilities breakdown
-  const facCounts = {};
-  list.forEach(r => { facCounts[r.facility || 'Other'] = (facCounts[r.facility || 'Other'] || 0) + 1; });
-  const facSorted = Object.entries(facCounts).sort((a,b) => b[1]-a[1]);
-
-  // Sub-centres breakdown
-  const scCounts = {};
-  list.forEach(r => {
-    const sc = r.subCentre || 'Not Specified';
-    if (sc !== 'Not Specified / Awaited') {
-      scCounts[sc] = (scCounts[sc] || 0) + 1;
-    }
-  });
-  const scSorted = Object.entries(scCounts).sort((a,b) => b[1]-a[1]).slice(0, 8);
-
-  // Causes breakdown
-  const causeCounts = {};
-  list.forEach(r => { causeCounts[r.causeCategory || 'Other'] = (causeCounts[r.causeCategory || 'Other'] || 0) + 1; });
-  const causeSorted = Object.entries(causeCounts).sort((a,b) => b[1]-a[1]);
-
-  // Areas breakdown
-  const areaCounts = {};
-  list.forEach(r => { areaCounts[r.areaCategory || 'Other'] = (areaCounts[r.areaCategory || 'Other'] || 0) + 1; });
+  const homeDeaths = list.filter(r => (r.podGroup === 'Home' || r.facility === 'Home')).length;
+  const instDeaths = total - homeDeaths;
+  const instPct = total > 0 ? ((instDeaths / total) * 100).toFixed(1) : 0;
+  const lbwCases = list.filter(r => r.birthWeightGrams && r.birthWeightGrams < 2500).length;
+  const knownWeights = list.filter(r => r.birthWeightGrams !== null).length;
+  const lbwPct = knownWeights > 0 ? ((lbwCases / knownWeights) * 100).toFixed(1) : 0;
+  const sepsisCount = list.filter(r => r.causeCategory === 'Sepsis & Septic Shock').length;
 
   return `
     <div class="doc-header">
-      <div class="doc-org-sub">Health Department • Nagpur Division Mortality Surveillance System</div>
-      <div class="doc-title">CHILD DEATH REVIEW (CDR) SURVEILLANCE REPORT</div>
+      <div class="doc-org-sub">Public Health Department • Nagpur Division Mortality Surveillance System</div>
+      <div class="doc-title">CHILD DEATH REVIEW (CDR) ANALYTICAL DASHBOARD REPORT</div>
       <div class="doc-subtitle">${escapeHtml(periodLabel)}</div>
       <div class="doc-meta-strip">
-        <span>Report Type: <strong>Child Mortality Audit</strong></span>
+        <span>Surveillance Module: <strong>Child Mortality (CDR)</strong></span>
         <span>Generated: <strong>${generatedDate}</strong></span>
         <span>Audited Sample: <strong>${total.toLocaleString()} Demises</strong></span>
-        <span>Status: <strong>Official Medical Review</strong></span>
+        <span>Format: <strong>Full KPI & Visual Analytics Report</strong></span>
       </div>
     </div>
 
-    <div class="doc-section-title">1. Executive Summary & Demographic Indicators</div>
-    <div class="doc-kpi-grid">
-      <div class="doc-kpi-box danger">
-        <div class="doc-kpi-num">${total.toLocaleString()}</div>
-        <div class="doc-kpi-lbl">Total Child Deaths</div>
+    <!-- Executive KPI Statistics Grid (Matches Dashboard Exactly) -->
+    <div class="doc-section-title">1. Executive Mortality Indicators (KPIs)</div>
+    <div class="rep-kpi-grid">
+      <div class="rep-kpi-card rep-kpi-rose">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Total Child Deaths</span>
+          <i class="fas fa-clipboard-check rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${total.toLocaleString()}</div>
+        <div class="rep-kpi-sub">Audited Demises in Selection</div>
       </div>
-      <div class="doc-kpi-box highlight">
-        <div class="doc-kpi-num">${neo.toLocaleString()} (${total > 0 ? ((neo/total)*100).toFixed(1) : 0}%)</div>
-        <div class="doc-kpi-lbl">Neonatal (&le;28 Days)</div>
+
+      <div class="rep-kpi-card rep-kpi-amber">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Neonatal Mortality (&le;28d)</span>
+          <i class="fas fa-baby rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${neonatalCount.toLocaleString()}</div>
+        <div class="rep-kpi-sub">${neonatalPct}% of reviewed child demises</div>
       </div>
-      <div class="doc-kpi-box">
-        <div class="doc-kpi-num">${males}M / ${females}F</div>
-        <div class="doc-kpi-lbl">Gender Distribution</div>
+
+      <div class="rep-kpi-card rep-kpi-blue">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Gender Ratio</span>
+          <i class="fas fa-venus-mars rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${males}M / ${females}F</div>
+        <div class="rep-kpi-sub">${total > 0 ? ((males/total)*100).toFixed(1) : 0}% M &bull; ${total > 0 ? ((females/total)*100).toFixed(1) : 0}% F</div>
       </div>
-      <div class="doc-kpi-box">
-        <div class="doc-kpi-num">${inst.toLocaleString()} (${total > 0 ? ((inst/total)*100).toFixed(1) : 0}%)</div>
-        <div class="doc-kpi-lbl">Institutional Deaths</div>
+
+      <div class="rep-kpi-card rep-kpi-purple">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Institutional Rate</span>
+          <i class="fas fa-hospital-user rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${instPct}%</div>
+        <div class="rep-kpi-sub">${instDeaths} Hospital | ${homeDeaths} Home</div>
       </div>
-      <div class="doc-kpi-box">
-        <div class="doc-kpi-num">${home.toLocaleString()}</div>
-        <div class="doc-kpi-lbl">Home Deaths</div>
+
+      <div class="rep-kpi-card rep-kpi-cyan">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Low Birth Weight (&lt;2.5kg)</span>
+          <i class="fas fa-weight rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${lbwPct}%</div>
+        <div class="rep-kpi-sub">${lbwCases} of ${knownWeights} recorded weights</div>
+      </div>
+
+      <div class="rep-kpi-card rep-kpi-emerald">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Sepsis & Septic Shock</span>
+          <i class="fas fa-virus rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${sepsisCount.toLocaleString()}</div>
+        <div class="rep-kpi-sub">${total > 0 ? ((sepsisCount/total)*100).toFixed(1) : 0}% Leading Primary Cause</div>
       </div>
     </div>
 
-    <div class="doc-section-title">2. Health Facility & Institutional Case Distribution</div>
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Health Facility Tier / Provider</th>
-          <th class="col-num">Cases</th>
-          <th class="col-pct">Share (%)</th>
-          <th>Institutional Role & Surveillance Implication</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${facSorted.map(([fac, count]) => `
-          <tr>
-            <td><strong>${escapeHtml(fac)}</strong></td>
-            <td class="col-num">${count}</td>
-            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
-            <td>${fac === 'Home' ? 'Community outreach & early referral priority' : 'Tertiary / secondary clinical management'}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
+    <!-- Graphical Visualizations Grid: Pair 1 -->
+    <div class="doc-section-title">2. Facility & Regional Distribution Visualizations</div>
+    <div class="rep-charts-two-col">
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-hospital-alt" style="color:#4f46e5;"></i> Health Facility Wise Analysis</div>
+        <div class="rep-chart-sub">GMC, IGGMC, DAGA, NMC (Urban), Private Hospital, Home</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-facility"></canvas>
+        </div>
+      </div>
 
-    <div class="doc-section-title">3. Sub-Centre & Urban Primary Health Center (UPHC) Caseload</div>
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Sub-centre / UPHC Jurisdiction</th>
-          <th class="col-num">Reported Cases</th>
-          <th class="col-pct">Caseload Share (%)</th>
-          <th>Grassroots Area Surveillance</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${scSorted.length > 0 ? scSorted.map(([sc, count]) => `
-          <tr>
-            <td><strong>${escapeHtml(sc)}</strong></td>
-            <td class="col-num">${count}</td>
-            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
-            <td>NMC Urban / Rural Sub-centre field network</td>
-          </tr>
-        `).join('') : '<tr><td colspan="4">No specific sub-centre data recorded for this selection.</td></tr>'}
-      </tbody>
-    </table>
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-map-marked-alt" style="color:#0284c7;"></i> Area Wise Analysis</div>
+        <div class="rep-chart-sub">NMC (Urban), Rural, Other District, Other State</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-area"></canvas>
+        </div>
+      </div>
+    </div>
 
-    <div class="doc-section-title">4. Primary Epidemiological & Clinical Causes of Death</div>
+    <!-- Graphical Visualizations Grid: Pair 2 -->
+    <div class="doc-section-title">3. Sub-Centre Caseload & Demographics Visualizations</div>
+    <div class="rep-charts-two-col">
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-clinic-medical" style="color:#0d9488;"></i> Sub-centre / UPHC Wise Cases (CDR)</div>
+        <div class="rep-chart-sub">Top Sub-centres and Urban Primary Health Centres by child mortality caseload</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-subcentre"></canvas>
+        </div>
+      </div>
+
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-hospital-user" style="color:#0891b2;"></i> Place of Death Distribution</div>
+        <div class="rep-chart-sub">Public Hospital vs Private Hospital vs Home</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-pod"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphical Visualizations Grid: Pair 3 -->
+    <div class="doc-section-title">4. Age Profile & Birth Weight Profiling</div>
+    <div class="rep-charts-two-col">
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-child" style="color:#d97706;"></i> Child Age at Demise Profile</div>
+        <div class="rep-chart-sub">Early Neonatal (0-1d), Neonatal (1-28d), Post-Neonatal, Child stages</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-age"></canvas>
+        </div>
+      </div>
+
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-balance-scale" style="color:#059669;"></i> Birth Weight Categories</div>
+        <div class="rep-chart-sub">ELBW (&lt;1kg), VLBW (1-1.5kg), LBW (1.5-2.5kg), Normal (&ge;2.5kg)</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-bw"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistical Breakdown Summary Table -->
+    <div class="doc-section-title">5. Primary Clinical Causes of Death Breakdown</div>
+    ${buildCdrCausesTableHtml(list)}
+
+    <div class="doc-footer-notes">
+      <span>Child Death Review (CDR) Program &bull; Division of Public Health</span>
+      <span>Official Medical Surveillance Dashboard Report &bull; Auto-generated</span>
+    </div>
+  `;
+}
+
+function buildCdrCausesTableHtml(list) {
+  const total = list.length;
+  const causeCounts = {};
+  list.forEach(r => {
+    const c = r.causeCategory || 'Other Medical Causes';
+    causeCounts[c] = (causeCounts[c] || 0) + 1;
+  });
+  const sorted = Object.entries(causeCounts).sort((a,b) => b[1] - a[1]);
+
+  return `
     <table class="doc-table">
       <thead>
         <tr>
           <th>Clinical Etiology Category</th>
           <th class="col-num">Deaths</th>
           <th class="col-pct">% of Total</th>
-          <th>Clinical Surveillance Observation</th>
+          <th>Epidemiological Priority & Clinical Intervention</th>
         </tr>
       </thead>
       <tbody>
-        ${causeSorted.map(([cause, count]) => `
+        ${sorted.map(([cause, count]) => `
           <tr>
             <td><strong>${escapeHtml(cause)}</strong></td>
             <td class="col-num">${count}</td>
             <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
-            <td>Leading cause requiring neonatal care protocols</td>
+            <td>${cause.includes('Sepsis') ? 'Aseptic delivery protocols, neonatal sepsis screening' :
+                 (cause.includes('Prematurity') ? 'KMC, warm chain maintenance, SNCU admission' :
+                 (cause.includes('Respiratory') ? 'CPAP/Ventilator availability, resuscitation preparedness' :
+                 (cause.includes('Asphyxia') ? 'Immediate newborn care, resuscitation training' : 'General clinical protocol & facility management')))}</td>
           </tr>
         `).join('')}
       </tbody>
     </table>
-
-    <div class="doc-section-title">5. Area Categorization (Urban vs Rural vs Outside)</div>
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Residence Category</th>
-          <th class="col-num">Deaths</th>
-          <th class="col-pct">Distribution (%)</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${Object.entries(areaCounts).map(([ar, count]) => `
-          <tr>
-            <td><strong>${escapeHtml(ar)}</strong></td>
-            <td class="col-num">${count}</td>
-            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-
-    <div class="doc-footer-notes">
-      <span>Child Death Review (CDR) Program • Division of Public Health</span>
-      <span>Confidential Clinical Audit Document</span>
-    </div>
   `;
 }
 
-function buildMdrReportHtml(list, periodLabel, generatedDate) {
+function renderCdrReportCharts(list, cadence) {
+  const theme = getReportChartTheme();
+  const facilities = ['GMC', 'IGGMC', 'DAGA', 'NMC (Urban)', 'Private Hospital', 'Home'];
+
+  // 1. Facility Chart
+  const c1 = document.getElementById('rep-chart-facility');
+  if (c1) {
+    if (cadence === 'monthly') {
+      const facCounts = facilities.map(f => list.filter(r => r.facility === f).length);
+      reportCharts.facility = new Chart(c1.getContext('2d'), {
+        type: 'bar',
+        data: {
+          labels: facilities,
+          datasets: [{
+            label: 'Deaths',
+            data: facCounts,
+            backgroundColor: facilities.map(f => facilityColors[f] || '#6366f1'),
+            borderRadius: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 22 } },
+          plugins: { legend: { display: false } },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } },
+            y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          }
+        }
+      });
+    } else {
+      const months = ['Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb', 'Mar'];
+      const datasets = facilities.map(fac => ({
+        label: fac,
+        data: months.map(m => list.filter(r => r.facility === fac && r.month && r.month.toLowerCase().startsWith(m.toLowerCase())).length),
+        backgroundColor: facilityColors[fac] || '#6366f1',
+        borderRadius: 3
+      }));
+      reportCharts.facility = new Chart(c1.getContext('2d'), {
+        type: 'bar',
+        data: { labels: months, datasets: datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: { padding: { top: 20 } },
+          plugins: {
+            legend: { position: 'top', labels: { color: theme.textColor, font: { size: 9, weight: '600' }, boxWidth: 8 } }
+          },
+          scales: {
+            x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9 } } },
+            y: { beginAtZero: true, grace: '10%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+          }
+        }
+      });
+    }
+  }
+
+  // 2. Area Chart
+  const c2 = document.getElementById('rep-chart-area');
+  if (c2) {
+    const areas = ['NMC (Urban)', 'Rural', 'Other District', 'Other State'];
+    const areaCounts = areas.map(a => list.filter(r => r.areaCategory === a).length);
+    reportCharts.area = new Chart(c2.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: areas,
+        datasets: [{
+          label: 'Child Deaths',
+          data: areaCounts,
+          backgroundColor: areas.map(a => areaColors[a] || '#0284c7'),
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 22 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } },
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  }
+
+  // 3. Sub-centre Chart (Horizontal bar)
+  const c3 = document.getElementById('rep-chart-subcentre');
+  if (c3) {
+    const scCounts = {};
+    list.forEach(r => {
+      const sc = r.subCentre || 'Not Specified / Awaited';
+      if (sc !== 'Not Specified / Awaited') {
+        scCounts[sc] = (scCounts[sc] || 0) + 1;
+      }
+    });
+    const sorted = Object.entries(scCounts).sort((a,b) => b[1]-a[1]).slice(0, 8);
+    const labels = sorted.map(s => s[0]);
+    const values = sorted.map(s => s[1]);
+    const colors = ['#14b8a6', '#06b6d4', '#38bdf8', '#6366f1', '#a855f7', '#ec4899', '#f59e0b', '#10b981'];
+
+    reportCharts.subcentre = new Chart(c3.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: labels.length > 0 ? labels : ['No Sub-centre Data'],
+        datasets: [{
+          label: 'Cases',
+          data: values.length > 0 ? values : [0],
+          backgroundColor: colors.slice(0, Math.max(labels.length, 1)),
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 30 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } }
+        }
+      }
+    });
+  }
+
+  // 4. Place of Death Doughnut Chart
+  const c4 = document.getElementById('rep-chart-pod');
+  if (c4) {
+    const podCounts = {
+      'Public Hospital': list.filter(r => (r.podGroup || '').includes('Public')).length,
+      'Private Hospital': list.filter(r => (r.podGroup || '').includes('Private')).length,
+      'Home': list.filter(r => (r.podGroup === 'Home' || r.facility === 'Home')).length
+    };
+    reportCharts.pod = new Chart(c4.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: Object.keys(podCounts),
+        datasets: [{
+          data: Object.values(podCounts),
+          backgroundColor: ['#6366f1', '#f43f5e', '#10b981'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: 15 },
+        plugins: {
+          legend: { position: 'right', labels: { color: theme.textColor, font: { size: 9, weight: '600' }, boxWidth: 10 } }
+        },
+        cutout: '58%'
+      }
+    });
+  }
+
+  // 5. Age Demographics Chart
+  const c5 = document.getElementById('rep-chart-age');
+  if (c5) {
+    const ageLabels = ['Day 0-1', '1-7 Days', '8-28 Days', '1-12 Mos', '1-5 Yrs'];
+    const ageValues = [
+      list.filter(r => (r.ageGroup && (r.ageGroup.includes('Day 0') || r.ageGroup.includes('<24')))).length,
+      list.filter(r => (r.ageGroup && r.ageGroup.includes('1-7 Days'))).length,
+      list.filter(r => (r.ageGroup && r.ageGroup.includes('8-28 Days'))).length,
+      list.filter(r => (r.ageGroup && (r.ageGroup.includes('1-12') || r.ageGroup.includes('Post-Neonatal')))).length,
+      list.filter(r => (r.ageGroup && (r.ageGroup.includes('1 - 5') || r.ageGroup.includes('Child')))).length
+    ];
+    reportCharts.age = new Chart(c5.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: ageLabels,
+        datasets: [{
+          label: 'Demises',
+          data: ageValues,
+          backgroundColor: ['#f43f5e', '#f97316', '#f59e0b', '#6366f1', '#10b981'],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 22 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } },
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  }
+
+  // 6. Birth Weight Profile Chart
+  const c6 = document.getElementById('rep-chart-bw');
+  if (c6) {
+    const bwLabels = ['<1000g', '1-1.5kg', '1.5-2.5kg', '>=2.5kg', 'Unknown'];
+    const bwValues = [
+      list.filter(r => (r.birthWeightCategory && r.birthWeightCategory.includes('ELBW'))).length,
+      list.filter(r => (r.birthWeightCategory && r.birthWeightCategory.includes('VLBW'))).length,
+      list.filter(r => (r.birthWeightCategory && (r.birthWeightCategory.includes('LBW') && !r.birthWeightCategory.includes('VLBW') && !r.birthWeightCategory.includes('ELBW')))).length,
+      list.filter(r => (r.birthWeightCategory && r.birthWeightCategory.includes('Normal'))).length,
+      list.filter(r => (!r.birthWeightCategory || r.birthWeightCategory.includes('Unknown') || r.birthWeightCategory.includes('Not'))).length
+    ];
+    reportCharts.bw = new Chart(c6.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: bwLabels,
+        datasets: [{
+          label: 'Births',
+          data: bwValues,
+          backgroundColor: ['#ef4444', '#f59e0b', '#38bdf8', '#10b981', '#94a3b8'],
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 22 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } },
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   MDR Report Dashboard Builder (HTML + Chart Initialization)
+   -------------------------------------------------------------------------- */
+function buildMdrReportDashboardHtml(list, periodLabel, generatedDate, cadence) {
   const total = list.length;
-  const pnc = list.filter(r => r.deathTiming === 'Postpartum (PNC)').length;
-  const anc = list.filter(r => r.deathTiming === 'Antepartum (ANC)').length;
-  const intra = list.filter(r => r.deathTiming === 'Intrapartum (Delivery)').length;
-  const young = list.filter(r => r.ageNum > 0 && r.ageNum <= 24).length;
-
-  // Delays breakdown
-  const delayCounts = {};
-  list.forEach(r => {
-    const d = r.delayCategory || 'No Delay Reported';
-    delayCounts[d] = (delayCounts[d] || 0) + 1;
-  });
-  const delayOrder = [
-    'Type 1: Delay in Seeking Care',
-    'Type 2: Delay in Reaching Facility',
-    'Type 3: Delay in Receiving Adequate Care',
-    'Multiple Delays (Delay 1 & 3)',
-    'Multiple Delays (Delay 1 & 2)',
-    'No Delay Reported'
-  ];
-
-  // Clinical causes breakdown
-  const causeCounts = {};
-  list.forEach(r => { causeCounts[r.causeCategory || 'Other'] = (causeCounts[r.causeCategory || 'Other'] || 0) + 1; });
-  const causeSorted = Object.entries(causeCounts).sort((a,b) => b[1]-a[1]);
-
-  // Facilities breakdown
-  const facCounts = {};
-  list.forEach(r => { facCounts[r.facility || 'Other'] = (facCounts[r.facility || 'Other'] || 0) + 1; });
-  const facSorted = Object.entries(facCounts).sort((a,b) => b[1]-a[1]);
+  const pncDeaths = list.filter(r => r.deathTiming === 'Postpartum (PNC)').length;
+  const pncPct = total > 0 ? ((pncDeaths / total) * 100).toFixed(1) : 0;
+  const ancDeaths = list.filter(r => r.deathTiming === 'Antepartum (ANC)').length;
+  const ancPct = total > 0 ? ((ancDeaths / total) * 100).toFixed(1) : 0;
+  const pphDeaths = list.filter(r => (r.causeCategory || '').includes('Hemorrhage')).length;
+  const pphPct = total > 0 ? ((pphDeaths / total) * 100).toFixed(1) : 0;
+  const eclampsiaDeaths = list.filter(r => (r.causeCategory || '').includes('Hypertensive') || (r.causeCategory || '').includes('Eclampsia')).length;
+  const gmcDeaths = list.filter(r => (r.podGroup || '').includes('Public')).length;
+  const gmcPct = total > 0 ? ((gmcDeaths / total) * 100).toFixed(1) : 0;
+  const youngMothers = list.filter(r => r.ageNum > 0 && r.ageNum <= 24).length;
+  const youngPct = total > 0 ? ((youngMothers / total) * 100).toFixed(1) : 0;
 
   return `
     <div class="doc-header">
-      <div class="doc-org-sub">Health Department • Nagpur Division Mortality Surveillance System</div>
-      <div class="doc-title">MATERNAL DEATH REVIEW (MDR) SURVEILLANCE REPORT</div>
+      <div class="doc-org-sub">Public Health Department • Nagpur Division Mortality Surveillance System</div>
+      <div class="doc-title">MATERNAL DEATH REVIEW (MDR) ANALYTICAL DASHBOARD REPORT</div>
       <div class="doc-subtitle">${escapeHtml(periodLabel)}</div>
       <div class="doc-meta-strip">
-        <span>Report Type: <strong>Maternal Mortality Audit</strong></span>
+        <span>Surveillance Module: <strong>Maternal Mortality (MDR)</strong></span>
         <span>Generated: <strong>${generatedDate}</strong></span>
         <span>Audited Sample: <strong>${total.toLocaleString()} Maternal Demises</strong></span>
         <span>Framework: <strong>Three Delays Model & ICD-10</strong></span>
       </div>
     </div>
 
-    <div class="doc-section-title">1. Executive Maternal Demographics & Pregnancy Timing</div>
-    <div class="doc-kpi-grid">
-      <div class="doc-kpi-box danger">
-        <div class="doc-kpi-num">${total.toLocaleString()}</div>
-        <div class="doc-kpi-lbl">Total Maternal Deaths</div>
+    <!-- Executive KPI Statistics Grid (Matches Dashboard Exactly) -->
+    <div class="doc-section-title">1. Executive Maternal Demographics & Pregnancy Timing (KPIs)</div>
+    <div class="rep-kpi-grid">
+      <div class="rep-kpi-card rep-kpi-rose">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Total Maternal Deaths</span>
+          <i class="fas fa-female rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${total.toLocaleString()}</div>
+        <div class="rep-kpi-sub">Maternal Deaths Audited in Selection</div>
       </div>
-      <div class="doc-kpi-box highlight">
-        <div class="doc-kpi-num">${pnc.toLocaleString()} (${total > 0 ? ((pnc/total)*100).toFixed(1) : 0}%)</div>
-        <div class="doc-kpi-lbl">Postpartum (PNC)</div>
+
+      <div class="rep-kpi-card rep-kpi-purple">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Postpartum (PNC)</span>
+          <i class="fas fa-hourglass-end rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${pncDeaths} (${pncPct}%)</div>
+        <div class="rep-kpi-sub">Occurred Post Delivery</div>
       </div>
-      <div class="doc-kpi-box">
-        <div class="doc-kpi-num">${anc.toLocaleString()} (${total > 0 ? ((anc/total)*100).toFixed(1) : 0}%)</div>
-        <div class="doc-kpi-lbl">Antepartum (ANC)</div>
+
+      <div class="rep-kpi-card rep-kpi-amber">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Hemorrhage & PPH</span>
+          <i class="fas fa-tint rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${pphDeaths} (${pphPct}%)</div>
+        <div class="rep-kpi-sub">Obstetric Bleeding / Shock</div>
       </div>
-      <div class="doc-kpi-box">
-        <div class="doc-kpi-num">${intra.toLocaleString()}</div>
-        <div class="doc-kpi-lbl">Intrapartum (Delivery)</div>
+
+      <div class="rep-kpi-card rep-kpi-blue">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Eclampsia / HTN</span>
+          <i class="fas fa-heartbeat rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${eclampsiaDeaths}</div>
+        <div class="rep-kpi-sub">${total > 0 ? ((eclampsiaDeaths/total)*100).toFixed(1) : 0}% Hypertensive Disorders</div>
       </div>
-      <div class="doc-kpi-box">
-        <div class="doc-kpi-num">${young.toLocaleString()} (${total > 0 ? ((young/total)*100).toFixed(1) : 0}%)</div>
-        <div class="doc-kpi-lbl">Young Mothers (&le;24 Yrs)</div>
+
+      <div class="rep-kpi-card rep-kpi-cyan">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Tertiary Referrals</span>
+          <i class="fas fa-hospital rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${gmcPct}%</div>
+        <div class="rep-kpi-sub">${gmcDeaths} at GMC / District Hospital Level</div>
+      </div>
+
+      <div class="rep-kpi-card rep-kpi-emerald">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Young Mothers (&le;24 Yrs)</span>
+          <i class="fas fa-user-clock rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${youngMothers} (${youngPct}%)</div>
+        <div class="rep-kpi-sub">Mothers Aged 18 to 24 Years</div>
       </div>
     </div>
 
-    <div class="doc-section-title">2. Type of Delay in Cases (Three Delays Model Analysis)</div>
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Delay Classification</th>
-          <th class="col-num">Cases</th>
-          <th class="col-pct">Share (%)</th>
-          <th>Clinical Audit Focus & Public Health Intervention</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${Object.entries(delayCounts).sort((a,b) => b[1]-a[1]).map(([del, count]) => `
-          <tr>
-            <td><strong>${escapeHtml(del)}</strong></td>
-            <td class="col-num">${count}</td>
-            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
-            <td>${
-              del.includes('Type 1') ? 'Family awareness, recognizing danger signs & financial readiness' :
-              (del.includes('Type 2') ? 'Emergency ambulance, road connectivity & referral transport' :
-              (del.includes('Type 3') ? 'Institutional preparedness, blood bank & specialist obstetric response' :
-              (del.includes('Multiple') ? 'Compound delays across domestic, transit and facility tiers' : 'Adequate care pathway followed without preventable delay')))
-            }</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
+    <!-- Graphical Visualizations Grid: Pair 1 -->
+    <div class="doc-section-title">2. Type of Delay in Cases & Facility Distribution Visualizations</div>
+    <div class="rep-charts-two-col">
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-hourglass-half" style="color:#ef4444;"></i> Type of Delay in Cases (MDR)</div>
+        <div class="rep-chart-sub">Three Delays Framework: Seeking Care, Transport, Receiving Hospital Care</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-delay"></canvas>
+        </div>
+      </div>
 
-    <div class="doc-section-title">3. Primary Clinical Causes of Maternal Demise</div>
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-hospital-alt" style="color:#4f46e5;"></i> Health Facility Wise Analysis</div>
+        <div class="rep-chart-sub">GMC, IGGMC, DAGA, NMC (Urban), Private Hospital, Home</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-facility"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Graphical Visualizations Grid: Pair 2 -->
+    <div class="doc-section-title">3. District Distribution & Pregnancy Timing Visualizations</div>
+    <div class="rep-charts-two-col">
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-city" style="color:#f59e0b;"></i> District Wise Maternal Demises</div>
+        <div class="rep-chart-sub">Nagpur, Bhandara, Gondia, Wardha, Chandrapur, Amravati, MP</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-district"></canvas>
+        </div>
+      </div>
+
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-calendar-alt" style="color:#a855f7;"></i> Demise Timing Distribution</div>
+        <div class="rep-chart-sub">Postpartum (PNC) vs Antepartum (ANC) vs Intrapartum</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-timing"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Statistical Causes Table -->
+    <div class="doc-section-title">4. Primary Clinical Causes of Maternal Demise</div>
+    ${buildMdrCausesTableHtml(list)}
+
+    <div class="doc-footer-notes">
+      <span>Maternal Death Review (MDR) Program &bull; Division of Public Health</span>
+      <span>Official Maternal Health Surveillance Report &bull; Auto-generated</span>
+    </div>
+  `;
+}
+
+function buildMdrCausesTableHtml(list) {
+  const total = list.length;
+  const causeCounts = {};
+  list.forEach(r => {
+    const c = r.causeCategory || 'Other Medical Causes';
+    causeCounts[c] = (causeCounts[c] || 0) + 1;
+  });
+  const sorted = Object.entries(causeCounts).sort((a,b) => b[1] - a[1]);
+
+  return `
     <table class="doc-table">
       <thead>
         <tr>
           <th>Clinical Etiology Category</th>
           <th class="col-num">Deaths</th>
           <th class="col-pct">% of Total</th>
-          <th>Clinical Management Priorities</th>
+          <th>Clinical Audit Focus & Public Health Action</th>
         </tr>
       </thead>
       <tbody>
-        ${causeSorted.map(([cause, count]) => `
+        ${sorted.map(([cause, count]) => `
           <tr>
             <td><strong>${escapeHtml(cause)}</strong></td>
             <td class="col-num">${count}</td>
             <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
-            <td>Immediate maternal care and rapid-response protocol</td>
+            <td>${cause.includes('Hemorrhage') ? 'Blood storage center readiness, active stage 3 management, anti-shock garment' :
+                 (cause.includes('Hypertensive') ? 'BP screening in ANC, prophylactic MgSO4, early referral' :
+                 (cause.includes('Sepsis') ? 'Aseptic techniques, antibiotic stewardship, early intervention' :
+                 (cause.includes('Sickle') ? 'Specialist hematology protocol, pre-conceptional counseling' : 'Tertiary obstetric critical care response')))}</td>
           </tr>
         `).join('')}
       </tbody>
     </table>
-
-    <div class="doc-section-title">4. Health Facility of Demise</div>
-    <table class="doc-table">
-      <thead>
-        <tr>
-          <th>Health Facility Tier</th>
-          <th class="col-num">Deaths</th>
-          <th class="col-pct">Share (%)</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${facSorted.map(([fac, count]) => `
-          <tr>
-            <td><strong>${escapeHtml(fac)}</strong></td>
-            <td class="col-num">${count}</td>
-            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-
-    <div class="doc-footer-notes">
-      <span>Maternal Death Review (MDR) Program • Division of Public Health</span>
-      <span>Confidential Maternal Health Audit Report</span>
-    </div>
   `;
 }
 
-function buildCombinedReportHtml(cdrList, mdrList, periodLabel, generatedDate) {
+function renderMdrReportCharts(list, cadence) {
+  const theme = getReportChartTheme();
+  const facilities = ['GMC', 'IGGMC', 'DAGA', 'NMC (Urban)', 'Private Hospital', 'Home'];
+
+  // 1. Delay Chart (Horizontal Bar)
+  const c1 = document.getElementById('rep-chart-delay');
+  if (c1) {
+    const delayCategories = [
+      { key: 'Type 1: Delay in Seeking Care', label: 'Type 1: Seeking Care', color: '#ef4444' },
+      { key: 'Type 2: Delay in Reaching Facility', label: 'Type 2: Reaching Facility', color: '#f59e0b' },
+      { key: 'Type 3: Delay in Receiving Adequate Care', label: 'Type 3: Facility Care', color: '#6366f1' },
+      { key: 'Multiple Delays', label: 'Multiple Delays', color: '#ec4899' },
+      { key: 'No Delay Reported', label: 'No Delay Reported', color: '#10b981' }
+    ];
+    const counts = {};
+    list.forEach(r => {
+      const d = r.delayCategory || 'No Delay Reported';
+      if (d.includes('Multiple Delays')) counts['Multiple Delays'] = (counts['Multiple Delays'] || 0) + 1;
+      else counts[d] = (counts[d] || 0) + 1;
+    });
+
+    const activeList = delayCategories.map(c => ({
+      label: c.label,
+      count: counts[c.key] || 0,
+      color: c.color
+    }));
+
+    reportCharts.delay = new Chart(c1.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: activeList.map(c => c.label),
+        datasets: [{
+          label: 'Deaths',
+          data: activeList.map(c => c.count),
+          backgroundColor: activeList.map(c => c.color),
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 30 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } }
+        }
+      }
+    });
+  }
+
+  // 2. Facility Chart
+  const c2 = document.getElementById('rep-chart-facility');
+  if (c2) {
+    const facCounts = facilities.map(f => list.filter(r => r.facility === f).length);
+    reportCharts.facility = new Chart(c2.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: facilities,
+        datasets: [{
+          label: 'Maternal Deaths',
+          data: facCounts,
+          backgroundColor: facilities.map(f => facilityColors[f] || '#6366f1'),
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 22 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } },
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  }
+
+  // 3. District Chart
+  const c3 = document.getElementById('rep-chart-district');
+  if (c3) {
+    const counts = {};
+    list.forEach(r => {
+      const d = r.district || 'Nagpur';
+      counts[d] = (counts[d] || 0) + 1;
+    });
+    const sorted = Object.entries(counts).sort((a,b) => b[1]-a[1]).slice(0, 8);
+    const labels = sorted.map(s => s[0]);
+    const values = sorted.map(s => s[1]);
+
+    reportCharts.district = new Chart(c3.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Deaths',
+          data: values,
+          backgroundColor: '#f59e0b',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 30 } },
+        plugins: { legend: { display: false } },
+        scales: {
+          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } }
+        }
+      }
+    });
+  }
+
+  // 4. Pregnancy Timing Chart
+  const c4 = document.getElementById('rep-chart-timing');
+  if (c4) {
+    const timings = ['Postpartum (PNC)', 'Antepartum (ANC)', 'Intrapartum (Delivery)'];
+    const timingCounts = timings.map(t => list.filter(r => r.deathTiming === t).length);
+    reportCharts.timing = new Chart(c4.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: timings,
+        datasets: [{
+          data: timingCounts,
+          backgroundColor: ['#a855f7', '#38bdf8', '#f59e0b'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: 15 },
+        plugins: {
+          legend: { position: 'right', labels: { color: theme.textColor, font: { size: 9, weight: '600' }, boxWidth: 10 } }
+        },
+        cutout: '58%'
+      }
+    });
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Combined CDR + MDR Report Dashboard Builder
+   -------------------------------------------------------------------------- */
+function buildCombinedReportDashboardHtml(cdrList, mdrList, periodLabel, generatedDate, cadence) {
   const totalCdr = cdrList.length;
   const totalMdr = mdrList.length;
   const total = totalCdr + totalMdr;
 
   return `
     <div class="doc-header">
-      <div class="doc-org-sub">Health Department • Nagpur Division Mortality Surveillance System</div>
-      <div class="doc-title">CONSOLIDATED CDR & MDR MORTALITY AUDIT REPORT</div>
+      <div class="doc-org-sub">Public Health Department • Nagpur Division Mortality Surveillance System</div>
+      <div class="doc-title">CONSOLIDATED CDR & MDR SURVEILLANCE REPORT</div>
       <div class="doc-subtitle">${escapeHtml(periodLabel)}</div>
       <div class="doc-meta-strip">
-        <span>Report: <strong>Joint Child & Maternal Review</strong></span>
+        <span>Surveillance Scope: <strong>Joint Child (CDR) & Maternal (MDR) Review</strong></span>
         <span>Generated: <strong>${generatedDate}</strong></span>
-        <span>Total Records Audited: <strong>${total.toLocaleString()}</strong></span>
+        <span>Total Records Audited: <strong>${total.toLocaleString()} Demises</strong></span>
       </div>
     </div>
 
-    <div class="doc-section-title">1. Combined Surveillance Key Metrics</div>
-    <div class="doc-kpi-grid">
-      <div class="doc-kpi-box danger">
-        <div class="doc-kpi-num">${totalCdr.toLocaleString()}</div>
-        <div class="doc-kpi-lbl">Child Deaths (CDR)</div>
+    <!-- Combined Executive KPIs -->
+    <div class="doc-section-title">1. Combined Surveillance Key Metrics (KPIs)</div>
+    <div class="rep-kpi-grid">
+      <div class="rep-kpi-card rep-kpi-rose">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Child Demises (CDR)</span>
+          <i class="fas fa-baby rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${totalCdr.toLocaleString()}</div>
+        <div class="rep-kpi-sub">Total Under-5 Demises Audited</div>
       </div>
-      <div class="doc-kpi-box highlight">
-        <div class="doc-kpi-num">${totalMdr.toLocaleString()}</div>
-        <div class="doc-kpi-lbl">Maternal Deaths (MDR)</div>
+
+      <div class="rep-kpi-card rep-kpi-purple">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Maternal Demises (MDR)</span>
+          <i class="fas fa-female rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${totalMdr.toLocaleString()}</div>
+        <div class="rep-kpi-sub">Total Maternal Demises Audited</div>
       </div>
-      <div class="doc-kpi-box">
-        <div class="doc-kpi-num">${total.toLocaleString()}</div>
-        <div class="doc-kpi-lbl">Consolidated Demises</div>
+
+      <div class="rep-kpi-card rep-kpi-blue">
+        <div class="rep-kpi-top">
+          <span class="rep-kpi-title">Consolidated Audits</span>
+          <i class="fas fa-clipboard-list rep-kpi-icon"></i>
+        </div>
+        <div class="rep-kpi-val">${total.toLocaleString()}</div>
+        <div class="rep-kpi-sub">Total Clinical Mortality Reviews</div>
       </div>
     </div>
 
-    <div class="doc-section-title">2. Child Mortality (CDR) Highlights</div>
-    <p style="font-size:0.85rem; color:#475569; margin-bottom:0.75rem;">Total of ${totalCdr.toLocaleString()} child deaths reviewed. Top causes include Prematurity & LBW, Respiratory Distress, and Sepsis.</p>
+    <!-- Combined Charts Section -->
+    <div class="doc-section-title">2. Joint Mortality Profile Visualizations</div>
+    <div class="rep-charts-two-col">
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-balance-scale" style="color:#6366f1;"></i> Child vs Maternal Mortality Distribution</div>
+        <div class="rep-chart-sub">Volume proportion between child and maternal reviews</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-combined-dist"></canvas>
+        </div>
+      </div>
 
-    <div class="doc-section-title">3. Maternal Mortality (MDR) Highlights</div>
-    <p style="font-size:0.85rem; color:#475569; margin-bottom:0.75rem;">Total of ${totalMdr.toLocaleString()} maternal deaths reviewed. Key factors include Type 1 & 3 delays, Hemorrhage/PPH, and Hypertensive disorders.</p>
+      <div class="rep-chart-box">
+        <div class="rep-chart-title"><i class="fas fa-hospital" style="color:#0284c7;"></i> Joint Health Facility Load</div>
+        <div class="rep-chart-sub">GMC, IGGMC, DAGA, Private Hospital, Home</div>
+        <div class="rep-chart-canvas-wrap">
+          <canvas id="rep-chart-combined-fac"></canvas>
+        </div>
+      </div>
+    </div>
 
     <div class="doc-footer-notes">
-      <span>Joint Mortality Surveillance Unit • Division of Public Health</span>
-      <span>Official Surveillance Summary</span>
+      <span>Joint Mortality Surveillance Unit &bull; Division of Public Health</span>
+      <span>Official Surveillance Summary &bull; Auto-generated</span>
     </div>
   `;
 }
 
-// 1-Click Export to Word (.doc)
+function renderCombinedReportCharts(cdrList, mdrList, cadence) {
+  const theme = getReportChartTheme();
+
+  const c1 = document.getElementById('rep-chart-combined-dist');
+  if (c1) {
+    reportCharts.combDist = new Chart(c1.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: ['Child Deaths (CDR)', 'Maternal Deaths (MDR)'],
+        datasets: [{
+          data: [cdrList.length, mdrList.length],
+          backgroundColor: ['#38bdf8', '#f43f5e'],
+          borderWidth: 0
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: 15 },
+        plugins: {
+          legend: { position: 'right', labels: { color: theme.textColor, font: { size: 9, weight: '600' } } }
+        },
+        cutout: '58%'
+      }
+    });
+  }
+
+  const c2 = document.getElementById('rep-chart-combined-fac');
+  if (c2) {
+    const facilities = ['GMC', 'IGGMC', 'DAGA', 'NMC (Urban)', 'Private Hospital', 'Home'];
+    const datasets = [
+      {
+        label: 'CDR',
+        data: facilities.map(f => cdrList.filter(r => r.facility === f).length),
+        backgroundColor: '#38bdf8',
+        borderRadius: 4
+      },
+      {
+        label: 'MDR',
+        data: facilities.map(f => mdrList.filter(r => r.facility === f).length),
+        backgroundColor: '#f43f5e',
+        borderRadius: 4
+      }
+    ];
+    reportCharts.combFac = new Chart(c2.getContext('2d'), {
+      type: 'bar',
+      data: { labels: facilities, datasets: datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { top: 20 } },
+        plugins: {
+          legend: { position: 'top', labels: { color: theme.textColor, font: { size: 9, weight: '600' } } }
+        },
+        scales: {
+          x: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } },
+          y: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } }
+        }
+      }
+    });
+  }
+}
+
+// 1-Click Export to Word (.doc) with embedded high-resolution chart images
 function exportReportToDoc() {
   const container = document.getElementById('report-document-container');
   if (!container) return;
 
-  const { selectedMod, cadence, year, month } = getReportFilteredData();
-  const filename = `${selectedMod}_Surveillance_Report_${cadence}_${year}_${new Date().toISOString().slice(0, 10)}.doc`;
+  const { selectedMod, cadence, year } = getReportFilteredData();
+  const filename = `${selectedMod}_Dashboard_Report_${cadence}_${year}_${new Date().toISOString().slice(0, 10)}.doc`;
+
+  // Clone container to modify canvas elements into static base64 <img> tags for Word compatibility
+  const clone = container.cloneNode(true);
+  const canvases = container.querySelectorAll('canvas');
+  const cloneCanvases = clone.querySelectorAll('canvas');
+
+  canvases.forEach((origCanvas, idx) => {
+    try {
+      const imgData = origCanvas.toDataURL('image/png');
+      const img = document.createElement('img');
+      img.src = imgData;
+      img.style.maxWidth = '100%';
+      img.style.maxHeight = '240px';
+      img.style.display = 'block';
+      img.style.margin = '0 auto';
+      if (cloneCanvases[idx] && cloneCanvases[idx].parentNode) {
+        cloneCanvases[idx].parentNode.replaceChild(img, cloneCanvases[idx]);
+      }
+    } catch (e) {
+      console.warn('Canvas export error:', e);
+    }
+  });
 
   const docHead = `
     <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
     <head>
       <meta charset='utf-8'>
-      <title>${selectedMod} Surveillance Report</title>
+      <title>${selectedMod} Dashboard Surveillance Report</title>
       <style>
-        body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #1e293b; }
-        .doc-header { text-align: center; border-bottom: 2pt double #0284c7; padding-bottom: 12pt; margin-bottom: 18pt; }
-        .doc-org-sub { font-size: 9pt; font-weight: bold; color: #64748b; text-transform: uppercase; }
-        .doc-title { font-size: 18pt; font-weight: bold; color: #0f172a; margin-top: 4pt; }
-        .doc-subtitle { font-size: 12pt; font-weight: bold; color: #0369a1; margin-top: 4pt; }
-        .doc-meta-strip { font-size: 9.5pt; color: #64748b; margin-top: 6pt; }
-        .doc-section-title { font-size: 12pt; font-weight: bold; color: #0f172a; border-bottom: 1pt solid #cbd5e1; padding-bottom: 3pt; margin-top: 16pt; margin-bottom: 8pt; text-transform: uppercase; }
-        .doc-kpi-grid { margin-bottom: 12pt; }
-        .doc-kpi-box { display: inline-block; width: 18%; background: #f8fafc; border: 1pt solid #cbd5e1; padding: 6pt; text-align: center; margin-right: 1%; }
-        .doc-kpi-num { font-size: 14pt; font-weight: bold; color: #0f172a; }
-        .doc-kpi-lbl { font-size: 8pt; color: #475569; text-transform: uppercase; }
+        body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #1e293b; background: #ffffff; }
+        .doc-header { text-align: center; border-bottom: 2.5pt double #0284c7; padding-bottom: 12pt; margin-bottom: 16pt; }
+        .doc-org-sub { font-size: 8.5pt; font-weight: bold; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; }
+        .doc-title { font-size: 16pt; font-weight: bold; color: #0f172a; margin-top: 4pt; }
+        .doc-subtitle { font-size: 11pt; font-weight: bold; color: #0284c7; margin-top: 3pt; }
+        .doc-meta-strip { font-size: 9pt; color: #64748b; margin-top: 6pt; }
+        .doc-section-title { font-size: 11pt; font-weight: bold; color: #0f172a; border-bottom: 1pt solid #cbd5e1; padding-bottom: 3pt; margin-top: 14pt; margin-bottom: 8pt; text-transform: uppercase; }
+        .rep-kpi-grid { margin-bottom: 12pt; }
+        .rep-kpi-card { display: inline-block; width: 30%; background: #f8fafc; border: 1pt solid #cbd5e1; padding: 6pt; text-align: center; margin-right: 1.5%; margin-bottom: 6pt; }
+        .rep-kpi-title { font-size: 8pt; color: #475569; text-transform: uppercase; font-weight: bold; }
+        .rep-kpi-val { font-size: 14pt; font-weight: bold; color: #0f172a; margin: 2pt 0; }
+        .rep-kpi-sub { font-size: 7.5pt; color: #64748b; }
+        .rep-charts-two-col { width: 100%; margin-bottom: 12pt; }
+        .rep-chart-box { display: inline-block; width: 48%; vertical-align: top; border: 1pt solid #cbd5e1; padding: 6pt; margin-right: 1.5%; margin-bottom: 8pt; background: #ffffff; }
+        .rep-chart-title { font-size: 9.5pt; font-weight: bold; color: #0f172a; margin-bottom: 2pt; }
+        .rep-chart-sub { font-size: 7.5pt; color: #64748b; margin-bottom: 4pt; }
         table.doc-table { width: 100%; border-collapse: collapse; margin-top: 6pt; margin-bottom: 14pt; }
-        table.doc-table th { background: #0f172a; color: #ffffff; font-weight: bold; font-size: 9.5pt; border: 1pt solid #0f172a; padding: 5pt; }
-        table.doc-table td { border: 1pt solid #cbd5e1; font-size: 9.5pt; padding: 4.5pt; color: #334155; }
+        table.doc-table th { background: #0f172a; color: #ffffff; font-weight: bold; font-size: 9pt; border: 1pt solid #0f172a; padding: 4.5pt; }
+        table.doc-table td { border: 1pt solid #cbd5e1; font-size: 8.5pt; padding: 4pt; color: #334155; }
         .col-num { text-align: right; }
-        .col-pct { text-align: right; font-weight: bold; color: #0369a1; }
-        .doc-footer-notes { font-size: 8.5pt; color: #64748b; border-top: 1pt dashed #cbd5e1; padding-top: 8pt; margin-top: 20pt; }
+        .col-pct { text-align: right; font-weight: bold; color: #0284c7; }
+        .doc-footer-notes { font-size: 8pt; color: #64748b; border-top: 1pt dashed #cbd5e1; padding-top: 6pt; margin-top: 16pt; }
       </style>
     </head>
     <body>
   `;
   const docFoot = `</body></html>`;
-  const fullContent = docHead + container.innerHTML + docFoot;
+  const fullContent = docHead + clone.innerHTML + docFoot;
 
   const blob = new Blob(['\ufeff', fullContent], { type: 'application/msword' });
   const url = URL.createObjectURL(blob);
@@ -2428,21 +3024,21 @@ function exportReportToDoc() {
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
 
-  showToast(`Word report generated: ${filename}`, 'success');
+  showToast(`Word report with graphical charts generated: ${filename}`, 'success');
 }
 
-// 1-Click Export to PDF (.pdf) via html2pdf.js
+// 1-Click Export to PDF (.pdf) via html2pdf.js with charts
 function exportReportToPdf() {
   const container = document.getElementById('report-document-container');
   if (!container) return;
 
   const { selectedMod, cadence, year } = getReportFilteredData();
-  const filename = `${selectedMod}_Surveillance_Report_${cadence}_${year}_${new Date().toISOString().slice(0, 10)}.pdf`;
+  const filename = `${selectedMod}_Dashboard_Report_${cadence}_${year}_${new Date().toISOString().slice(0, 10)}.pdf`;
 
-  showToast('Generating PDF report...', 'info');
+  showToast('Generating high-resolution PDF report with charts...', 'info');
 
   const opt = {
-    margin: [10, 10, 10, 10],
+    margin: [8, 8, 8, 8],
     filename: filename,
     image: { type: 'jpeg', quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true, logging: false },
@@ -2455,12 +3051,9 @@ function exportReportToPdf() {
       showToast(`PDF report downloaded: ${filename}`, 'success');
     }).catch(err => {
       console.error('PDF generation error:', err);
-      // Fallback to window.print if library fails
       window.print();
     });
   } else {
-    // Fallback: trigger print dialog directly
     window.print();
   }
 }
-
