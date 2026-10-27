@@ -25,8 +25,10 @@ const appState = {
     causeCategory: 'ALL',
     // CDR specific
     sex: 'ALL',
+    subCentre: 'ALL',
     // MDR specific
     deathTiming: 'ALL',
+    delayCategory: 'ALL',
     search: ''
   },
   charts: {}
@@ -218,6 +220,9 @@ function switchModule(mod) {
   const distCardTitle = document.getElementById('chart-title-district');
   const distSub = document.getElementById('chart-sub-district');
 
+  const focusTitle = document.getElementById('chart-title-focus');
+  const focusSub = document.getElementById('chart-sub-focus');
+
   if (mod === 'CDR') {
     cdrBtn.classList.add('active');
     mdrBtn.classList.remove('active');
@@ -225,6 +230,8 @@ function switchModule(mod) {
     document.getElementById('table-main-title').innerHTML = '<i class="fas fa-baby" style="color:var(--accent-blue); margin-right:6px;"></i> Child Death Review (CDR) Case Explorer';
     if (distCardTitle) distCardTitle.innerHTML = '<i class="fas fa-city" style="color:var(--accent-amber);"></i> Area & District Distribution (CDR)';
     if (distSub) distSub.textContent = 'Cases by residence location & district';
+    if (focusTitle) focusTitle.innerHTML = '<i class="fas fa-clinic-medical" style="color:var(--accent-teal);"></i> Sub-centre / UPHC Wise Cases (CDR)';
+    if (focusSub) focusSub.textContent = 'Reported child deaths distributed by Sub-centre / Urban Primary Health Center (UPHC)';
   } else {
     mdrBtn.classList.add('active');
     cdrBtn.classList.remove('active');
@@ -232,6 +239,8 @@ function switchModule(mod) {
     document.getElementById('table-main-title').innerHTML = '<i class="fas fa-female" style="color:var(--accent-rose); margin-right:6px;"></i> Maternal Death Review (MDR) Case Explorer';
     if (distCardTitle) distCardTitle.innerHTML = '<i class="fas fa-city" style="color:var(--accent-amber);"></i> District Wise Case Distribution (MDR)';
     if (distSub) distSub.textContent = 'Maternal death distribution across Vidarbha, Maharashtra & Neighbouring States';
+    if (focusTitle) focusTitle.innerHTML = '<i class="fas fa-hourglass-half" style="color:var(--accent-rose);"></i> Type of Delay in Cases (MDR)';
+    if (focusSub) focusSub.textContent = 'Three Delays Model audit: Type 1 (Decision), Type 2 (Transport), Type 3 (Care), or No Delay';
   }
 
   renderFilterControls();
@@ -301,6 +310,40 @@ function renderFilterControls() {
           <option value="FEMALE">Female</option>
         </select>
       </div>
+
+      <div class="filter-group">
+        <label for="filter-subcentre"><i class="fas fa-clinic-medical"></i> Sub-centre / UPHC</label>
+        <select id="filter-subcentre" class="filter-select">
+          <option value="ALL">All Sub-centres / UPHCs</option>
+          <option value="Babulkheda UPHC">Babulkheda UPHC</option>
+          <option value="Garib Nawaz Nagar UPHC">Garib Nawaz Nagar UPHC</option>
+          <option value="Mominpura UPHC">Mominpura UPHC</option>
+          <option value="Bidipeth UPHC">Bidipeth UPHC</option>
+          <option value="Bhandewadi UPHC">Bhandewadi UPHC</option>
+          <option value="Kapil Nagar UPHC">Kapil Nagar UPHC</option>
+          <option value="Futala UPHC">Futala UPHC</option>
+          <option value="Ashi Nagar Zone">Ashi Nagar Zone</option>
+          <option value="Hiwari Nagar UPHC">Hiwari Nagar UPHC</option>
+          <option value="Bharatwada UPHC">Bharatwada UPHC</option>
+          <option value="Babulban UPHC">Babulban UPHC</option>
+          <option value="Indora UPHC">Indora UPHC</option>
+          <option value="Shende Nagar UPHC">Shende Nagar UPHC</option>
+          <option value="Telangkhedi UPHC">Telangkhedi UPHC</option>
+          <option value="Dighori UPHC">Dighori UPHC</option>
+          <option value="Hansapuri UPHC">Hansapuri UPHC</option>
+          <option value="Shanti Nagar UPHC">Shanti Nagar UPHC</option>
+          <option value="Dipti Signal UPHC">Dipti Signal UPHC</option>
+          <option value="Somalwada UPHC">Somalwada UPHC</option>
+          <option value="Binaki UPHC">Binaki UPHC</option>
+          <option value="Jaitala UPHC">Jaitala UPHC</option>
+          <option value="Cotton Market UPHC">Cotton Market UPHC</option>
+          <option value="New Health City Hospital">New Health City Hospital</option>
+          <option value="Kingsway / KIMS">Kingsway / KIMS</option>
+          <option value="Colours Hospital">Colours Hospital</option>
+          <option value="Home">Home</option>
+          <option value="Nagpur (HQ / General)">Nagpur (HQ / General)</option>
+        </select>
+      </div>
     ` : `
       <div class="filter-group">
         <label for="filter-timing"><i class="fas fa-hourglass-half"></i> Demise Timing</label>
@@ -309,6 +352,18 @@ function renderFilterControls() {
           <option value="Postpartum (PNC)">Postpartum (PNC)</option>
           <option value="Antepartum (ANC)">Antepartum (ANC)</option>
           <option value="Intrapartum (Delivery)">Intrapartum (Delivery)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filter-delay"><i class="fas fa-clock"></i> Type of Delay</label>
+        <select id="filter-delay" class="filter-select">
+          <option value="ALL">All Delays</option>
+          <option value="Type 1: Delay in Seeking Care">Type 1: Delay in Seeking Care</option>
+          <option value="Type 2: Delay in Reaching Facility">Type 2: Delay in Reaching Facility</option>
+          <option value="Type 3: Delay in Receiving Adequate Care">Type 3: Delay in Receiving Adequate Care</option>
+          <option value="Multiple Delays">Multiple Delays</option>
+          <option value="No Delay Reported">No Delay Reported</option>
         </select>
       </div>
     `}
@@ -358,8 +413,10 @@ function onDynamicFilterChange() {
 
   if (isCdr) {
     appState.filters.sex = document.getElementById('filter-gender') ? document.getElementById('filter-gender').value : 'ALL';
+    appState.filters.subCentre = document.getElementById('filter-subcentre') ? document.getElementById('filter-subcentre').value : 'ALL';
   } else {
     appState.filters.deathTiming = document.getElementById('filter-timing') ? document.getElementById('filter-timing').value : 'ALL';
+    appState.filters.delayCategory = document.getElementById('filter-delay') ? document.getElementById('filter-delay').value : 'ALL';
   }
 
   appState.currentPage = 1;
@@ -397,7 +454,9 @@ function resetAllFilters() {
     ageGroup: 'ALL',
     causeCategory: 'ALL',
     sex: 'ALL',
+    subCentre: 'ALL',
     deathTiming: 'ALL',
+    delayCategory: 'ALL',
     search: ''
   };
 
@@ -427,8 +486,16 @@ function applyFilters() {
 
     if (isCdr) {
       if (f.sex !== 'ALL' && r.sex !== f.sex) return false;
+      if (f.subCentre !== 'ALL' && r.subCentre !== f.subCentre) return false;
     } else {
       if (f.deathTiming !== 'ALL' && r.deathTiming !== f.deathTiming) return false;
+      if (f.delayCategory !== 'ALL') {
+        if (f.delayCategory === 'Multiple Delays') {
+          if (!r.delayCategory || !r.delayCategory.includes('Multiple Delays')) return false;
+        } else if (r.delayCategory !== f.delayCategory) {
+          return false;
+        }
+      }
     }
 
     if (f.search) {
@@ -438,6 +505,7 @@ function applyFilters() {
                       (r.motherName && r.motherName.toLowerCase().includes(q)) ||
                       (r.cause && r.cause.toLowerCase().includes(q)) ||
                       (r.village && r.village.toLowerCase().includes(q)) ||
+                      (r.subCentre && r.subCentre.toLowerCase().includes(q)) ||
                       (r.district && r.district.toLowerCase().includes(q)) ||
                       (r.facility && r.facility.toLowerCase().includes(q)) ||
                       (r.areaCategory && r.areaCategory.toLowerCase().includes(q));
@@ -447,6 +515,8 @@ function applyFilters() {
                       (r.cause && r.cause.toLowerCase().includes(q)) ||
                       (r.address && r.address.toLowerCase().includes(q)) ||
                       (r.district && r.district.toLowerCase().includes(q)) ||
+                      (r.delayType && r.delayType.toLowerCase().includes(q)) ||
+                      (r.delayCategory && r.delayCategory.toLowerCase().includes(q)) ||
                       (r.facility && r.facility.toLowerCase().includes(q));
         if (!match) return false;
       }
@@ -477,7 +547,9 @@ function updateActiveChips() {
   if (f.areaCategory !== 'ALL') chips.push(`Area: ${f.areaCategory}`);
   if (f.district !== 'ALL') chips.push(`District: ${f.district}`);
   if (isCdr && f.sex !== 'ALL') chips.push(`Sex: ${f.sex}`);
+  if (isCdr && f.subCentre !== 'ALL') chips.push(`Sub-centre: ${f.subCentre}`);
   if (!isCdr && f.deathTiming !== 'ALL') chips.push(`Timing: ${f.deathTiming}`);
+  if (!isCdr && f.delayCategory !== 'ALL') chips.push(`Delay: ${f.delayCategory}`);
   if (f.causeCategory !== 'ALL') chips.push(`Cause: ${f.causeCategory}`);
   if (f.search) chips.push(`Search: "${f.search}"`);
 
@@ -669,6 +741,9 @@ function renderAllCharts(data) {
 
   // 3. District Wise Analysis (Special focus for MDR & regional surveillance)
   renderDistrictChart(data, theme);
+
+  // 3b. Module-Specific Focus: Sub-Centre Wise (CDR) / Type of Delay in Cases (MDR)
+  renderFocusChart(data, theme, isCdr);
 
   // 4. Place of Death Donut Chart
   renderPodChart(data, theme, isCdr);
@@ -1081,6 +1156,149 @@ function renderDistrictChart(data, theme) {
         },
         scales: {
           x: { beginAtZero: true, grace: '10%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } }
+        }
+      }
+    });
+  }
+}
+
+// 3b. Focus Chart: Sub-centre Wise Cases (CDR) vs Type of Delay in Cases (MDR)
+function renderFocusChart(data, theme, isCdr) {
+  const canvas = document.getElementById('chart-focus');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (appState.charts.focus) appState.charts.focus.destroy();
+
+  const titleEl = document.getElementById('chart-title-focus');
+  const subEl = document.getElementById('chart-sub-focus');
+
+  if (isCdr) {
+    if (titleEl) titleEl.innerHTML = '<i class="fas fa-clinic-medical" style="color:var(--accent-teal);"></i> Sub-centre / UPHC Wise Cases (CDR)';
+    if (subEl) subEl.textContent = 'Top Sub-centres and Urban Primary Health Centres (UPHCs) by child death caseload';
+
+    // Aggregate sub-centres for CDR (filter out unassigned for clean visual or group them)
+    const counts = {};
+    data.forEach(r => {
+      const sc = r.subCentre || 'Not Specified / Awaited';
+      if (sc !== 'Not Specified / Awaited') {
+        counts[sc] = (counts[sc] || 0) + 1;
+      }
+    });
+
+    const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 10);
+    const labels = sorted.map(s => s[0]);
+    const values = sorted.map(s => s[1]);
+
+    const colors = [
+      '#14b8a6', // Teal
+      '#06b6d4', // Cyan
+      '#38bdf8', // Sky
+      '#6366f1', // Indigo
+      '#a855f7', // Purple
+      '#ec4899', // Pink
+      '#f59e0b', // Amber
+      '#10b981', // Emerald
+      '#f97316', // Orange
+      '#94a3b8'  // Slate
+    ];
+
+    appState.charts.focus = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels.length > 0 ? labels : ['No Sub-centre Data'],
+        datasets: [{
+          label: 'Child Cases',
+          data: values.length > 0 ? values : [0],
+          backgroundColor: colors.slice(0, Math.max(labels.length, 1)),
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 35 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipText,
+            bodyColor: theme.tooltipText,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } }
+        }
+      }
+    });
+  } else {
+    // MDR: Type of Delay in Cases Breakdown
+    if (titleEl) titleEl.innerHTML = '<i class="fas fa-hourglass-half" style="color:var(--accent-rose);"></i> Type of Delay in Cases (MDR)';
+    if (subEl) subEl.textContent = 'Maternal death reviews categorized by Three Delays Framework & No Delay';
+
+    const delayCategories = [
+      { key: 'Type 1: Delay in Seeking Care', label: 'Type 1: Seeking Care (Decision)', color: '#ef4444' },
+      { key: 'Type 2: Delay in Reaching Facility', label: 'Type 2: Reaching Facility (Transport)', color: '#f59e0b' },
+      { key: 'Type 3: Delay in Receiving Adequate Care', label: 'Type 3: Receiving Adequate Care (Facility)', color: '#6366f1' },
+      { key: 'Multiple Delays', label: 'Multiple Delays (Compound)', color: '#ec4899' },
+      { key: 'No Delay Reported', label: 'No Delay Reported', color: '#10b981' },
+      { key: 'Other / Under Review', label: 'Other / Under Review', color: '#94a3b8' }
+    ];
+
+    const counts = {};
+    data.forEach(r => {
+      const d = r.delayCategory || 'No Delay Reported';
+      if (d.includes('Multiple Delays')) {
+        counts['Multiple Delays'] = (counts['Multiple Delays'] || 0) + 1;
+      } else {
+        counts[d] = (counts[d] || 0) + 1;
+      }
+    });
+
+    const activeList = delayCategories
+      .map(c => ({
+        label: c.label,
+        count: counts[c.key] || 0,
+        color: c.color
+      }))
+      .filter(c => c.count > 0 || data.length === 0);
+
+    const labels = activeList.map(c => c.label);
+    const values = activeList.map(c => c.count);
+    const bgColors = activeList.map(c => c.color);
+
+    appState.charts.focus = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Maternal Deaths',
+          data: values,
+          backgroundColor: bgColors,
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        layout: { padding: { right: 35 } },
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: theme.tooltipBg,
+            titleColor: theme.tooltipText,
+            bodyColor: theme.tooltipText,
+            borderColor: theme.tooltipBorder,
+            borderWidth: 1
+          }
+        },
+        scales: {
+          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
           y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 10, weight: '600' } } }
         }
       }
@@ -1527,6 +1745,10 @@ function openCaseModal(rec) {
         <span class="detail-value" style="color:var(--accent-amber); font-weight:800; font-size:1rem;">${escapeHtml(rec.district || 'Nagpur')}</span>
       </div>
       <div class="detail-item">
+        <span class="detail-label">Sub-centre / UPHC Area</span>
+        <span class="detail-value" style="color:var(--accent-teal); font-weight:700;">${escapeHtml(rec.subCentre || 'Not Specified / Awaited')}</span>
+      </div>
+      <div class="detail-item">
         <span class="detail-label">Village / Location</span>
         <span class="detail-value">${escapeHtml(rec.village || 'Nagpur')}</span>
       </div>
@@ -1579,6 +1801,13 @@ function openCaseModal(rec) {
         <span class="detail-value" style="color:var(--accent-rose); font-weight:700;">${escapeHtml(rec.deathTiming)}</span>
       </div>
       <div class="detail-item modal-full-width">
+        <span class="detail-label">Type of Delay (Audit Assessment)</span>
+        <span class="detail-value" style="color:var(--accent-rose); font-weight:800; font-size:0.95rem;">
+          <i class="fas fa-exclamation-circle" style="margin-right:6px;"></i> ${escapeHtml(rec.delayCategory || rec.delayType || 'No Delay Reported')}
+          ${rec.delayType && rec.delayType !== rec.delayCategory ? `<span style="font-size:0.8rem; font-weight:normal; color:var(--text-muted); margin-left:8px;">[Raw: ${escapeHtml(rec.delayType)}]</span>` : ''}
+        </span>
+      </div>
+      <div class="detail-item modal-full-width">
         <span class="detail-label">Full Address / Location</span>
         <span class="detail-value">${escapeHtml(rec.address || 'Nagpur')}</span>
       </div>
@@ -1612,21 +1841,24 @@ function exportActiveViewToCsv() {
   let rows = [];
 
   if (isCdr) {
-    headers = ['Sr. No.', 'Year', 'Child Name', "Mother's Name", 'Sex', 'Category', 'Age', 'Village', 'Birth Weight', 'Place of Death', 'Diagnosis', 'Cause Category'];
+    headers = ['Sr. No.', 'Year', 'Child Name', "Mother's Name", 'Sex', 'Category', 'Age', 'District', 'Sub-centre Area', 'Village', 'Birth Weight', 'Place of Death', 'Facility', 'Area', 'Diagnosis', 'Cause Category'];
     rows = appState.filteredData.map(r => [
       `"${r.srNo}"`, `"${r.year}"`, `"${(r.childName || '').replace(/"/g, '""')}"`,
       `"${(r.motherName || '').replace(/"/g, '""')}"`, `"${r.sex}"`, `"${r.category}"`,
-      `"${r.rawAge}"`, `"${(r.village || '').replace(/"/g, '""')}"`, `"${r.rawBirthWeight}"`,
-      `"${(r.placeOfDeath || '').replace(/"/g, '""')}"`, `"${(r.cause || '').replace(/"/g, '""')}"`,
+      `"${r.rawAge}"`, `"${(r.district || '').replace(/"/g, '""')}"`, `"${(r.subCentre || '').replace(/"/g, '""')}"`,
+      `"${(r.village || '').replace(/"/g, '""')}"`, `"${r.rawBirthWeight}"`,
+      `"${(r.placeOfDeath || '').replace(/"/g, '""')}"`, `"${(r.facility || '').replace(/"/g, '""')}"`,
+      `"${(r.areaCategory || '').replace(/"/g, '""')}"`, `"${(r.cause || '').replace(/"/g, '""')}"`,
       `"${r.causeCategory}"`
     ]);
   } else {
-    headers = ['Sr. No.', 'Year', 'Deceased Women', 'Age', 'Address', 'Timing', 'Place of Death', 'Clinical Cause', 'Cause Category'];
+    headers = ['Sr. No.', 'Year', 'Deceased Women', 'Age', 'Address', 'District', 'Timing', 'Type of Delay', 'Delay Category', 'Place of Death', 'Facility', 'Clinical Cause', 'Cause Category'];
     rows = appState.filteredData.map(r => [
       `"${r.srNo}"`, `"${r.year}"`, `"${(r.deceasedName || '').replace(/"/g, '""')}"`,
-      `"${r.age}"`, `"${(r.address || '').replace(/"/g, '""')}"`, `"${r.deathTiming}"`,
-      `"${(r.placeOfDeath || '').replace(/"/g, '""')}"`, `"${(r.cause || '').replace(/"/g, '""')}"`,
-      `"${r.causeCategory}"`
+      `"${r.age}"`, `"${(r.address || '').replace(/"/g, '""')}"`, `"${(r.district || '').replace(/"/g, '""')}"`,
+      `"${r.deathTiming}"`, `"${(r.delayType || '').replace(/"/g, '""')}"`, `"${(r.delayCategory || '').replace(/"/g, '""')}"`,
+      `"${(r.placeOfDeath || '').replace(/"/g, '""')}"`, `"${(r.facility || '').replace(/"/g, '""')}"`,
+      `"${(r.cause || '').replace(/"/g, '""')}"`, `"${r.causeCategory}"`
     ]);
   }
 

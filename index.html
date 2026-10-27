@@ -130,9 +130,9 @@
       </div>
     </section>
 
-    <!-- Secondary Charts Section: District Wise Analysis -->
-    <section style="margin-bottom: 0;">
-      <!-- 3. District Wise Analysis (Special focus for MDR & Regional Trends) -->
+    <!-- Regional & Operational Drilldown Section: District & Sub-Centre / Delay Analysis -->
+    <section class="charts-grid-two-col">
+      <!-- 3. District Wise Analysis -->
       <div class="chart-card">
         <div class="chart-header">
           <div class="chart-title-group">
@@ -146,6 +146,19 @@
         </div>
         <div class="chart-canvas-container">
           <canvas id="chart-district"></canvas>
+        </div>
+      </div>
+
+      <!-- 3b. Module-Specific Focus: Sub-Centre Wise (CDR) / Type of Delay in Cases (MDR) -->
+      <div class="chart-card" id="card-module-focus">
+        <div class="chart-header">
+          <div class="chart-title-group">
+            <h2 id="chart-title-focus"><i class="fas fa-clinic-medical" style="color:var(--accent-teal);"></i> Sub-centre Wise Cases (CDR)</h2>
+            <span id="chart-sub-focus" class="chart-subtitle">Case load across sub-centres and urban primary health centers (UPHC)</span>
+          </div>
+        </div>
+        <div class="chart-canvas-container">
+          <canvas id="chart-focus"></canvas>
         </div>
       </div>
     </section>
@@ -245,6 +258,6 @@
   <div id="toast-container" class="toast-container"></div>
 
   <!-- Unified Multi-Sheet App Logic -->
-  <script src="js/app.js?v=20261013-2"></script>
+  <script src="js/app.js?v=20261027-1"></script>
 </body>
 </html>

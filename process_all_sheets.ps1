@@ -176,6 +176,72 @@ function Classify-MdrCause($clinical, $desc) {
     return "Other Medical Causes / Awaited"
 }
 
+function Clean-Subcentre($raw) {
+    if (-not $raw) { return "Not Specified / Awaited" }
+    $s = ($raw -replace '\r|\n', ' ').Trim()
+    if ($s -eq '' -or $s -eq '-' -or $s -eq '_' -or $s -match '^\.+$') { return "Not Specified / Awaited" }
+    
+    $u = $s.ToUpper()
+    if ($u -match 'BABULKHEDA') { return "Babulkheda UPHC" }
+    if ($u -match 'FUTALA') { return "Futala UPHC" }
+    if ($u -match 'TELANGKHEDI') { return "Telangkhedi UPHC" }
+    if ($u -match 'MOMINPURA') { return "Mominpura UPHC" }
+    if ($u -match 'BIDIPETH|BIDI PETH') { return "Bidipeth UPHC" }
+    if ($u -match 'BHANDEWADI') { return "Bhandewadi UPHC" }
+    if ($u -match 'KAPIL NAGAR') { return "Kapil Nagar UPHC" }
+    if ($u -match 'GARIB NAWAZ|BANDE NAWAZ') { return "Garib Nawaz Nagar UPHC" }
+    if ($u -match 'ASHI NAGAR') { return "Ashi Nagar Zone" }
+    if ($u -match 'INDORA') { return "Indora UPHC" }
+    if ($u -match 'BHARATWADA') { return "Bharatwada UPHC" }
+    if ($u -match 'BABULBAN') { return "Babulban UPHC" }
+    if ($u -match 'HIWARI|HIWRI') { return "Hiwari Nagar UPHC" }
+    if ($u -match 'DIGHORI') { return "Dighori UPHC" }
+    if ($u -match 'SOMALWADA') { return "Somalwada UPHC" }
+    if ($u -match 'SHENDE NAGAR') { return "Shende Nagar UPHC" }
+    if ($u -match 'DIPTI SIGNAL|DIPTY SIGNAL') { return "Dipti Signal UPHC" }
+    if ($u -match 'SHANTI NAGAR') { return "Shanti Nagar UPHC" }
+    if ($u -match 'JAITALA') { return "Jaitala UPHC" }
+    if ($u -match 'BINAKI') { return "Binaki UPHC" }
+    if ($u -match 'HANSAPURI') { return "Hansapuri UPHC" }
+    if ($u -match 'KALMANA') { return "Kalmana UPHC" }
+    if ($u -match 'PACHPAOLI') { return "Pachpaoli UPHC" }
+    if ($u -match 'ZINGABAI|TAKLI') { return "Zingabai Takli UPHC" }
+    if ($u -match 'KT NAGAR|K\.T\. NAGAR') { return "K.T. Nagar UPHC" }
+    if ($u -match 'COTTAN MARKET') { return "Cotton Market UPHC" }
+    if ($u -match 'NEW HEALTH CITY') { return "New Health City Hospital" }
+    if ($u -match 'KINGSWAY|KIMS') { return "Kingsway / KIMS" }
+    if ($u -match 'COLOURS') { return "Colours Hospital" }
+    if ($u -match 'HOME') { return "Home" }
+    if ($u -eq 'NAGPUR') { return "Nagpur (HQ / General)" }
+    
+    $textInfo = (Get-Culture).TextInfo
+    return $textInfo.ToTitleCase($s.ToLower())
+}
+
+function Classify-MdrDelay($raw) {
+    if (-not $raw) { return "No Delay Reported" }
+    $s = ($raw -replace '\r|\n', ' ').Trim()
+    if ($s -eq '' -or $s -eq '-' -or $s -eq '_') { return "No Delay Reported" }
+    
+    $u = $s.ToUpper()
+    if ($u -match 'NO DELAY|NO\s+DELAY|NONE') { return "No Delay Reported" }
+    
+    $has1 = $u -match 'DELAY\s*1|\b1\b'
+    $has2 = $u -match 'DELAY\s*2|\b2\b'
+    $has3 = $u -match 'DELAY\s*3|\b3\b'
+    
+    if ($has1 -and $has2 -and $has3) { return "Multiple Delays (Delay 1, 2 & 3)" }
+    if ($has1 -and $has3) { return "Multiple Delays (Delay 1 & 3)" }
+    if ($has1 -and $has2) { return "Multiple Delays (Delay 1 & 2)" }
+    if ($has2 -and $has3) { return "Multiple Delays (Delay 2 & 3)" }
+    
+    if ($has1) { return "Type 1: Delay in Seeking Care" }
+    if ($has2) { return "Type 2: Delay in Reaching Facility" }
+    if ($has3) { return "Type 3: Delay in Receiving Adequate Care" }
+    
+    return "Other / Under Review"
+}
+
 $allCdr = @()
 foreach ($s in $cdrSheets) {
     $filePath = "d:\Dashboard\AIl Dashboard\CDR-MDR\data\sheet_$($s.Gid).csv"
@@ -271,6 +337,11 @@ foreach ($s in $cdrSheets) {
             # Area exact 4 classifications: NMC (Urban), Rural, Other District, Other State
             $areaCategory = Classify-Area "" $village $areaType $district
 
+            # Sub-centre / UPHC area
+            $rawSub = $r.'Sub-centre Area'
+            if (-not $rawSub) { $rawSub = $r.'9. Sub-centre Area' }
+            $subCentre = Clean-Subcentre $rawSub
+
             $allCdr += [PSCustomObject]@{
                 recordType = "CDR"
                 year = $s.Year
@@ -286,6 +357,8 @@ foreach ($s in $cdrSheets) {
                 ageDays = $ageDays
                 ageGroup = $ageGroup
                 village = ($village -replace '\r|\n', ' ').Trim()
+                subCentre = $subCentre
+                rawSubCentre = ($rawSub -replace '\r|\n', ' ').Trim()
                 district = $district
                 areaType = $areaType
                 areaCategory = $areaCategory
@@ -379,6 +452,9 @@ foreach ($s in $mdrSheets) {
             # Standardized Clinical Cause Category
             $causeCategory = Classify-MdrCause $clinicalCause $causeDesc
 
+            # Standardized Type of Delay Category
+            $delayCategory = Classify-MdrDelay $delayType
+
             # Reporting Month
             $month = Parse-MdrReportingMonth $dod $reviewDate "Apr"
 
@@ -406,6 +482,7 @@ foreach ($s in $mdrSheets) {
                 causeDescription = $causeDesc
                 causeCategory = $causeCategory
                 delayType = $delayType
+                delayCategory = $delayCategory
                 haemoglobin = $haemoglobin
             }
         }

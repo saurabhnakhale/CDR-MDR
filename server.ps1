@@ -24,12 +24,17 @@ try {
             elseif ($ext -eq ".csv") { $mime = "text/csv; charset=utf-8" }
             
             $response.ContentType = $mime
-            $response.ContentLength64 = $bytes.Length
-            $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            $response.ContentLength64 = $bytes.LongLength
+            if ($request.HttpMethod -ne "HEAD") {
+                $response.OutputStream.Write($bytes, 0, $bytes.Length)
+            }
         } else {
             $response.StatusCode = 404
             $err = [System.Text.Encoding]::UTF8.GetBytes("404 Not Found")
-            $response.OutputStream.Write($err, 0, $err.Length)
+            $response.ContentLength64 = $err.LongLength
+            if ($request.HttpMethod -ne "HEAD") {
+                $response.OutputStream.Write($err, 0, $err.Length)
+            }
         }
         $response.Close()
     }
