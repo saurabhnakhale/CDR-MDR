@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Child Death Review (CDR) & Maternal Death Review (MDR) Unified Dashboard
  * Across all 8 worksheets (2023-24, 2024-25, 2025-26, 2026-27)
  */
@@ -787,7 +787,8 @@ const chartDataLabelsPlugin = {
   afterDatasetsDraw(chart, args, options) {
     if (options && options.display === false) return;
     const { ctx } = chart;
-    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const isReport = chart.canvas && chart.canvas.closest && chart.canvas.closest('.report-document-sheet');
+    const isDark = !isReport && document.documentElement.getAttribute('data-theme') !== 'light';
     const defaultColor = isDark ? '#f1f5f9' : '#0f172a';
 
     chart.data.datasets.forEach((dataset, datasetIndex) => {
@@ -2377,10 +2378,10 @@ function renderCdrReportCharts(list, cadence) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 30 } },
+        layout: { padding: { right: 45, top: 10, bottom: 5 } },
         plugins: { legend: { display: false } },
         scales: {
-          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          x: { beginAtZero: true, grace: '15%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
           y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } }
         }
       }
@@ -2705,10 +2706,10 @@ function renderMdrReportCharts(list, cadence) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 30 } },
+        layout: { padding: { right: 45, top: 10, bottom: 5 } },
         plugins: { legend: { display: false } },
         scales: {
-          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          x: { beginAtZero: true, grace: '15%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
           y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } }
         }
       }
@@ -2770,10 +2771,10 @@ function renderMdrReportCharts(list, cadence) {
         indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
-        layout: { padding: { right: 30 } },
+        layout: { padding: { right: 45, top: 10, bottom: 5 } },
         plugins: { legend: { display: false } },
         scales: {
-          x: { beginAtZero: true, grace: '12%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
+          x: { beginAtZero: true, grace: '15%', grid: { color: theme.gridColor }, ticks: { color: theme.textColor } },
           y: { grid: { display: false }, ticks: { color: theme.textColor, font: { size: 9, weight: 'bold' } } }
         }
       }
