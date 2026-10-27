@@ -115,9 +115,14 @@ function setupEventListeners() {
   document.getElementById('btn-sync-all-sheets').addEventListener('click', () => loadAllDatasets());
   document.getElementById('btn-export-csv').addEventListener('click', exportActiveViewToCsv);
 
-  // Tab buttons (CDR vs MDR)
+  // Tab buttons (CDR vs MDR vs REPORTS)
   document.getElementById('tab-btn-cdr').addEventListener('click', () => switchModule('CDR'));
   document.getElementById('tab-btn-mdr').addEventListener('click', () => switchModule('MDR'));
+  const repBtn = document.getElementById('tab-btn-reports');
+  if (repBtn) repBtn.addEventListener('click', () => switchModule('REPORTS'));
+
+  // Report Generator controls listeners
+  setupReportEventListeners();
 
   // Multi-select Year chips selector
   document.querySelectorAll('.year-chip').forEach(btn => {
@@ -210,16 +215,37 @@ function setupTemporalToggle(containerId, chartKey) {
   });
 }
 
-// Switch between Child Death Review (CDR) and Maternal Death Review (MDR)
+// Switch between Child Death Review (CDR), Maternal Death Review (MDR), and Reports
 function switchModule(mod) {
   appState.activeModule = mod;
   appState.currentPage = 1;
 
   const cdrBtn = document.getElementById('tab-btn-cdr');
   const mdrBtn = document.getElementById('tab-btn-mdr');
+  const repBtn = document.getElementById('tab-btn-reports');
+  const dashView = document.getElementById('section-dashboard-view');
+  const repView = document.getElementById('section-reports-view');
+  const yearChipsBar = document.querySelector('.year-chips-selector');
+
+  if (mod === 'REPORTS') {
+    if (repBtn) repBtn.classList.add('active');
+    if (cdrBtn) cdrBtn.classList.remove('active');
+    if (mdrBtn) mdrBtn.classList.remove('active');
+    if (dashView) dashView.style.display = 'none';
+    if (repView) repView.style.display = 'flex';
+    if (yearChipsBar) yearChipsBar.style.display = 'none';
+    generateSurveillanceReport();
+    return;
+  }
+
+  // Otherwise CDR or MDR dashboard view
+  if (repBtn) repBtn.classList.remove('active');
+  if (dashView) dashView.style.display = 'block';
+  if (repView) repView.style.display = 'none';
+  if (yearChipsBar) yearChipsBar.style.display = 'flex';
+
   const distCardTitle = document.getElementById('chart-title-district');
   const distSub = document.getElementById('chart-sub-district');
-
   const focusTitle = document.getElementById('chart-title-focus');
   const focusSub = document.getElementById('chart-sub-focus');
 
@@ -1910,3 +1936,531 @@ function debounce(fn, wait) {
     timer = setTimeout(() => fn.apply(this, args), wait);
   };
 }
+
+/* ==========================================================================
+   Surveillance Reports Generator & 1-Click Word / PDF Exporters
+   ========================================================================== */
+
+function setupReportEventListeners() {
+  const modSel = document.getElementById('report-module-select');
+  const cadSel = document.getElementById('report-cadence-select');
+  const yearSel = document.getElementById('report-year-select');
+  const monthSel = document.getElementById('report-month-select');
+
+  if (modSel) modSel.addEventListener('change', generateSurveillanceReport);
+  if (cadSel) {
+    cadSel.addEventListener('change', () => {
+      const isMonthly = cadSel.value === 'monthly';
+      const mGroup = document.getElementById('group-report-month');
+      if (mGroup) mGroup.style.display = isMonthly ? 'flex' : 'none';
+      generateSurveillanceReport();
+    });
+  }
+  if (yearSel) yearSel.addEventListener('change', generateSurveillanceReport);
+  if (monthSel) monthSel.addEventListener('change', generateSurveillanceReport);
+
+  // 1-Click Export buttons
+  const pdfBtn = document.getElementById('btn-generate-pdf');
+  const docBtn = document.getElementById('btn-generate-doc');
+  const prtBtn = document.getElementById('btn-print-report');
+
+  if (pdfBtn) pdfBtn.addEventListener('click', exportReportToPdf);
+  if (docBtn) docBtn.addEventListener('click', exportReportToDoc);
+  if (prtBtn) prtBtn.addEventListener('click', () => window.print());
+}
+
+function getReportFilteredData() {
+  const modSel = document.getElementById('report-module-select');
+  const cadSel = document.getElementById('report-cadence-select');
+  const yearSel = document.getElementById('report-year-select');
+  const monthSel = document.getElementById('report-month-select');
+
+  const selectedMod = modSel ? modSel.value : 'CDR';
+  const cadence = cadSel ? cadSel.value : 'yearly';
+  const year = yearSel ? yearSel.value : 'ALL';
+  const month = monthSel ? monthSel.value : 'Apr';
+
+  const filterFn = (rec) => {
+    if (year !== 'ALL' && rec.year !== year) return false;
+    if (cadence === 'monthly') {
+      const rMonth = (rec.month || '').toLowerCase();
+      if (!rMonth.startsWith(month.toLowerCase())) return false;
+    }
+    return true;
+  };
+
+  const cdrList = (appState.allData.cdr || []).filter(filterFn);
+  const mdrList = (appState.allData.mdr || []).filter(filterFn);
+
+  return { selectedMod, cadence, year, month, cdrList, mdrList };
+}
+
+function generateSurveillanceReport() {
+  const container = document.getElementById('report-document-container');
+  if (!container) return;
+
+  const { selectedMod, cadence, year, month, cdrList, mdrList } = getReportFilteredData();
+
+  const generatedDate = new Date().toLocaleDateString('en-IN', {
+    day: '2-digit', month: 'short', year: 'numeric'
+  });
+
+  const periodLabel = cadence === 'monthly'
+    ? `Monthly Review: ${month} (${year === 'ALL' ? 'All Years' : year})`
+    : `Annual Review: ${year === 'ALL' ? 'All Consolidated Years (2023–2027)' : `Fiscal Year ${year}`}`;
+
+  let docHtml = '';
+
+  if (selectedMod === 'CDR') {
+    docHtml = buildCdrReportHtml(cdrList, periodLabel, generatedDate);
+  } else if (selectedMod === 'MDR') {
+    docHtml = buildMdrReportHtml(mdrList, periodLabel, generatedDate);
+  } else {
+    docHtml = buildCombinedReportHtml(cdrList, mdrList, periodLabel, generatedDate);
+  }
+
+  container.innerHTML = docHtml;
+  const statusEl = document.getElementById('report-preview-status');
+  if (statusEl) {
+    const count = selectedMod === 'CDR' ? cdrList.length : (selectedMod === 'MDR' ? mdrList.length : cdrList.length + mdrList.length);
+    statusEl.textContent = `Ready • ${count} Records Included`;
+  }
+}
+
+function buildCdrReportHtml(list, periodLabel, generatedDate) {
+  const total = list.length;
+  const males = list.filter(r => r.sex === 'MALE').length;
+  const females = list.filter(r => r.sex === 'FEMALE').length;
+  const neo = list.filter(r => (r.ageGroup || '').includes('Neonatal') || (r.ageGroup || '').includes('Day 0')).length;
+  const inst = list.filter(r => (r.facility && r.facility !== 'Home')).length;
+  const home = total - inst;
+
+  // Facilities breakdown
+  const facCounts = {};
+  list.forEach(r => { facCounts[r.facility || 'Other'] = (facCounts[r.facility || 'Other'] || 0) + 1; });
+  const facSorted = Object.entries(facCounts).sort((a,b) => b[1]-a[1]);
+
+  // Sub-centres breakdown
+  const scCounts = {};
+  list.forEach(r => {
+    const sc = r.subCentre || 'Not Specified';
+    if (sc !== 'Not Specified / Awaited') {
+      scCounts[sc] = (scCounts[sc] || 0) + 1;
+    }
+  });
+  const scSorted = Object.entries(scCounts).sort((a,b) => b[1]-a[1]).slice(0, 8);
+
+  // Causes breakdown
+  const causeCounts = {};
+  list.forEach(r => { causeCounts[r.causeCategory || 'Other'] = (causeCounts[r.causeCategory || 'Other'] || 0) + 1; });
+  const causeSorted = Object.entries(causeCounts).sort((a,b) => b[1]-a[1]);
+
+  // Areas breakdown
+  const areaCounts = {};
+  list.forEach(r => { areaCounts[r.areaCategory || 'Other'] = (areaCounts[r.areaCategory || 'Other'] || 0) + 1; });
+
+  return `
+    <div class="doc-header">
+      <div class="doc-org-sub">Health Department • Nagpur Division Mortality Surveillance System</div>
+      <div class="doc-title">CHILD DEATH REVIEW (CDR) SURVEILLANCE REPORT</div>
+      <div class="doc-subtitle">${escapeHtml(periodLabel)}</div>
+      <div class="doc-meta-strip">
+        <span>Report Type: <strong>Child Mortality Audit</strong></span>
+        <span>Generated: <strong>${generatedDate}</strong></span>
+        <span>Audited Sample: <strong>${total.toLocaleString()} Demises</strong></span>
+        <span>Status: <strong>Official Medical Review</strong></span>
+      </div>
+    </div>
+
+    <div class="doc-section-title">1. Executive Summary & Demographic Indicators</div>
+    <div class="doc-kpi-grid">
+      <div class="doc-kpi-box danger">
+        <div class="doc-kpi-num">${total.toLocaleString()}</div>
+        <div class="doc-kpi-lbl">Total Child Deaths</div>
+      </div>
+      <div class="doc-kpi-box highlight">
+        <div class="doc-kpi-num">${neo.toLocaleString()} (${total > 0 ? ((neo/total)*100).toFixed(1) : 0}%)</div>
+        <div class="doc-kpi-lbl">Neonatal (&le;28 Days)</div>
+      </div>
+      <div class="doc-kpi-box">
+        <div class="doc-kpi-num">${males}M / ${females}F</div>
+        <div class="doc-kpi-lbl">Gender Distribution</div>
+      </div>
+      <div class="doc-kpi-box">
+        <div class="doc-kpi-num">${inst.toLocaleString()} (${total > 0 ? ((inst/total)*100).toFixed(1) : 0}%)</div>
+        <div class="doc-kpi-lbl">Institutional Deaths</div>
+      </div>
+      <div class="doc-kpi-box">
+        <div class="doc-kpi-num">${home.toLocaleString()}</div>
+        <div class="doc-kpi-lbl">Home Deaths</div>
+      </div>
+    </div>
+
+    <div class="doc-section-title">2. Health Facility & Institutional Case Distribution</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Health Facility Tier / Provider</th>
+          <th class="col-num">Cases</th>
+          <th class="col-pct">Share (%)</th>
+          <th>Institutional Role & Surveillance Implication</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${facSorted.map(([fac, count]) => `
+          <tr>
+            <td><strong>${escapeHtml(fac)}</strong></td>
+            <td class="col-num">${count}</td>
+            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
+            <td>${fac === 'Home' ? 'Community outreach & early referral priority' : 'Tertiary / secondary clinical management'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="doc-section-title">3. Sub-Centre & Urban Primary Health Center (UPHC) Caseload</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Sub-centre / UPHC Jurisdiction</th>
+          <th class="col-num">Reported Cases</th>
+          <th class="col-pct">Caseload Share (%)</th>
+          <th>Grassroots Area Surveillance</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${scSorted.length > 0 ? scSorted.map(([sc, count]) => `
+          <tr>
+            <td><strong>${escapeHtml(sc)}</strong></td>
+            <td class="col-num">${count}</td>
+            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
+            <td>NMC Urban / Rural Sub-centre field network</td>
+          </tr>
+        `).join('') : '<tr><td colspan="4">No specific sub-centre data recorded for this selection.</td></tr>'}
+      </tbody>
+    </table>
+
+    <div class="doc-section-title">4. Primary Epidemiological & Clinical Causes of Death</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Clinical Etiology Category</th>
+          <th class="col-num">Deaths</th>
+          <th class="col-pct">% of Total</th>
+          <th>Clinical Surveillance Observation</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${causeSorted.map(([cause, count]) => `
+          <tr>
+            <td><strong>${escapeHtml(cause)}</strong></td>
+            <td class="col-num">${count}</td>
+            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
+            <td>Leading cause requiring neonatal care protocols</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="doc-section-title">5. Area Categorization (Urban vs Rural vs Outside)</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Residence Category</th>
+          <th class="col-num">Deaths</th>
+          <th class="col-pct">Distribution (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${Object.entries(areaCounts).map(([ar, count]) => `
+          <tr>
+            <td><strong>${escapeHtml(ar)}</strong></td>
+            <td class="col-num">${count}</td>
+            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="doc-footer-notes">
+      <span>Child Death Review (CDR) Program • Division of Public Health</span>
+      <span>Confidential Clinical Audit Document</span>
+    </div>
+  `;
+}
+
+function buildMdrReportHtml(list, periodLabel, generatedDate) {
+  const total = list.length;
+  const pnc = list.filter(r => r.deathTiming === 'Postpartum (PNC)').length;
+  const anc = list.filter(r => r.deathTiming === 'Antepartum (ANC)').length;
+  const intra = list.filter(r => r.deathTiming === 'Intrapartum (Delivery)').length;
+  const young = list.filter(r => r.ageNum > 0 && r.ageNum <= 24).length;
+
+  // Delays breakdown
+  const delayCounts = {};
+  list.forEach(r => {
+    const d = r.delayCategory || 'No Delay Reported';
+    delayCounts[d] = (delayCounts[d] || 0) + 1;
+  });
+  const delayOrder = [
+    'Type 1: Delay in Seeking Care',
+    'Type 2: Delay in Reaching Facility',
+    'Type 3: Delay in Receiving Adequate Care',
+    'Multiple Delays (Delay 1 & 3)',
+    'Multiple Delays (Delay 1 & 2)',
+    'No Delay Reported'
+  ];
+
+  // Clinical causes breakdown
+  const causeCounts = {};
+  list.forEach(r => { causeCounts[r.causeCategory || 'Other'] = (causeCounts[r.causeCategory || 'Other'] || 0) + 1; });
+  const causeSorted = Object.entries(causeCounts).sort((a,b) => b[1]-a[1]);
+
+  // Facilities breakdown
+  const facCounts = {};
+  list.forEach(r => { facCounts[r.facility || 'Other'] = (facCounts[r.facility || 'Other'] || 0) + 1; });
+  const facSorted = Object.entries(facCounts).sort((a,b) => b[1]-a[1]);
+
+  return `
+    <div class="doc-header">
+      <div class="doc-org-sub">Health Department • Nagpur Division Mortality Surveillance System</div>
+      <div class="doc-title">MATERNAL DEATH REVIEW (MDR) SURVEILLANCE REPORT</div>
+      <div class="doc-subtitle">${escapeHtml(periodLabel)}</div>
+      <div class="doc-meta-strip">
+        <span>Report Type: <strong>Maternal Mortality Audit</strong></span>
+        <span>Generated: <strong>${generatedDate}</strong></span>
+        <span>Audited Sample: <strong>${total.toLocaleString()} Maternal Demises</strong></span>
+        <span>Framework: <strong>Three Delays Model & ICD-10</strong></span>
+      </div>
+    </div>
+
+    <div class="doc-section-title">1. Executive Maternal Demographics & Pregnancy Timing</div>
+    <div class="doc-kpi-grid">
+      <div class="doc-kpi-box danger">
+        <div class="doc-kpi-num">${total.toLocaleString()}</div>
+        <div class="doc-kpi-lbl">Total Maternal Deaths</div>
+      </div>
+      <div class="doc-kpi-box highlight">
+        <div class="doc-kpi-num">${pnc.toLocaleString()} (${total > 0 ? ((pnc/total)*100).toFixed(1) : 0}%)</div>
+        <div class="doc-kpi-lbl">Postpartum (PNC)</div>
+      </div>
+      <div class="doc-kpi-box">
+        <div class="doc-kpi-num">${anc.toLocaleString()} (${total > 0 ? ((anc/total)*100).toFixed(1) : 0}%)</div>
+        <div class="doc-kpi-lbl">Antepartum (ANC)</div>
+      </div>
+      <div class="doc-kpi-box">
+        <div class="doc-kpi-num">${intra.toLocaleString()}</div>
+        <div class="doc-kpi-lbl">Intrapartum (Delivery)</div>
+      </div>
+      <div class="doc-kpi-box">
+        <div class="doc-kpi-num">${young.toLocaleString()} (${total > 0 ? ((young/total)*100).toFixed(1) : 0}%)</div>
+        <div class="doc-kpi-lbl">Young Mothers (&le;24 Yrs)</div>
+      </div>
+    </div>
+
+    <div class="doc-section-title">2. Type of Delay in Cases (Three Delays Model Analysis)</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Delay Classification</th>
+          <th class="col-num">Cases</th>
+          <th class="col-pct">Share (%)</th>
+          <th>Clinical Audit Focus & Public Health Intervention</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${Object.entries(delayCounts).sort((a,b) => b[1]-a[1]).map(([del, count]) => `
+          <tr>
+            <td><strong>${escapeHtml(del)}</strong></td>
+            <td class="col-num">${count}</td>
+            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
+            <td>${
+              del.includes('Type 1') ? 'Family awareness, recognizing danger signs & financial readiness' :
+              (del.includes('Type 2') ? 'Emergency ambulance, road connectivity & referral transport' :
+              (del.includes('Type 3') ? 'Institutional preparedness, blood bank & specialist obstetric response' :
+              (del.includes('Multiple') ? 'Compound delays across domestic, transit and facility tiers' : 'Adequate care pathway followed without preventable delay')))
+            }</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="doc-section-title">3. Primary Clinical Causes of Maternal Demise</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Clinical Etiology Category</th>
+          <th class="col-num">Deaths</th>
+          <th class="col-pct">% of Total</th>
+          <th>Clinical Management Priorities</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${causeSorted.map(([cause, count]) => `
+          <tr>
+            <td><strong>${escapeHtml(cause)}</strong></td>
+            <td class="col-num">${count}</td>
+            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
+            <td>Immediate maternal care and rapid-response protocol</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="doc-section-title">4. Health Facility of Demise</div>
+    <table class="doc-table">
+      <thead>
+        <tr>
+          <th>Health Facility Tier</th>
+          <th class="col-num">Deaths</th>
+          <th class="col-pct">Share (%)</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${facSorted.map(([fac, count]) => `
+          <tr>
+            <td><strong>${escapeHtml(fac)}</strong></td>
+            <td class="col-num">${count}</td>
+            <td class="col-pct">${total > 0 ? ((count/total)*100).toFixed(1) : 0}%</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+
+    <div class="doc-footer-notes">
+      <span>Maternal Death Review (MDR) Program • Division of Public Health</span>
+      <span>Confidential Maternal Health Audit Report</span>
+    </div>
+  `;
+}
+
+function buildCombinedReportHtml(cdrList, mdrList, periodLabel, generatedDate) {
+  const totalCdr = cdrList.length;
+  const totalMdr = mdrList.length;
+  const total = totalCdr + totalMdr;
+
+  return `
+    <div class="doc-header">
+      <div class="doc-org-sub">Health Department • Nagpur Division Mortality Surveillance System</div>
+      <div class="doc-title">CONSOLIDATED CDR & MDR MORTALITY AUDIT REPORT</div>
+      <div class="doc-subtitle">${escapeHtml(periodLabel)}</div>
+      <div class="doc-meta-strip">
+        <span>Report: <strong>Joint Child & Maternal Review</strong></span>
+        <span>Generated: <strong>${generatedDate}</strong></span>
+        <span>Total Records Audited: <strong>${total.toLocaleString()}</strong></span>
+      </div>
+    </div>
+
+    <div class="doc-section-title">1. Combined Surveillance Key Metrics</div>
+    <div class="doc-kpi-grid">
+      <div class="doc-kpi-box danger">
+        <div class="doc-kpi-num">${totalCdr.toLocaleString()}</div>
+        <div class="doc-kpi-lbl">Child Deaths (CDR)</div>
+      </div>
+      <div class="doc-kpi-box highlight">
+        <div class="doc-kpi-num">${totalMdr.toLocaleString()}</div>
+        <div class="doc-kpi-lbl">Maternal Deaths (MDR)</div>
+      </div>
+      <div class="doc-kpi-box">
+        <div class="doc-kpi-num">${total.toLocaleString()}</div>
+        <div class="doc-kpi-lbl">Consolidated Demises</div>
+      </div>
+    </div>
+
+    <div class="doc-section-title">2. Child Mortality (CDR) Highlights</div>
+    <p style="font-size:0.85rem; color:#475569; margin-bottom:0.75rem;">Total of ${totalCdr.toLocaleString()} child deaths reviewed. Top causes include Prematurity & LBW, Respiratory Distress, and Sepsis.</p>
+
+    <div class="doc-section-title">3. Maternal Mortality (MDR) Highlights</div>
+    <p style="font-size:0.85rem; color:#475569; margin-bottom:0.75rem;">Total of ${totalMdr.toLocaleString()} maternal deaths reviewed. Key factors include Type 1 & 3 delays, Hemorrhage/PPH, and Hypertensive disorders.</p>
+
+    <div class="doc-footer-notes">
+      <span>Joint Mortality Surveillance Unit • Division of Public Health</span>
+      <span>Official Surveillance Summary</span>
+    </div>
+  `;
+}
+
+// 1-Click Export to Word (.doc)
+function exportReportToDoc() {
+  const container = document.getElementById('report-document-container');
+  if (!container) return;
+
+  const { selectedMod, cadence, year, month } = getReportFilteredData();
+  const filename = `${selectedMod}_Surveillance_Report_${cadence}_${year}_${new Date().toISOString().slice(0, 10)}.doc`;
+
+  const docHead = `
+    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+    <head>
+      <meta charset='utf-8'>
+      <title>${selectedMod} Surveillance Report</title>
+      <style>
+        body { font-family: Calibri, Arial, sans-serif; font-size: 11pt; color: #1e293b; }
+        .doc-header { text-align: center; border-bottom: 2pt double #0284c7; padding-bottom: 12pt; margin-bottom: 18pt; }
+        .doc-org-sub { font-size: 9pt; font-weight: bold; color: #64748b; text-transform: uppercase; }
+        .doc-title { font-size: 18pt; font-weight: bold; color: #0f172a; margin-top: 4pt; }
+        .doc-subtitle { font-size: 12pt; font-weight: bold; color: #0369a1; margin-top: 4pt; }
+        .doc-meta-strip { font-size: 9.5pt; color: #64748b; margin-top: 6pt; }
+        .doc-section-title { font-size: 12pt; font-weight: bold; color: #0f172a; border-bottom: 1pt solid #cbd5e1; padding-bottom: 3pt; margin-top: 16pt; margin-bottom: 8pt; text-transform: uppercase; }
+        .doc-kpi-grid { margin-bottom: 12pt; }
+        .doc-kpi-box { display: inline-block; width: 18%; background: #f8fafc; border: 1pt solid #cbd5e1; padding: 6pt; text-align: center; margin-right: 1%; }
+        .doc-kpi-num { font-size: 14pt; font-weight: bold; color: #0f172a; }
+        .doc-kpi-lbl { font-size: 8pt; color: #475569; text-transform: uppercase; }
+        table.doc-table { width: 100%; border-collapse: collapse; margin-top: 6pt; margin-bottom: 14pt; }
+        table.doc-table th { background: #0f172a; color: #ffffff; font-weight: bold; font-size: 9.5pt; border: 1pt solid #0f172a; padding: 5pt; }
+        table.doc-table td { border: 1pt solid #cbd5e1; font-size: 9.5pt; padding: 4.5pt; color: #334155; }
+        .col-num { text-align: right; }
+        .col-pct { text-align: right; font-weight: bold; color: #0369a1; }
+        .doc-footer-notes { font-size: 8.5pt; color: #64748b; border-top: 1pt dashed #cbd5e1; padding-top: 8pt; margin-top: 20pt; }
+      </style>
+    </head>
+    <body>
+  `;
+  const docFoot = `</body></html>`;
+  const fullContent = docHead + container.innerHTML + docFoot;
+
+  const blob = new Blob(['\ufeff', fullContent], { type: 'application/msword' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+
+  showToast(`Word report generated: ${filename}`, 'success');
+}
+
+// 1-Click Export to PDF (.pdf) via html2pdf.js
+function exportReportToPdf() {
+  const container = document.getElementById('report-document-container');
+  if (!container) return;
+
+  const { selectedMod, cadence, year } = getReportFilteredData();
+  const filename = `${selectedMod}_Surveillance_Report_${cadence}_${year}_${new Date().toISOString().slice(0, 10)}.pdf`;
+
+  showToast('Generating PDF report...', 'info');
+
+  const opt = {
+    margin: [10, 10, 10, 10],
+    filename: filename,
+    image: { type: 'jpeg', quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true, logging: false },
+    jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' },
+    pagebreak: { mode: ['avoid-all', 'css', 'legacy'] }
+  };
+
+  if (window.html2pdf) {
+    window.html2pdf().set(opt).from(container).save().then(() => {
+      showToast(`PDF report downloaded: ${filename}`, 'success');
+    }).catch(err => {
+      console.error('PDF generation error:', err);
+      // Fallback to window.print if library fails
+      window.print();
+    });
+  } else {
+    // Fallback: trigger print dialog directly
+    window.print();
+  }
+}
+

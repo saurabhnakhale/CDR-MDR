@@ -12,6 +12,9 @@
   <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 
+  <!-- html2pdf.js for 1-Click Client-side PDF Generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWQV46GjGJRnxLS53+NT5h++XtZBNPXIF92nPWgyfSybZ49ED3SU0ZSkEZfqhg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+
   <!-- Custom Stylesheet -->
   <link rel="stylesheet" href="css/dashboard.css">
 </head>
@@ -62,6 +65,10 @@
           <i class="fas fa-female"></i> Maternal Deaths (MDR)
           <span id="tab-count-mdr" class="tab-badge">417</span>
         </button>
+        <button id="tab-btn-reports" class="tab-btn tab-reports" data-module="REPORTS">
+          <i class="fas fa-file-alt"></i> Surveillance Reports
+          <span class="tab-badge" style="background:rgba(16,185,129,0.2); color:var(--accent-emerald);">Export</span>
+        </button>
       </div>
 
       <div class="year-chips-selector">
@@ -74,24 +81,26 @@
       </div>
     </section>
 
-    <!-- Dynamic Surveillance Filter Bar -->
-    <section class="filter-panel">
-      <div class="filter-top-row">
-        <div class="filter-title-label">
-          <i class="fas fa-sliders-h" style="color:var(--accent-blue);"></i> <span id="filter-module-label">CDR Surveillance Filters</span>
+    <!-- Main Analytics Dashboard View (CDR / MDR) -->
+    <div id="section-dashboard-view">
+      <!-- Dynamic Surveillance Filter Bar -->
+      <section class="filter-panel">
+        <div class="filter-top-row">
+          <div class="filter-title-label">
+            <i class="fas fa-sliders-h" style="color:var(--accent-blue);"></i> <span id="filter-module-label">CDR Surveillance Filters</span>
+          </div>
+          <div id="filter-active-chips" class="filter-active-chips"></div>
         </div>
-        <div id="filter-active-chips" class="filter-active-chips"></div>
-      </div>
 
-      <div id="filter-grid-container" class="filter-grid">
-        <!-- Injected dynamically based on active module (CDR vs MDR) -->
-      </div>
-    </section>
+        <div id="filter-grid-container" class="filter-grid">
+          <!-- Injected dynamically based on active module (CDR vs MDR) -->
+        </div>
+      </section>
 
-    <!-- Executive KPI Statistics Grid -->
-    <section id="kpi-cards-container" class="kpi-grid">
-      <!-- Injected dynamically based on active module -->
-    </section>
+      <!-- Executive KPI Statistics Grid -->
+      <section id="kpi-cards-container" class="kpi-grid">
+        <!-- Injected dynamically based on active module -->
+      </section>
 
     <!-- Primary Charts Section: Facility & Area Wise Analysis with Monthly/Yearly Toggle -->
     <section class="charts-grid-two-col">
@@ -235,6 +244,91 @@
         <div class="pagination-controls">
           <button id="btn-prev-page" class="btn-page"><i class="fas fa-chevron-left"></i> Previous</button>
           <button id="btn-next-page" class="btn-page">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <!-- Reports Generator View Section (Displayed when Reports tab is active) -->
+    <section id="section-reports-view" class="reports-section-wrapper" style="display: none;">
+      <!-- Report Controls Card -->
+      <div class="report-controls-card">
+        <div class="report-controls-header">
+          <div class="report-title-group">
+            <h2><i class="fas fa-file-invoice" style="color:var(--accent-emerald);"></i> Mortality Surveillance Report Generator</h2>
+            <p>Generate comprehensive clinical & epidemiological mortality review reports with Monthly or Yearly aggregation. Export directly to Word (.doc) and PDF (.pdf) with a single click.</p>
+          </div>
+
+          <div class="report-export-actions">
+            <button id="btn-generate-pdf" class="btn-report-export btn-export-pdf" title="Generate and Download formatted PDF Report">
+              <i class="fas fa-file-pdf"></i> Download PDF Report
+            </button>
+            <button id="btn-generate-doc" class="btn-report-export btn-export-doc" title="Generate and Download editable Word Document (.doc)">
+              <i class="fas fa-file-word"></i> Download Word Report
+            </button>
+            <button id="btn-print-report" class="btn-report-export btn-export-print" title="Open Browser Print Dialog">
+              <i class="fas fa-print"></i> Print
+            </button>
+          </div>
+        </div>
+
+        <div class="report-config-grid">
+          <div class="filter-group">
+            <label for="report-module-select"><i class="fas fa-stethoscope"></i> Surveillance Module</label>
+            <select id="report-module-select" class="filter-select">
+              <option value="CDR">Child Mortality (CDR - Child Death Review)</option>
+              <option value="MDR">Maternal Mortality (MDR - Maternal Death Review)</option>
+              <option value="COMBINED">Executive Combined (CDR & MDR Summary)</option>
+            </select>
+          </div>
+
+          <div class="filter-group">
+            <label for="report-cadence-select"><i class="fas fa-calendar-alt"></i> Cadence Period</label>
+            <select id="report-cadence-select" class="filter-select">
+              <option value="yearly">Yearly Report (Full Fiscal Year Audit)</option>
+              <option value="monthly">Monthly Report (Month-Wise Audit)</option>
+            </select>
+          </div>
+
+          <div class="filter-group" id="group-report-year">
+            <label for="report-year-select"><i class="fas fa-calendar-check"></i> Fiscal Year</label>
+            <select id="report-year-select" class="filter-select">
+              <option value="ALL">All Consolidated Years (2023–2027)</option>
+              <option value="2023-24">2023-24</option>
+              <option value="2024-25">2024-25</option>
+              <option value="2025-26">2025-26</option>
+              <option value="2026-27">2026-27</option>
+            </select>
+          </div>
+
+          <div class="filter-group" id="group-report-month" style="display: none;">
+            <label for="report-month-select"><i class="fas fa-clock"></i> Reporting Month</label>
+            <select id="report-month-select" class="filter-select">
+              <option value="Apr">April</option>
+              <option value="May">May</option>
+              <option value="Jun">June</option>
+              <option value="Jul">July</option>
+              <option value="Aug">August</option>
+              <option value="Sep">September</option>
+              <option value="Oct">October</option>
+              <option value="Nov">November</option>
+              <option value="Dec">December</option>
+              <option value="Jan">January</option>
+              <option value="Feb">February</option>
+              <option value="Mar">March</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Printable Document Preview Container -->
+      <div class="report-preview-outer">
+        <div class="report-preview-banner">
+          <span><i class="fas fa-eye"></i> Live Document Preview (Matches Word & PDF output)</span>
+          <span id="report-preview-status" class="kpi-pill">Ready to Download</span>
+        </div>
+        <div id="report-document-container" class="report-document-sheet">
+          <!-- Injected dynamically via app.js -->
         </div>
       </div>
     </section>
